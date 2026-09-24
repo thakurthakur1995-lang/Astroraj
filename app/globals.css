@@ -1,0 +1,127 @@
+@import "tailwindcss";
+
+@theme {
+  --color-saffron-50: #fff7ed;
+  --color-saffron-100: #ffedd5;
+  --color-saffron-200: #fed7aa;
+  --color-saffron-300: #fdba74;
+  --color-saffron-400: #fb923c;
+  --color-saffron-500: #f97316;
+  --color-saffron-600: #d05e2d;
+  --color-saffron-700: #b8491c;
+  --color-saffron-800: #9a3412;
+  --color-saffron-900: #7c2d12;
+
+  --color-vedic-dark: #22140e;
+  --color-vedic-brown: #472b20;
+  --color-vedic-tan: #8b5e3c;
+  --color-vedic-muted: #6b5548;
+
+  --color-gold-50: #fefdf9;
+  --color-gold-100: #fdfaf2;
+  --color-gold-200: #f7edcf;
+  --color-gold-300: #eedbad;
+  --color-gold-400: #e2be79;
+  --color-gold-500: #d4a359;
+  --color-gold-600: #b88636;
+  --color-gold-700: #946726;
+
+  --color-ivory: #faf8f5;
+  --color-ivory-card: #f5efe6;
+  --color-sand: #eae1d3;
+
+  --font-serif: "Cinzel", "Georgia", "Cambria", "Times New Roman", serif;
+  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+:root {
+  --background: #faf8f5;
+  --foreground: #22140e;
+  --card: #ffffff;
+  --card-foreground: #22140e;
+  --popover: #ffffff;
+  --popover-foreground: #22140e;
+  --primary: #d05e2d;
+  --primary-foreground: #ffffff;
+  --secondary: #f5efe6;
+  --secondary-foreground: #472b20;
+  --muted: #f5efe6;
+  --muted-foreground: #6b5548;
+  --accent: #d4a359;
+  --accent-foreground: #22140e;
+  --border: #e8ded2;
+  --input: #e8ded2;
+  --ring: #d05e2d;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Elegant Spiritual Typography & Details */
+h1,
+h2,
+h3,
+.spiritual-heading {
+  font-family: var(--font-serif);
+  letter-spacing: -0.015em;
+}
+
+/* Custom Subtle Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f5efe6;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d4a359;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #b88636;
+}
+
+/* Glassmorphism Accents */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 163, 89, 0.2);
+}
+
+.dark-glass-panel {
+  background: rgba(34, 20, 14, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(212, 163, 89, 0.25);
+}
+
+/* Shimmer & Glow Effects (Subtle and restrained) */
+.gold-glow {
+  box-shadow: 0 4px 20px -2px rgba(212, 163, 89, 0.25);
+}
+
+.saffron-glow {
+  box-shadow: 0 6px 24px -4px rgba(208, 94, 45, 0.3);
+}
+
+/* Interactive Card Transitions */
+.card-hover-lift {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+}
+
+.card-hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px -8px rgba(71, 43, 32, 0.12);
+  border-color: rgba(208, 94, 45, 0.4);
+}
