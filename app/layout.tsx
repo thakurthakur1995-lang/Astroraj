@@ -17,7 +17,6 @@ const geistSans = Geist({
 const cinzel = Cinzel({
   variable: "--font-cinzel",
   subsets: ["latin"],
-  weight: ["400", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
