@@ -2,15 +2,15 @@ import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { 
-  Award, 
-  MapPin, 
-  ShieldCheck, 
-  Sparkles, 
-  Calendar, 
-  BookOpen, 
-  HeartHandshake, 
-  Compass 
+import {
+  Award,
+  MapPin,
+  ShieldCheck,
+  Sparkles,
+  Calendar,
+  BookOpen,
+  HeartHandshake,
+  Compass
 } from "lucide-react";
 import { SITE_SETTINGS } from "@/lib/constants";
 import { getTestimonials } from "@/lib/supabase/repository";
@@ -95,10 +95,12 @@ export default async function AboutPage() {
             <div className="lg:col-span-5 relative flex justify-center">
               <div className="relative w-full max-w-md h-[460px] rounded-3xl overflow-hidden shadow-2xl border-2 border-gold-400/40 bg-vedic-dark">
                 <Image
-                  src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=800&q=80"
-                  alt="Astrologer Rajat Thakur in Rishikesh"
+                  src="/images/astrologer-rajat-study-portrait-framed.jpg"
+                  alt="Astrologer Rajat Thakur - Vedic Astrology & Spiritual Guidance"
                   fill
-                  className="object-cover"
+                  priority
+                  sizes="(max-width: 768px) 100vw, 448px"
+                  className="object-cover object-center"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-vedic-dark via-vedic-dark/20 to-transparent" />
                 <div className="absolute bottom-6 inset-x-6 text-white text-center space-y-1">
