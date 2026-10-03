@@ -12,6 +12,9 @@ export default function CheckoutPage() {
   const router = useRouter();
   const { cart, subtotal, clearCart } = useCart();
 
+  const hasPhysicalItems = cart.some((item) => !item.product.isCourse);
+  const hasCourses = cart.some((item) => item.product.isCourse);
+
   const [customer, setCustomer] = useState({
     fullName: "",
     email: "",
@@ -29,16 +32,27 @@ export default function CheckoutPage() {
 
   if (cart.length === 0) {
     return (
-      <div className="bg-ivory min-h-screen py-24 text-center">
-        <h1 className="font-serif text-2xl font-bold text-vedic-dark mb-4">
+      <div className="bg-ivory min-h-screen py-24 text-center space-y-4">
+        <h1 className="font-serif text-2xl font-bold text-vedic-dark">
           No items in cart to checkout
         </h1>
-        <Link
-          href="/shop"
-          className="px-6 py-2.5 bg-saffron-600 text-white rounded-lg text-xs font-semibold"
-        >
-          Return to Shop
-        </Link>
+        <p className="text-xs text-vedic-muted">
+          Your cart is currently empty. Explore our courses or sacred shop to add items.
+        </p>
+        <div className="flex items-center justify-center gap-3 pt-2">
+          <Link
+            href="/courses"
+            className="px-6 py-2.5 bg-saffron-600 text-white rounded-lg text-xs font-semibold hover:bg-saffron-700 transition-colors"
+          >
+            Explore Courses
+          </Link>
+          <Link
+            href="/shop"
+            className="px-6 py-2.5 bg-ivory border border-border text-vedic-dark rounded-lg text-xs font-semibold hover:bg-ivory-card transition-colors"
+          >
+            Sacred Shop
+          </Link>
+        </div>
       </div>
     );
   }
@@ -52,9 +66,11 @@ export default function CheckoutPage() {
     if (!customer.phone.trim() || customer.phone.length < 10) {
       errs.phone = "Please enter a 10-digit phone number.";
     }
-    if (!customer.street.trim()) errs.street = "Please enter your street address.";
-    if (!customer.city.trim()) errs.city = "Please enter your city.";
-    if (!customer.postalCode.trim()) errs.postalCode = "Please enter your PIN code.";
+    if (hasPhysicalItems) {
+      if (!customer.street.trim()) errs.street = "Please enter your street address.";
+      if (!customer.city.trim()) errs.city = "Please enter your city.";
+      if (!customer.postalCode.trim()) errs.postalCode = "Please enter your PIN code.";
+    }
 
     setErrors(errs);
     return Object.keys(errs).length === 0;
@@ -89,11 +105,11 @@ export default function CheckoutPage() {
             email: customer.email,
             phone: customer.phone,
             shippingAddress: {
-              street: customer.street,
-              city: customer.city,
-              state: customer.state,
-              postalCode: customer.postalCode,
-              country: customer.country,
+              street: customer.street.trim() || (hasCourses ? "Digital Course Access" : "Standard Delivery"),
+              city: customer.city.trim() || (hasCourses ? "Online Learning" : "Dehradun"),
+              state: customer.state || "Uttarakhand",
+              postalCode: customer.postalCode.trim() || (hasCourses ? "000000" : "248001"),
+              country: customer.country || "India",
             },
             orderNotes: customer.orderNotes,
           },
@@ -113,7 +129,7 @@ export default function CheckoutPage() {
         amount: orderData.amount, // in paise
         currency: orderData.currency || "INR",
         name: SITE_SETTINGS.brandName || "Astro Raj",
-        description: `Order of ${cart.length} sacred item(s) from Rishikesh`,
+        description: `Order of ${cart.length} item(s) • Astro Raj`,
         image: "/favicon.ico",
         order_id: orderData.orderId,
         prefill: {
@@ -208,10 +224,12 @@ export default function CheckoutPage() {
           <div className="lg:col-span-8 bg-white rounded-3xl border border-border p-6 sm:p-8 space-y-6 shadow-xs">
             <div className="space-y-1">
               <h2 className="font-serif text-lg font-bold text-vedic-dark">
-                1. Customer & Delivery Information
+                {hasPhysicalItems ? "1. Customer & Delivery Information" : "1. Student & Contact Information"}
               </h2>
               <p className="text-xs text-vedic-muted">
-                Please provide your exact address for insured sacred parcel dispatch from Rishikesh.
+                {hasPhysicalItems
+                  ? "Please provide your exact address for insured sacred parcel dispatch from Rishikesh."
+                  : "Please provide your contact details for course access credentials and WhatsApp batch updates."}
               </p>
             </div>
 
@@ -220,6 +238,7 @@ export default function CheckoutPage() {
                 <label className="text-xs font-semibold text-vedic-dark">Full Name *</label>
                 <input
                   type="text"
+                  placeholder="e.g. Ramesh Sharma"
                   value={customer.fullName}
                   onChange={(e) => setCustomer({ ...customer, fullName: e.target.value })}
                   className="w-full p-3 bg-ivory rounded-xl border border-border text-xs focus:outline-hidden focus:border-saffron-600"
@@ -228,9 +247,12 @@ export default function CheckoutPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-vedic-dark">Email *</label>
+                <label className="text-xs font-semibold text-vedic-dark">
+                  {hasCourses ? "Email (For Course Portal Access) *" : "Email Address *"}
+                </label>
                 <input
                   type="email"
+                  placeholder="name@example.com"
                   value={customer.email}
                   onChange={(e) => setCustomer({ ...customer, email: e.target.value })}
                   className="w-full p-3 bg-ivory rounded-xl border border-border text-xs focus:outline-hidden focus:border-saffron-600"
@@ -239,9 +261,14 @@ export default function CheckoutPage() {
               </div>
 
               <div className="space-y-1 sm:col-span-2">
-                <label className="text-xs font-semibold text-vedic-dark">Phone Number (For Courier Tracking) *</label>
+                <label className="text-xs font-semibold text-vedic-dark">
+                  {hasPhysicalItems
+                    ? "Phone Number (For Courier Tracking) *"
+                    : "Phone Number (For WhatsApp Student Group) *"}
+                </label>
                 <input
                   type="tel"
+                  placeholder="10-digit WhatsApp number"
                   value={customer.phone}
                   onChange={(e) => setCustomer({ ...customer, phone: e.target.value })}
                   className="w-full p-3 bg-ivory rounded-xl border border-border text-xs focus:outline-hidden focus:border-saffron-600"
@@ -250,9 +277,12 @@ export default function CheckoutPage() {
               </div>
 
               <div className="space-y-1 sm:col-span-2">
-                <label className="text-xs font-semibold text-vedic-dark">Flat / House No. & Street Address *</label>
+                <label className="text-xs font-semibold text-vedic-dark">
+                  {hasPhysicalItems ? "Flat / House No. & Street Address *" : "Street Address (Optional)"}
+                </label>
                 <input
                   type="text"
+                  placeholder={hasPhysicalItems ? "House/Flat number, Street name, Landmark" : "Optional for online courses"}
                   value={customer.street}
                   onChange={(e) => setCustomer({ ...customer, street: e.target.value })}
                   className="w-full p-3 bg-ivory rounded-xl border border-border text-xs focus:outline-hidden focus:border-saffron-600"
@@ -261,9 +291,12 @@ export default function CheckoutPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-vedic-dark">City *</label>
+                <label className="text-xs font-semibold text-vedic-dark">
+                  {hasPhysicalItems ? "City *" : "City (Optional)"}
+                </label>
                 <input
                   type="text"
+                  placeholder="e.g. New Delhi, Mumbai"
                   value={customer.city}
                   onChange={(e) => setCustomer({ ...customer, city: e.target.value })}
                   className="w-full p-3 bg-ivory rounded-xl border border-border text-xs focus:outline-hidden focus:border-saffron-600"
@@ -272,7 +305,7 @@ export default function CheckoutPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-vedic-dark">State *</label>
+                <label className="text-xs font-semibold text-vedic-dark">State</label>
                 <input
                   type="text"
                   value={customer.state}
@@ -282,9 +315,12 @@ export default function CheckoutPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-vedic-dark">PIN Code *</label>
+                <label className="text-xs font-semibold text-vedic-dark">
+                  {hasPhysicalItems ? "PIN Code *" : "PIN Code (Optional)"}
+                </label>
                 <input
                   type="text"
+                  placeholder="6-digit postal PIN"
                   value={customer.postalCode}
                   onChange={(e) => setCustomer({ ...customer, postalCode: e.target.value })}
                   className="w-full p-3 bg-ivory rounded-xl border border-border text-xs focus:outline-hidden focus:border-saffron-600"
@@ -303,10 +339,18 @@ export default function CheckoutPage() {
               </div>
 
               <div className="space-y-1 sm:col-span-2">
-                <label className="text-xs font-semibold text-vedic-dark">Delivery Instructions / Gotra for Sankalp</label>
+                <label className="text-xs font-semibold text-vedic-dark">
+                  {hasPhysicalItems
+                    ? "Delivery Instructions / Gotra for Sankalp"
+                    : "Notes / Special Requests / Batch Timing Preference"}
+                </label>
                 <textarea
                   rows={2}
-                  placeholder="Optional: Mention your family gotra or landmark..."
+                  placeholder={
+                    hasPhysicalItems
+                      ? "Optional: Mention your family gotra or landmark..."
+                      : "Optional: Mention your learning goals or batch queries..."
+                  }
                   value={customer.orderNotes}
                   onChange={(e) => setCustomer({ ...customer, orderNotes: e.target.value })}
                   className="w-full p-3 bg-ivory rounded-xl border border-border text-xs focus:outline-hidden focus:border-saffron-600"
@@ -340,14 +384,30 @@ export default function CheckoutPage() {
                   <span>Subtotal</span>
                   <span>₹{subtotal.toLocaleString("en-IN")}</span>
                 </div>
-                <div className="flex justify-between text-emerald-700 font-semibold">
-                  <span>Shipping</span>
-                  <span>FREE</span>
-                </div>
-                <div className="flex justify-between text-gold-700 font-semibold">
-                  <span>Pran-Pratishtha</span>
-                  <span>FREE</span>
-                </div>
+                {hasPhysicalItems && (
+                  <>
+                    <div className="flex justify-between text-emerald-700 font-semibold">
+                      <span>Shipping</span>
+                      <span>FREE</span>
+                    </div>
+                    <div className="flex justify-between text-gold-700 font-semibold">
+                      <span>Pran-Pratishtha</span>
+                      <span>FREE</span>
+                    </div>
+                  </>
+                )}
+                {hasCourses && (
+                  <>
+                    <div className="flex justify-between text-emerald-700 font-semibold">
+                      <span>Course Activation</span>
+                      <span>INSTANT</span>
+                    </div>
+                    <div className="flex justify-between text-gold-700 font-semibold">
+                      <span>Ashram Certificate</span>
+                      <span>INCLUDED</span>
+                    </div>
+                  </>
+                )}
                 <div className="pt-2 border-t border-border flex justify-between text-sm font-bold text-vedic-dark">
                   <span>Total Amount</span>
                   <span className="font-serif text-xl text-saffron-700">

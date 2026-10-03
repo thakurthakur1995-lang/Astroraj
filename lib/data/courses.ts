@@ -1,4 +1,4 @@
-import { Course } from "../types";
+import { Course, Product } from "../types";
 
 export const COURSES: Course[] = [
   {
@@ -681,3 +681,30 @@ export const COURSES: Course[] = [
     ],
   },
 ];
+
+export function courseToProduct(course: Course): Product {
+  return {
+    id: course.id,
+    slug: course.slug,
+    name: course.title,
+    category: "courses",
+    categoryLabel: course.categoryLabel || "Online Course",
+    price: course.price,
+    originalPrice: course.originalPrice,
+    shortDescription: course.shortDescription,
+    description: course.fullDescription,
+    images: [course.image || course.imageUrl || "https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&w=600&q=80"],
+    inStock: true,
+    sku: `CRS-${course.slug.toUpperCase()}`,
+    certified: course.certificateProvided,
+    certificationAuthority: "Astro Raj Academy",
+    spiritualBenefits: course.learningOutcomes || [],
+    specifications: {
+      Level: course.level,
+      Duration: course.duration,
+      Mode: course.mode,
+      Language: course.language,
+    },
+    isCourse: true,
+  };
+}

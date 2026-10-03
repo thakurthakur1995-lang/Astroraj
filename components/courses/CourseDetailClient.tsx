@@ -19,9 +19,12 @@ import {
   GraduationCap,
   Calendar,
   Lock,
+  ShoppingBag,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { Course } from "@/lib/types";
-import { CourseEnrollModal } from "./CourseEnrollModal";
+import { useCart } from "@/lib/cart-context";
+import { courseToProduct } from "@/lib/data/courses";
 import { SITE_SETTINGS } from "@/lib/constants";
 
 interface CourseDetailClientProps {
@@ -30,7 +33,8 @@ interface CourseDetailClientProps {
 }
 
 export function CourseDetailClient({ course, relatedCourses }: CourseDetailClientProps) {
-  const [isEnrollModalOpen, setIsEnrollModalOpen] = useState(false);
+  const router = useRouter();
+  const { addToCart } = useCart();
   const [expandedModules, setExpandedModules] = useState<Record<string, boolean>>({
     "mod-1": true, // open first module by default
   });
@@ -344,12 +348,23 @@ export function CourseDetailClient({ course, relatedCourses }: CourseDetailClien
             {/* Big Action Buttons */}
             <div className="space-y-2.5">
               <button
-                onClick={() => setIsEnrollModalOpen(true)}
-                className="w-full py-4 bg-gradient-to-r from-saffron-600 via-saffron-700 to-saffron-800 hover:from-saffron-700 hover:to-saffron-900 text-white rounded-2xl text-sm font-bold shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 group"
+                onClick={() => {
+                  addToCart(courseToProduct(course), 1);
+                  router.push("/checkout");
+                }}
+                className="w-full py-4 bg-gradient-to-r from-saffron-600 via-saffron-700 to-saffron-800 hover:from-saffron-700 hover:to-saffron-900 text-white rounded-2xl text-sm font-bold shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 group cursor-pointer"
               >
                 <Sparkles className="w-4 h-4 text-gold-300" />
-                <span>Enroll Now & Start Learning</span>
+                <span>Enroll Now & Proceed to Checkout</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </button>
+
+              <button
+                onClick={() => addToCart(courseToProduct(course), 1)}
+                className="w-full py-3.5 bg-ivory hover:bg-ivory-card border border-saffron-600/40 text-saffron-800 rounded-2xl text-xs font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs hover:shadow-sm"
+              >
+                <ShoppingBag className="w-4 h-4 text-saffron-600" />
+                <span>Add Course to Cart</span>
               </button>
 
               <a
@@ -459,13 +474,6 @@ export function CourseDetailClient({ course, relatedCourses }: CourseDetailClien
           </div>
         </section>
       )}
-
-      {/* Enrollment Modal */}
-      <CourseEnrollModal
-        course={course}
-        isOpen={isEnrollModalOpen}
-        onClose={() => setIsEnrollModalOpen(false)}
-      />
     </div>
   );
 }

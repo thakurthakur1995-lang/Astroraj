@@ -16,15 +16,16 @@ import {
   Flame
 } from "lucide-react";
 import { Course } from "@/lib/types";
+import { useCart } from "@/lib/cart-context";
+import { courseToProduct } from "@/lib/data/courses";
 import { SITE_SETTINGS } from "@/lib/constants";
-import { CourseEnrollModal } from "@/components/courses/CourseEnrollModal";
 
 interface CoursesPreviewProps {
   courses: Course[];
 }
 
 export function CoursesPreview({ courses }: CoursesPreviewProps) {
-  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  const { addToCart } = useCart();
 
   // Pick top 3-4 courses for homepage showcase
   const featuredCourses = courses.slice(0, 3);
@@ -171,7 +172,7 @@ export function CoursesPreview({ courses }: CoursesPreviewProps) {
                     </div>
 
                     <button
-                      onClick={() => setSelectedCourse(course)}
+                      onClick={() => addToCart(courseToProduct(course), 1)}
                       className="px-4 py-2 rounded-lg bg-gradient-to-r from-saffron-600 via-saffron-500 to-amber-500 hover:from-saffron-500 hover:to-amber-400 text-stone-950 font-bold text-xs shadow-md shadow-saffron-500/20 hover:shadow-saffron-500/40 transition-all cursor-pointer flex items-center gap-1.5"
                     >
                       <span>Enroll</span>
@@ -221,15 +222,6 @@ export function CoursesPreview({ courses }: CoursesPreviewProps) {
           </div>
         </div>
       </div>
-
-      {/* Direct Enrollment Modal */}
-      {selectedCourse && (
-        <CourseEnrollModal
-          course={selectedCourse}
-          isOpen={!!selectedCourse}
-          onClose={() => setSelectedCourse(null)}
-        />
-      )}
     </section>
   );
 }

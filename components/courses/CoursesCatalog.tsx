@@ -19,7 +19,8 @@ import {
   HelpCircle,
 } from "lucide-react";
 import { Course } from "@/lib/types";
-import { CourseEnrollModal } from "./CourseEnrollModal";
+import { useCart } from "@/lib/cart-context";
+import { courseToProduct } from "@/lib/data/courses";
 import { SITE_SETTINGS } from "@/lib/constants";
 
 interface CoursesCatalogProps {
@@ -27,10 +28,9 @@ interface CoursesCatalogProps {
 }
 
 export function CoursesCatalog({ courses }: CoursesCatalogProps) {
+  const { addToCart } = useCart();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [activeCourseForEnroll, setActiveCourseForEnroll] = useState<Course | null>(null);
-  const [isEnrollModalOpen, setIsEnrollModalOpen] = useState(false);
 
   const categories = [
     { id: "all", label: "All Courses" },
@@ -51,8 +51,7 @@ export function CoursesCatalog({ courses }: CoursesCatalogProps) {
   });
 
   const handleEnrollClick = (course: Course) => {
-    setActiveCourseForEnroll(course);
-    setIsEnrollModalOpen(true);
+    addToCart(courseToProduct(course), 1);
   };
 
   const whatsappGeneralUrl = `https://wa.me/${SITE_SETTINGS.whatsappNumber}?text=${encodeURIComponent(
@@ -315,16 +314,6 @@ export function CoursesCatalog({ courses }: CoursesCatalogProps) {
           <span>Chat on WhatsApp</span>
         </a>
       </div>
-
-      {/* Enrollment Modal */}
-      <CourseEnrollModal
-        course={activeCourseForEnroll}
-        isOpen={isEnrollModalOpen}
-        onClose={() => {
-          setIsEnrollModalOpen(false);
-          setActiveCourseForEnroll(null);
-        }}
-      />
     </div>
   );
 }

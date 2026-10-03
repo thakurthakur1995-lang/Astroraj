@@ -45,7 +45,7 @@ export interface Product {
   id: string;
   slug: string;
   name: string;
-  category: "gemstones" | "rudraksha" | "yantra" | "ayurveda" | "spiritual" | "diwali-items" | "mala";
+  category: "gemstones" | "rudraksha" | "yantra" | "ayurveda" | "spiritual" | "diwali-items" | "mala" | "courses" | string;
   categoryLabel: string;
   categories?: string[];
   price: number;
@@ -62,6 +62,7 @@ export interface Product {
   spiritualBenefits: string[];
   specifications: Record<string, string>;
   origin?: string;
+  isCourse?: boolean;
 }
 
 export interface CourseModule {

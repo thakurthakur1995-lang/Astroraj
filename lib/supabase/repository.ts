@@ -15,106 +15,9 @@ import {
   OrderRecord 
 } from "../types";
 
-// In-memory runtime store for simulated bookings and orders during local demo / development
-const runtimeBookings: BookingRecord[] = [
-  {
-    id: "bkg-101",
-    bookingCode: "AR-2026-9812",
-    serviceId: "personal-consultation",
-    serviceTitle: "Personal Astrology Consultation (30 Min Video)",
-    consultationType: "video",
-    durationMinutes: 30,
-    urgency: "urgent",
-    date: new Date(Date.now() + 86400000).toISOString().split("T")[0],
-    timeSlot: "11:30 AM - 12:00 PM",
-    price: 6200,
-    fullName: "Aarav Sharma",
-    email: "aarav.sharma@example.com",
-    phone: "+91 98765 43210",
-    whatsappSameAsPhone: true,
-    whatsappNumber: "+91 98765 43210",
-    gender: "male",
-    dateOfBirth: "1991-04-14",
-    timeOfBirth: "06:45 AM",
-    placeOfBirth: "Delhi, India",
-    preferredLanguage: "Hindi",
-    concernsTopic: "Career",
-    questionOrNotes: "Looking for guidance regarding business partnership and promotion timeline.",
-    status: "confirmed",
-    paymentStatus: "paid",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    meetingLink: "https://meet.google.com/xyz-astro-raj",
-  },
-  {
-    id: "bkg-102",
-    bookingCode: "AR-2026-9813",
-    serviceId: "kundli-analysis",
-    serviceTitle: "Kundli Analysis & Dosha Check (15 Min Audio)",
-    consultationType: "audio",
-    durationMinutes: 15,
-    urgency: "normal",
-    date: new Date(Date.now() + 86400000 * 3).toISOString().split("T")[0],
-    timeSlot: "04:00 PM - 04:15 PM",
-    price: 2100,
-    fullName: "Priyanka Verma",
-    email: "priyanka.verma@example.com",
-    phone: "+91 98111 22334",
-    whatsappSameAsPhone: true,
-    gender: "female",
-    dateOfBirth: "1994-09-28",
-    timeOfBirth: "11:15 PM",
-    placeOfBirth: "Jaipur, Rajasthan",
-    preferredLanguage: "English",
-    concernsTopic: "Marriage & Relationship",
-    questionOrNotes: "Checking Mangal dosha compatibility for prospective marriage proposal.",
-    status: "pending",
-    paymentStatus: "paid",
-    createdAt: new Date(Date.now() - 3600000 * 5).toISOString(),
-    updatedAt: new Date().toISOString(),
-  }
-];
-
-const runtimeOrders: OrderRecord[] = [
-  {
-    id: "ord-201",
-    orderNumber: "ORD-94812",
-    customer: {
-      fullName: "Rohan Khanna",
-      email: "rohan.khanna@example.com",
-      phone: "+91 99887 76655",
-      shippingAddress: {
-        street: "B-402, Lotus Boulevard, Sector 100",
-        city: "Noida",
-        state: "Uttar Pradesh",
-        postalCode: "201304",
-        country: "India",
-      },
-    },
-    items: [
-      {
-        productId: "all-siddh-shree-yantra-main-sphatik",
-        productName: "All Siddh Shree Yantra (Main Sphatik)",
-        price: 2699.25,
-        quantity: 1,
-        image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80",
-      },
-      {
-        productId: "dhanyog-bracelet",
-        productName: "Dhanyog Abundance Bracelet",
-        price: 824.25,
-        quantity: 1,
-        image: "https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?auto=format&fit=crop&w=800&q=80",
-      },
-    ],
-    subtotal: 3523.5,
-    shippingFee: 0,
-    total: 3523.5,
-    paymentStatus: "paid",
-    orderStatus: "processing",
-    createdAt: new Date().toISOString(),
-  }
-];
+// In-memory runtime store fallback for bookings and orders during local demo / development
+const runtimeBookings: BookingRecord[] = [];
+const runtimeOrders: OrderRecord[] = [];
 
 export interface ContactMessageRecord {
   id: string;
@@ -271,6 +174,57 @@ export async function createBooking(
 }
 
 export async function getBookingByCode(code: string): Promise<BookingRecord | null> {
+  if (isSupabaseConfigured) {
+    try {
+      const client = getServiceSupabase();
+      const { data, error } = await client
+        .from("bookings")
+        .select("*")
+        .eq("booking_code", code)
+        .maybeSingle();
+
+      if (!error && data) {
+        return {
+          id: data.id,
+          bookingCode: data.booking_code,
+          serviceId: data.service_id,
+          serviceTitle: data.service_title,
+          consultationType: data.consultation_type,
+          durationMinutes: data.duration_minutes,
+          urgency: data.urgency,
+          date: data.booking_date,
+          timeSlot: data.time_slot,
+          price: Number(data.price),
+          fullName: data.full_name,
+          email: data.email,
+          phone: data.phone,
+          whatsappNumber: data.whatsapp_number,
+          whatsappSameAsPhone: !data.whatsapp_number || data.whatsapp_number === data.phone,
+          gender: data.gender,
+          dateOfBirth: data.date_of_birth,
+          timeOfBirth: data.time_of_birth,
+          timeIsApproximate: Boolean(data.time_is_approximate),
+          placeOfBirth: data.place_of_birth,
+          preferredLanguage: data.preferred_language,
+          concernsTopic: data.concerns_topic,
+          questionOrNotes: data.question_or_notes,
+          status: data.status,
+          paymentStatus: data.payment_status,
+          paymentId: data.payment_id,
+          razorpayOrderId: data.razorpay_order_id,
+          razorpayPaymentId: data.razorpay_payment_id,
+          razorpaySignature: data.razorpay_signature,
+          paymentVerifiedAt: data.payment_verified_at,
+          meetingLink: data.meeting_link,
+          adminNotes: data.admin_notes,
+          createdAt: data.created_at,
+          updatedAt: data.updated_at,
+        };
+      }
+    } catch {
+      // fallback
+    }
+  }
   return runtimeBookings.find((b) => b.bookingCode === code) || null;
 }
 
@@ -300,11 +254,11 @@ export async function getBookingByRazorpayOrderId(orderId: string): Promise<Book
           email: data.email,
           phone: data.phone,
           whatsappNumber: data.whatsapp_number,
-          whatsappSameAsPhone: true,
+          whatsappSameAsPhone: !data.whatsapp_number || data.whatsapp_number === data.phone,
           gender: data.gender,
           dateOfBirth: data.date_of_birth,
           timeOfBirth: data.time_of_birth,
-          timeIsApproximate: data.time_is_approximate,
+          timeIsApproximate: Boolean(data.time_is_approximate),
           placeOfBirth: data.place_of_birth,
           preferredLanguage: data.preferred_language,
           concernsTopic: data.concerns_topic,
@@ -316,6 +270,8 @@ export async function getBookingByRazorpayOrderId(orderId: string): Promise<Book
           razorpayPaymentId: data.razorpay_payment_id,
           razorpaySignature: data.razorpay_signature,
           paymentVerifiedAt: data.payment_verified_at,
+          meetingLink: data.meeting_link,
+          adminNotes: data.admin_notes,
           createdAt: data.created_at,
           updatedAt: data.updated_at,
         };
@@ -328,17 +284,102 @@ export async function getBookingByRazorpayOrderId(orderId: string): Promise<Book
 }
 
 export async function getAllBookings(): Promise<BookingRecord[]> {
+  if (isSupabaseConfigured) {
+    try {
+      const client = getServiceSupabase();
+      const { data, error } = await client
+        .from("bookings")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (!error && Array.isArray(data)) {
+        return data.map((d: any) => ({
+          id: d.id,
+          bookingCode: d.booking_code,
+          serviceId: d.service_id,
+          serviceTitle: d.service_title,
+          consultationType: d.consultation_type,
+          durationMinutes: d.duration_minutes,
+          urgency: d.urgency,
+          date: d.booking_date,
+          timeSlot: d.time_slot,
+          price: Number(d.price),
+          fullName: d.full_name,
+          email: d.email,
+          phone: d.phone,
+          whatsappNumber: d.whatsapp_number,
+          whatsappSameAsPhone: !d.whatsapp_number || d.whatsapp_number === d.phone,
+          gender: d.gender,
+          dateOfBirth: d.date_of_birth,
+          timeOfBirth: d.time_of_birth,
+          timeIsApproximate: Boolean(d.time_is_approximate),
+          placeOfBirth: d.place_of_birth,
+          preferredLanguage: d.preferred_language,
+          concernsTopic: d.concerns_topic,
+          questionOrNotes: d.question_or_notes,
+          status: d.status,
+          paymentStatus: d.payment_status,
+          paymentId: d.payment_id,
+          razorpayOrderId: d.razorpay_order_id,
+          razorpayPaymentId: d.razorpay_payment_id,
+          razorpaySignature: d.razorpay_signature,
+          paymentVerifiedAt: d.payment_verified_at,
+          meetingLink: d.meeting_link,
+          adminNotes: d.admin_notes,
+          createdAt: d.created_at,
+          updatedAt: d.updated_at,
+        }));
+      }
+    } catch (err) {
+      console.error("[getAllBookings] Error querying Supabase:", err);
+    }
+  }
   return runtimeBookings;
 }
 
-export async function updateBookingStatus(id: string, status: BookingRecord["status"]): Promise<boolean> {
-  const idx = runtimeBookings.findIndex((b) => b.id === id);
+export async function updateBookingStatus(
+  id: string, 
+  status: BookingRecord["status"],
+  extra?: { meetingLink?: string; adminNotes?: string }
+): Promise<boolean> {
+  const now = new Date().toISOString();
+  const idx = runtimeBookings.findIndex((b) => b.id === id || b.bookingCode === id);
   if (idx !== -1) {
     runtimeBookings[idx].status = status;
-    runtimeBookings[idx].updatedAt = new Date().toISOString();
-    return true;
+    if (extra?.meetingLink !== undefined) runtimeBookings[idx].meetingLink = extra.meetingLink;
+    if (extra?.adminNotes !== undefined) runtimeBookings[idx].adminNotes = extra.adminNotes;
+    runtimeBookings[idx].updatedAt = now;
   }
-  return false;
+
+  if (isSupabaseConfigured) {
+    try {
+      const client = getServiceSupabase();
+      const updateData: Record<string, any> = {
+        status,
+        updated_at: now,
+      };
+      if (extra?.meetingLink !== undefined) updateData.meeting_link = extra.meetingLink;
+      if (extra?.adminNotes !== undefined) updateData.admin_notes = extra.adminNotes;
+
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+      let query = client.from("bookings").update(updateData);
+      if (isUUID) {
+        query = query.eq("id", id);
+      } else {
+        query = query.eq("booking_code", id);
+      }
+      const { error } = await query;
+      if (error) {
+        console.error("[updateBookingStatus error]:", error);
+        return false;
+      }
+      return true;
+    } catch (err) {
+      console.error("[updateBookingStatus exception]:", err);
+      return false;
+    }
+  }
+  return idx !== -1;
 }
 
 export async function markBookingPaymentPaid(params: {
@@ -589,8 +630,124 @@ export async function recordPaymentTransaction(params: {
   }
 }
 
+export async function getOrderByNumber(orderNumber: string): Promise<OrderRecord | null> {
+  if (isSupabaseConfigured) {
+    try {
+      const client = getServiceSupabase();
+      const { data, error } = await client
+        .from("orders")
+        .select("*")
+        .eq("order_number", orderNumber)
+        .maybeSingle();
+
+      if (!error && data) {
+        return {
+          id: data.id,
+          orderNumber: data.order_number,
+          customer: {
+            fullName: data.customer_name,
+            email: data.customer_email,
+            phone: data.customer_phone,
+            shippingAddress: data.shipping_address || {},
+            orderNotes: data.order_notes || "",
+          },
+          items: data.items || [],
+          subtotal: Number(data.subtotal),
+          shippingFee: Number(data.shipping_fee || 0),
+          total: Number(data.total),
+          paymentStatus: data.payment_status,
+          orderStatus: data.order_status,
+          paymentId: data.payment_id,
+          razorpayOrderId: data.razorpay_order_id,
+          razorpayPaymentId: data.razorpay_payment_id,
+          razorpaySignature: data.razorpay_signature,
+          paymentVerifiedAt: data.payment_verified_at,
+          createdAt: data.created_at,
+        };
+      }
+    } catch {
+      // fallback
+    }
+  }
+  return runtimeOrders.find((o) => o.orderNumber === orderNumber) || null;
+}
+
 export async function getAllOrders(): Promise<OrderRecord[]> {
+  if (isSupabaseConfigured) {
+    try {
+      const client = getServiceSupabase();
+      const { data, error } = await client
+        .from("orders")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (!error && Array.isArray(data)) {
+        return data.map((d: any) => ({
+          id: d.id,
+          orderNumber: d.order_number,
+          customer: {
+            fullName: d.customer_name,
+            email: d.customer_email,
+            phone: d.customer_phone,
+            shippingAddress: d.shipping_address || {},
+            orderNotes: d.order_notes || "",
+          },
+          items: d.items || [],
+          subtotal: Number(d.subtotal),
+          shippingFee: Number(d.shipping_fee || 0),
+          total: Number(d.total),
+          paymentStatus: d.payment_status,
+          orderStatus: d.order_status,
+          paymentId: d.payment_id,
+          razorpayOrderId: d.razorpay_order_id,
+          razorpayPaymentId: d.razorpay_payment_id,
+          razorpaySignature: d.razorpay_signature,
+          paymentVerifiedAt: d.payment_verified_at,
+          createdAt: d.created_at,
+        }));
+      }
+    } catch (err) {
+      console.error("[getAllOrders] Error querying Supabase:", err);
+    }
+  }
   return runtimeOrders;
+}
+
+export async function updateOrderStatus(
+  id: string,
+  orderStatus: OrderRecord["orderStatus"]
+): Promise<boolean> {
+  const now = new Date().toISOString();
+  const idx = runtimeOrders.findIndex((o) => o.id === id || o.orderNumber === id);
+  if (idx !== -1) {
+    runtimeOrders[idx].orderStatus = orderStatus;
+  }
+
+  if (isSupabaseConfigured) {
+    try {
+      const client = getServiceSupabase();
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+      let query = client.from("orders").update({
+        order_status: orderStatus,
+        updated_at: now,
+      });
+      if (isUUID) {
+        query = query.eq("id", id);
+      } else {
+        query = query.eq("order_number", id);
+      }
+      const { error } = await query;
+      if (error) {
+        console.error("[updateOrderStatus error]:", error);
+        return false;
+      }
+      return true;
+    } catch (err) {
+      console.error("[updateOrderStatus exception]:", err);
+      return false;
+    }
+  }
+  return idx !== -1;
 }
 
 // CONTACT MESSAGES
@@ -611,10 +768,12 @@ export async function getAllContactMessages() {
 
 // ADMIN DASHBOARD STATS
 export async function getAdminDashboardStats() {
-  const totalBookings = runtimeBookings.length;
-  const totalOrders = runtimeOrders.length;
-  const bookingRevenue = runtimeBookings.reduce((sum, b) => (b.paymentStatus === "paid" ? sum + b.price : sum), 0);
-  const orderRevenue = runtimeOrders.reduce((sum, o) => (o.paymentStatus === "paid" ? sum + o.total : sum), 0);
+  const bookings = await getAllBookings();
+  const orders = await getAllOrders();
+  const totalBookings = bookings.length;
+  const totalOrders = orders.length;
+  const bookingRevenue = bookings.reduce((sum, b) => (b.paymentStatus === "paid" ? sum + b.price : sum), 0);
+  const orderRevenue = orders.reduce((sum, o) => (o.paymentStatus === "paid" ? sum + o.total : sum), 0);
   const totalRevenue = bookingRevenue + orderRevenue;
   
   return {
@@ -623,7 +782,7 @@ export async function getAdminDashboardStats() {
     totalRevenue,
     activeServices: SERVICES.length,
     activeProducts: PRODUCTS.length,
-    recentBookings: runtimeBookings.slice(0, 5),
-    recentOrders: runtimeOrders.slice(0, 5),
+    recentBookings: bookings.slice(0, 5),
+    recentOrders: orders.slice(0, 5),
   };
 }

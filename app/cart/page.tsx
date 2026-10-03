@@ -20,15 +20,21 @@ export default function CartPage() {
             Your Cart is Empty
           </h1>
           <p className="text-xs text-vedic-muted leading-relaxed">
-            You haven&apos;t added any sacred gemstones, Siddh yantras, or spiritual remedies yet.
+            You haven&apos;t added any sacred gemstones, Siddh yantras, or online masterclasses yet.
           </p>
-          <div className="pt-2">
+          <div className="pt-2 flex flex-wrap gap-2.5 justify-center">
+            <Link
+              href="/courses"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-saffron-600 hover:bg-saffron-700 text-white font-semibold text-xs shadow-md transition-all"
+            >
+              <span>Explore Courses</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
             <Link
               href="/shop"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-saffron-600 hover:bg-saffron-700 text-white font-semibold text-xs shadow-md transition-all"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-ivory hover:bg-ivory-card border border-border text-vedic-dark font-semibold text-xs shadow-xs transition-all"
             >
-              <span>Explore Sacred Shop</span>
-              <ArrowRight className="w-4 h-4" />
+              <span>Visit Sacred Shop</span>
             </Link>
           </div>
         </div>
@@ -45,12 +51,12 @@ export default function CartPage() {
               Shopping Cart
             </h1>
             <p className="text-xs text-vedic-muted">
-              Review your consecrated sacred items before proceeding to checkout.
+              Review your consecrated sacred items and courses before proceeding to checkout.
             </p>
           </div>
           <button
             onClick={clearCart}
-            className="text-xs text-red-600 hover:underline"
+            className="text-xs text-red-600 hover:underline cursor-pointer"
           >
             Clear Cart
           </button>
@@ -66,7 +72,7 @@ export default function CartPage() {
               >
                 <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-ivory-card shrink-0">
                   <Image
-                    src={item.product.images[0]}
+                    src={item.product.images[0] || "https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&w=400&q=80"}
                     alt={item.product.name}
                     fill
                     className="object-cover"
@@ -78,7 +84,10 @@ export default function CartPage() {
                     {item.product.categoryLabel}
                   </span>
                   <h3 className="font-serif text-base font-bold text-vedic-dark truncate">
-                    <Link href={`/shop/${item.product.slug}`} className="hover:text-saffron-700">
+                    <Link
+                      href={item.product.isCourse ? `/courses/${item.product.slug}` : `/shop/${item.product.slug}`}
+                      className="hover:text-saffron-700 transition-colors"
+                    >
                       {item.product.name}
                     </Link>
                   </h3>

@@ -77,7 +77,13 @@ export function CartDrawer() {
                       {item.product.categoryLabel}
                     </span>
                     <h4 className="text-sm font-semibold text-vedic-dark truncate">
-                      {item.product.name}
+                      <Link
+                        href={item.product.isCourse ? `/courses/${item.product.slug}` : `/shop/${item.product.slug}`}
+                        onClick={() => setIsCartOpen(false)}
+                        className="hover:text-saffron-700 transition-colors"
+                      >
+                        {item.product.name}
+                      </Link>
                     </h4>
                     <div className="text-sm font-bold text-saffron-700 mt-1">
                       ₹{item.product.price.toLocaleString("en-IN")}
@@ -126,7 +132,9 @@ export function CartDrawer() {
                 </span>
               </div>
               <p className="text-xs text-vedic-muted">
-                Free consecrated shipping across India. Standard taxes included.
+                {cart.some((item) => !item.product.isCourse)
+                  ? "Free consecrated shipping across India. Standard taxes included."
+                  : "Instant digital enrollment & access after payment. Standard taxes included."}
               </p>
               <div className="grid grid-cols-2 gap-2 pt-2">
                 <Link

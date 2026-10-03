@@ -1,6 +1,7 @@
 import { CONSULTATION_PRICING_MATRIX } from "./constants";
 import { SERVICES } from "./data/services";
 import { PRODUCTS } from "./data/products";
+import { COURSES } from "./data/courses";
 import { ConsultationType, ConsultationUrgency } from "./types";
 import { isSupabaseConfigured, supabase } from "./supabase/client";
 
@@ -136,9 +137,9 @@ export async function validateAndCalculateOrderPrice(
       }
     }
 
-    // Fallback to local catalog
+    // Fallback to local products catalog
     if (!product) {
-      const local = PRODUCTS.find((p) => p.id === item.productId);
+      const local = PRODUCTS.find((p) => p.id === item.productId || p.slug === item.productId);
       if (local) {
         product = {
           id: local.id,
@@ -149,8 +150,21 @@ export async function validateAndCalculateOrderPrice(
       }
     }
 
+    // Check courses catalog if not a physical product
     if (!product) {
-      throw new Error(`Product not found: ${item.productId}`);
+      const course = COURSES.find((c) => c.id === item.productId || c.slug === item.productId);
+      if (course) {
+        product = {
+          id: course.id,
+          name: course.title,
+          price: course.price,
+          image: course.image || course.imageUrl || "",
+        };
+      }
+    }
+
+    if (!product) {
+      throw new Error(`Product or course not found: ${item.productId}`);
     }
 
     const itemTotal = product.price * item.quantity;
