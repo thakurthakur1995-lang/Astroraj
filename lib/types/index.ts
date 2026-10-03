@@ -45,8 +45,9 @@ export interface Product {
   id: string;
   slug: string;
   name: string;
-  category: "gemstones" | "rudraksha" | "yantra" | "ayurveda" | "spiritual";
+  category: "gemstones" | "rudraksha" | "yantra" | "ayurveda" | "spiritual" | "diwali-items" | "mala";
   categoryLabel: string;
+  categories?: string[];
   price: number;
   originalPrice?: number;
   shortDescription: string;
@@ -61,6 +62,42 @@ export interface Product {
   spiritualBenefits: string[];
   specifications: Record<string, string>;
   origin?: string;
+}
+
+export interface CourseModule {
+  id: string;
+  title: string;
+  duration?: string;
+  lessons: string[];
+}
+
+export interface Course {
+  id: string;
+  slug: string;
+  title: string;
+  shortDescription: string;
+  fullDescription: string;
+  image: string;
+  imageUrl?: string;
+  price: number;
+  originalPrice: number;
+  category: "astrology" | "vastu" | "numerology" | "rudraksha" | "prediction";
+  categoryLabel: string;
+  level: "Beginner" | "Intermediate" | "Advanced" | "Beginner to Intermediate" | "Intermediate to Advanced" | "All Levels";
+  duration: string;
+  mode: "Self-Paced Recorded" | "Live Mentorship + Recordings" | "One-on-One Mentorship" | string;
+  language: string;
+  rating: number;
+  reviewsCount: number;
+  studentsEnrolled: number;
+  featured?: boolean;
+  certificateProvided: boolean;
+  batchStartDate?: string;
+  learningOutcomes: string[];
+  features: string[];
+  targetAudience: string[];
+  curriculum: CourseModule[];
+  faqs?: { question: string; answer: string }[];
 }
 
 export interface Testimonial {
@@ -80,24 +117,6 @@ export interface FAQItem {
   question: string;
   answer: string;
   category: "consultation" | "kundli" | "puja" | "gemstones" | "payment";
-}
-
-export interface BlogPost {
-  id: string;
-  slug: string;
-  title: string;
-  excerpt: string;
-  content: string;
-  coverImage: string;
-  author: {
-    name: string;
-    role: string;
-    image: string;
-  };
-  publishedAt: string;
-  readTimeMinutes: number;
-  category: string;
-  tags: string[];
 }
 
 export interface BookingCustomerDetails {
@@ -135,6 +154,9 @@ export interface BookingRecord extends BookingCustomerDetails, BookingSelection 
   paymentStatus: "pending" | "paid" | "failed" | "refunded";
   paymentId?: string;
   razorpayOrderId?: string;
+  razorpayPaymentId?: string;
+  razorpaySignature?: string;
+  paymentVerifiedAt?: string;
   createdAt: string;
   updatedAt: string;
   adminNotes?: string;
@@ -177,6 +199,10 @@ export interface OrderRecord {
   paymentStatus: "pending" | "paid" | "failed";
   orderStatus: "processing" | "shipped" | "delivered" | "cancelled";
   paymentId?: string;
+  razorpayOrderId?: string;
+  razorpayPaymentId?: string;
+  razorpaySignature?: string;
+  paymentVerifiedAt?: string;
   createdAt: string;
 }
 

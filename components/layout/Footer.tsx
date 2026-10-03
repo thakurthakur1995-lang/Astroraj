@@ -79,8 +79,8 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/blog" className="hover:text-gold-400 transition-colors">
-                  Vedic Insights & Blog
+                <Link href="/courses" className="hover:text-gold-400 transition-colors">
+                  Vedic & Vastu Courses
                 </Link>
               </li>
               <li>

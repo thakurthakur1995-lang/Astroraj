@@ -1,16 +1,16 @@
-import { supabase, isSupabaseConfigured } from "./client";
+import { supabase, getServiceSupabase, isSupabaseConfigured } from "./client";
 import { SERVICES, SERVICE_CATEGORIES } from "../data/services";
 import { PRODUCTS } from "../data/products";
 import { TESTIMONIALS } from "../data/testimonials";
 import { FAQS } from "../data/faqs";
-import { BLOG_POSTS } from "../data/blogs";
+import { COURSES } from "../data/courses";
 import { 
   Service, 
   ServiceCategory, 
   Product, 
+  Course,
   Testimonial, 
   FAQItem, 
-  BlogPost, 
   BookingRecord, 
   OrderRecord 
 } from "../types";
@@ -203,17 +203,22 @@ export async function getFaqs(category?: string): Promise<FAQItem[]> {
   return FAQS;
 }
 
-export async function getBlogPosts(): Promise<BlogPost[]> {
-  return BLOG_POSTS;
+export async function getCourses(category?: string): Promise<Course[]> {
+  if (category && category !== "all") {
+    return COURSES.filter((c) => c.category === category);
+  }
+  return COURSES;
 }
 
-export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
-  const all = await getBlogPosts();
-  return all.find((b) => b.slug === slug) || null;
+export async function getCourseBySlug(slug: string): Promise<Course | null> {
+  const all = await getCourses();
+  return all.find((c) => c.slug === slug) || null;
 }
 
 // BOOKINGS
-export async function createBooking(bookingData: Omit<BookingRecord, "id" | "bookingCode" | "createdAt" | "updatedAt">): Promise<BookingRecord> {
+export async function createBooking(
+  bookingData: Omit<BookingRecord, "id" | "bookingCode" | "createdAt" | "updatedAt">
+): Promise<BookingRecord> {
   const randomSuffix = Math.floor(1000 + Math.random() * 9000);
   const code = `AR-2026-${randomSuffix}`;
   const now = new Date().toISOString();
@@ -228,7 +233,8 @@ export async function createBooking(bookingData: Omit<BookingRecord, "id" | "boo
 
   if (isSupabaseConfigured) {
     try {
-      await supabase.from("bookings").insert({
+      const client = getServiceSupabase();
+      await client.from("bookings").insert({
         booking_code: record.bookingCode,
         service_id: record.serviceId,
         service_title: record.serviceTitle,
@@ -253,6 +259,7 @@ export async function createBooking(bookingData: Omit<BookingRecord, "id" | "boo
         status: record.status,
         payment_status: record.paymentStatus,
         payment_id: record.paymentId,
+        razorpay_order_id: record.razorpayOrderId,
       });
     } catch {
       // In-memory fallback
@@ -265,6 +272,59 @@ export async function createBooking(bookingData: Omit<BookingRecord, "id" | "boo
 
 export async function getBookingByCode(code: string): Promise<BookingRecord | null> {
   return runtimeBookings.find((b) => b.bookingCode === code) || null;
+}
+
+export async function getBookingByRazorpayOrderId(orderId: string): Promise<BookingRecord | null> {
+  if (isSupabaseConfigured) {
+    try {
+      const client = getServiceSupabase();
+      const { data, error } = await client
+        .from("bookings")
+        .select("*")
+        .eq("razorpay_order_id", orderId)
+        .maybeSingle();
+
+      if (!error && data) {
+        return {
+          id: data.id,
+          bookingCode: data.booking_code,
+          serviceId: data.service_id,
+          serviceTitle: data.service_title,
+          consultationType: data.consultation_type,
+          durationMinutes: data.duration_minutes,
+          urgency: data.urgency,
+          date: data.booking_date,
+          timeSlot: data.time_slot,
+          price: Number(data.price),
+          fullName: data.full_name,
+          email: data.email,
+          phone: data.phone,
+          whatsappNumber: data.whatsapp_number,
+          whatsappSameAsPhone: true,
+          gender: data.gender,
+          dateOfBirth: data.date_of_birth,
+          timeOfBirth: data.time_of_birth,
+          timeIsApproximate: data.time_is_approximate,
+          placeOfBirth: data.place_of_birth,
+          preferredLanguage: data.preferred_language,
+          concernsTopic: data.concerns_topic,
+          questionOrNotes: data.question_or_notes,
+          status: data.status,
+          paymentStatus: data.payment_status,
+          paymentId: data.payment_id,
+          razorpayOrderId: data.razorpay_order_id,
+          razorpayPaymentId: data.razorpay_payment_id,
+          razorpaySignature: data.razorpay_signature,
+          paymentVerifiedAt: data.payment_verified_at,
+          createdAt: data.created_at,
+          updatedAt: data.updated_at,
+        };
+      }
+    } catch {
+      // fallback
+    }
+  }
+  return runtimeBookings.find((b) => b.razorpayOrderId === orderId) || null;
 }
 
 export async function getAllBookings(): Promise<BookingRecord[]> {
@@ -281,8 +341,51 @@ export async function updateBookingStatus(id: string, status: BookingRecord["sta
   return false;
 }
 
+export async function markBookingPaymentPaid(params: {
+  razorpayOrderId: string;
+  razorpayPaymentId: string;
+  razorpaySignature?: string;
+}): Promise<BookingRecord | null> {
+  const now = new Date().toISOString();
+
+  const idx = runtimeBookings.findIndex((b) => b.razorpayOrderId === params.razorpayOrderId);
+  if (idx !== -1) {
+    runtimeBookings[idx].status = "confirmed";
+    runtimeBookings[idx].paymentStatus = "paid";
+    runtimeBookings[idx].paymentId = params.razorpayPaymentId;
+    runtimeBookings[idx].razorpayPaymentId = params.razorpayPaymentId;
+    runtimeBookings[idx].razorpaySignature = params.razorpaySignature;
+    runtimeBookings[idx].paymentVerifiedAt = now;
+    runtimeBookings[idx].updatedAt = now;
+  }
+
+  if (isSupabaseConfigured) {
+    try {
+      const client = getServiceSupabase();
+      await client
+        .from("bookings")
+        .update({
+          status: "confirmed",
+          payment_status: "paid",
+          payment_id: params.razorpayPaymentId,
+          razorpay_payment_id: params.razorpayPaymentId,
+          razorpay_signature: params.razorpaySignature,
+          payment_verified_at: now,
+          updated_at: now,
+        })
+        .eq("razorpay_order_id", params.razorpayOrderId);
+    } catch {
+      // fallback
+    }
+  }
+
+  return idx !== -1 ? runtimeBookings[idx] : await getBookingByRazorpayOrderId(params.razorpayOrderId);
+}
+
 // ORDERS
-export async function createOrder(orderData: Omit<OrderRecord, "id" | "orderNumber" | "createdAt">): Promise<OrderRecord> {
+export async function createOrder(
+  orderData: Omit<OrderRecord, "id" | "orderNumber" | "createdAt">
+): Promise<OrderRecord> {
   const randomSuffix = Math.floor(10000 + Math.random() * 90000);
   const orderNumber = `ORD-${randomSuffix}`;
   const now = new Date().toISOString();
@@ -294,8 +397,196 @@ export async function createOrder(orderData: Omit<OrderRecord, "id" | "orderNumb
     createdAt: now,
   };
 
+  if (isSupabaseConfigured) {
+    try {
+      const client = getServiceSupabase();
+      await client.from("orders").insert({
+        order_number: record.orderNumber,
+        customer_name: record.customer.fullName,
+        customer_email: record.customer.email,
+        customer_phone: record.customer.phone,
+        shipping_address: record.customer.shippingAddress,
+        items: record.items,
+        subtotal: record.subtotal,
+        shipping_fee: record.shippingFee,
+        total: record.total,
+        payment_status: record.paymentStatus,
+        order_status: record.orderStatus,
+        payment_id: record.paymentId,
+        razorpay_order_id: record.razorpayOrderId,
+        order_notes: record.customer.orderNotes,
+      });
+    } catch {
+      // fallback
+    }
+  }
+
   runtimeOrders.unshift(record);
   return record;
+}
+
+export async function getOrderByRazorpayOrderId(orderId: string): Promise<OrderRecord | null> {
+  if (isSupabaseConfigured) {
+    try {
+      const client = getServiceSupabase();
+      const { data, error } = await client
+        .from("orders")
+        .select("*")
+        .eq("razorpay_order_id", orderId)
+        .maybeSingle();
+
+      if (!error && data) {
+        return {
+          id: data.id,
+          orderNumber: data.order_number,
+          customer: {
+            fullName: data.customer_name,
+            email: data.customer_email,
+            phone: data.customer_phone,
+            shippingAddress: data.shipping_address,
+            orderNotes: data.order_notes,
+          },
+          items: data.items,
+          subtotal: Number(data.subtotal),
+          shippingFee: Number(data.shipping_fee || 0),
+          total: Number(data.total),
+          paymentStatus: data.payment_status,
+          orderStatus: data.order_status,
+          paymentId: data.payment_id,
+          razorpayOrderId: data.razorpay_order_id,
+          razorpayPaymentId: data.razorpay_payment_id,
+          razorpaySignature: data.razorpay_signature,
+          paymentVerifiedAt: data.payment_verified_at,
+          createdAt: data.created_at,
+        };
+      }
+    } catch {
+      // fallback
+    }
+  }
+  return runtimeOrders.find((o) => o.razorpayOrderId === orderId) || null;
+}
+
+export async function markOrderPaymentPaid(params: {
+  razorpayOrderId: string;
+  razorpayPaymentId: string;
+  razorpaySignature?: string;
+}): Promise<OrderRecord | null> {
+  const now = new Date().toISOString();
+
+  const idx = runtimeOrders.findIndex((o) => o.razorpayOrderId === params.razorpayOrderId);
+  if (idx !== -1) {
+    runtimeOrders[idx].paymentStatus = "paid";
+    runtimeOrders[idx].orderStatus = "processing";
+    runtimeOrders[idx].paymentId = params.razorpayPaymentId;
+    runtimeOrders[idx].razorpayPaymentId = params.razorpayPaymentId;
+    runtimeOrders[idx].razorpaySignature = params.razorpaySignature;
+    runtimeOrders[idx].paymentVerifiedAt = now;
+  }
+
+  if (isSupabaseConfigured) {
+    try {
+      const client = getServiceSupabase();
+      await client
+        .from("orders")
+        .update({
+          payment_status: "paid",
+          order_status: "processing",
+          payment_id: params.razorpayPaymentId,
+          razorpay_payment_id: params.razorpayPaymentId,
+          razorpay_signature: params.razorpaySignature,
+          payment_verified_at: now,
+          updated_at: now,
+        })
+        .eq("razorpay_order_id", params.razorpayOrderId);
+    } catch {
+      // fallback
+    }
+  }
+
+  return idx !== -1 ? runtimeOrders[idx] : await getOrderByRazorpayOrderId(params.razorpayOrderId);
+}
+
+export async function markPaymentFailed(params: {
+  razorpayOrderId: string;
+  error?: string;
+}): Promise<void> {
+  const now = new Date().toISOString();
+
+  const bkg = runtimeBookings.find((b) => b.razorpayOrderId === params.razorpayOrderId);
+  if (bkg && bkg.paymentStatus !== "paid") {
+    bkg.paymentStatus = "failed";
+    bkg.updatedAt = now;
+  }
+  const ord = runtimeOrders.find((o) => o.razorpayOrderId === params.razorpayOrderId);
+  if (ord && ord.paymentStatus !== "paid") {
+    ord.paymentStatus = "failed";
+  }
+
+  if (isSupabaseConfigured) {
+    try {
+      const client = getServiceSupabase();
+      await client
+        .from("bookings")
+        .update({ payment_status: "failed", updated_at: now })
+        .eq("razorpay_order_id", params.razorpayOrderId)
+        .neq("payment_status", "paid");
+
+      await client
+        .from("orders")
+        .update({ payment_status: "failed", updated_at: now })
+        .eq("razorpay_order_id", params.razorpayOrderId)
+        .neq("payment_status", "paid");
+
+      await client
+        .from("payments")
+        .update({
+          status: "failed",
+          error_description: params.error || "Payment failed or declined",
+          updated_at: now,
+        })
+        .eq("razorpay_order_id", params.razorpayOrderId)
+        .neq("status", "captured");
+    } catch {
+      // fallback
+    }
+  }
+}
+
+export async function recordPaymentTransaction(params: {
+  razorpayOrderId: string;
+  entityType: "booking" | "order";
+  entityId: string;
+  amount: number;
+  status: "created" | "authorized" | "captured" | "failed" | "refunded";
+  razorpayPaymentId?: string;
+  razorpaySignature?: string;
+  errorCode?: string;
+  errorDescription?: string;
+}): Promise<void> {
+  if (isSupabaseConfigured) {
+    try {
+      const client = getServiceSupabase();
+      await client.from("payments").upsert(
+        {
+          razorpay_order_id: params.razorpayOrderId,
+          entity_type: params.entityType,
+          entity_id: params.entityId,
+          amount: params.amount,
+          currency: "INR",
+          status: params.status,
+          razorpay_payment_id: params.razorpayPaymentId,
+          razorpay_signature: params.razorpaySignature,
+          error_code: params.errorCode,
+          error_description: params.errorDescription,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "razorpay_order_id" }
+      );
+    } catch {
+      // safe fallback if payments table is not yet created
+    }
+  }
 }
 
 export async function getAllOrders(): Promise<OrderRecord[]> {

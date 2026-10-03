@@ -185,26 +185,7 @@ CREATE TABLE IF NOT EXISTS public.contact_messages (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 
--- 11. BLOG POSTS
-CREATE TABLE IF NOT EXISTS public.blog_posts (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    slug TEXT UNIQUE NOT NULL,
-    title TEXT NOT NULL,
-    excerpt TEXT NOT NULL,
-    content TEXT NOT NULL,
-    cover_image TEXT NOT NULL,
-    author_name TEXT NOT NULL DEFAULT 'Astrologer Rajat Thakur',
-    author_role TEXT NOT NULL DEFAULT 'Founder & Spiritual Guide',
-    author_image TEXT,
-    category TEXT NOT NULL,
-    tags JSONB DEFAULT '[]'::jsonb,
-    read_time_minutes INTEGER DEFAULT 5,
-    is_published BOOLEAN DEFAULT true,
-    published_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
-);
-
--- 12. SITE SETTINGS
+-- 11. SITE SETTINGS
 CREATE TABLE IF NOT EXISTS public.site_settings (
     key TEXT PRIMARY KEY,
     value JSONB NOT NULL,
@@ -221,7 +202,6 @@ CREATE INDEX IF NOT EXISTS idx_bookings_user ON public.bookings(user_id);
 CREATE INDEX IF NOT EXISTS idx_bookings_date ON public.bookings(booking_date);
 CREATE INDEX IF NOT EXISTS idx_orders_number ON public.orders(order_number);
 CREATE INDEX IF NOT EXISTS idx_orders_user ON public.orders(user_id);
-CREATE INDEX IF NOT EXISTS idx_blog_slug ON public.blog_posts(slug);
 
 -- ROW LEVEL SECURITY (RLS) POLICIES
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
@@ -232,23 +212,38 @@ ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.reviews ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.faqs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.contact_messages ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.blog_posts ENABLE ROW LEVEL SECURITY;
 
 -- Public Read Policies
+DROP POLICY IF EXISTS "Public services are viewable by everyone" ON public.services;
 CREATE POLICY "Public services are viewable by everyone" ON public.services FOR SELECT USING (is_active = true);
+
+DROP POLICY IF EXISTS "Public products are viewable by everyone" ON public.products;
 CREATE POLICY "Public products are viewable by everyone" ON public.products FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Public reviews are viewable by everyone" ON public.reviews;
 CREATE POLICY "Public reviews are viewable by everyone" ON public.reviews FOR SELECT USING (is_published = true);
+
+DROP POLICY IF EXISTS "Public faqs are viewable by everyone" ON public.faqs;
 CREATE POLICY "Public faqs are viewable by everyone" ON public.faqs FOR SELECT USING (is_active = true);
-CREATE POLICY "Public blog posts are viewable by everyone" ON public.blog_posts FOR SELECT USING (is_published = true);
 
 -- Customer Specific Policies
+DROP POLICY IF EXISTS "Users can view own profile" ON public.profiles;
 CREATE POLICY "Users can view own profile" ON public.profiles FOR SELECT USING (auth.uid() = id);
+
+DROP POLICY IF EXISTS "Users can update own profile" ON public.profiles;
 CREATE POLICY "Users can update own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id);
 
+DROP POLICY IF EXISTS "Users can view own bookings" ON public.bookings;
 CREATE POLICY "Users can view own bookings" ON public.bookings FOR SELECT USING (auth.uid() = user_id OR auth.role() = 'service_role');
+
+DROP POLICY IF EXISTS "Anyone can create a booking" ON public.bookings;
 CREATE POLICY "Anyone can create a booking" ON public.bookings FOR INSERT WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Users can view own orders" ON public.orders;
 CREATE POLICY "Users can view own orders" ON public.orders FOR SELECT USING (auth.uid() = user_id OR auth.role() = 'service_role');
+
+DROP POLICY IF EXISTS "Anyone can create an order" ON public.orders;
 CREATE POLICY "Anyone can create an order" ON public.orders FOR INSERT WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Anyone can submit a contact message" ON public.contact_messages;
 CREATE POLICY "Anyone can submit a contact message" ON public.contact_messages FOR INSERT WITH CHECK (true);

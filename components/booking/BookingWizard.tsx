@@ -23,7 +23,7 @@ import {
 import { SERVICES } from "@/lib/data/services";
 import { CONSULTATION_PRICING_MATRIX, SITE_SETTINGS } from "@/lib/constants";
 import { ConsultationType, ConsultationUrgency, BookingCustomerDetails, BookingRecord } from "@/lib/types";
-import { createBooking } from "@/lib/supabase/repository";
+import { loadRazorpayScript, RazorpaySuccessResponse } from "@/lib/razorpay-client";
 
 export function BookingWizard() {
   const searchParams = useSearchParams();
@@ -138,47 +138,154 @@ export function BookingWizard() {
     return Object.keys(errors).length === 0;
   };
 
-  // Payment Execution
+  // Payment Execution with Razorpay Standard Checkout
   const handlePayment = async () => {
     setIsProcessingPayment(true);
 
     try {
-      const bookingData = {
-        serviceId: selectedService.id,
-        serviceTitle: `${selectedService.title} (${durationMinutes} Min ${
-          consultationType === "video" ? "Video" : "Audio"
-        })`,
-        consultationType,
-        durationMinutes,
-        urgency,
-        date: bookingDate,
-        timeSlot: selectedTimeSlot,
-        price: currentTier.price,
-        originalPrice: currentTier.originalPrice,
-        ...customerDetails,
-        status: "confirmed" as const,
-        paymentStatus: "paid" as const,
-        paymentId: `pay_${Date.now()}`,
+      // 1. Safely load Razorpay checkout script
+      const scriptLoaded = await loadRazorpayScript();
+      if (!scriptLoaded) {
+        alert("Unable to load Razorpay payment gateway. Please check your internet connection.");
+        setIsProcessingPayment(false);
+        return;
+      }
+
+      // 2. Create order on server (verifies price strictly server-side)
+      const createOrderRes = await fetch("/api/razorpay/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "booking",
+          serviceId: selectedService.id,
+          consultationType,
+          durationMinutes,
+          urgency,
+          date: bookingDate,
+          timeSlot: selectedTimeSlot,
+          customerDetails,
+        }),
+      });
+
+      const orderData = await createOrderRes.json();
+      if (!createOrderRes.ok || !orderData.success) {
+        alert(orderData.message || "Failed to initiate payment order. Please try again.");
+        setIsProcessingPayment(false);
+        return;
+      }
+
+      // 3. Open Razorpay Standard Checkout
+      const options = {
+        key: orderData.keyId,
+        amount: orderData.amount, // in paise
+        currency: orderData.currency || "INR",
+        name: SITE_SETTINGS.brandName || "Astro Raj",
+        description: `${selectedService.title} (${durationMinutes} Min ${consultationType === "video" ? "Video" : "Audio"})`,
+        image: "/favicon.ico",
+        order_id: orderData.orderId,
+        prefill: {
+          name: customerDetails.fullName,
+          email: customerDetails.email,
+          contact: customerDetails.phone,
+        },
+        notes: {
+          bookingCode: orderData.bookingCode,
+          serviceId: selectedService.id,
+        },
+        theme: {
+          color: "#d05e2d",
+        },
+        handler: async function (response: RazorpaySuccessResponse) {
+          try {
+            // 4. Server-side HMAC SHA256 Signature Verification
+            const verifyRes = await fetch("/api/razorpay/verify-payment", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                entityType: "booking",
+                entityId: orderData.bookingCode,
+              }),
+            });
+
+            const verifyData = await verifyRes.json();
+
+            if (verifyRes.ok && verifyData.success) {
+              setConfirmedBooking({
+                id: orderData.bookingId,
+                bookingCode: orderData.bookingCode,
+                serviceId: selectedService.id,
+                serviceTitle: `${selectedService.title} (${durationMinutes} Min ${
+                  consultationType === "video" ? "Video" : "Audio"
+                })`,
+                consultationType,
+                durationMinutes,
+                urgency,
+                date: bookingDate,
+                timeSlot: selectedTimeSlot,
+                price: currentTier.price,
+                originalPrice: currentTier.originalPrice,
+                ...customerDetails,
+                status: "confirmed",
+                paymentStatus: "paid",
+                paymentId: response.razorpay_payment_id,
+                razorpayOrderId: response.razorpay_order_id,
+                razorpayPaymentId: response.razorpay_payment_id,
+                razorpaySignature: response.razorpay_signature,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+              });
+
+              setCurrentStep(6); // Step 6: Confirmation
+
+              try {
+                confetti({
+                  particleCount: 80,
+                  spread: 70,
+                  origin: { y: 0.6 },
+                  colors: ["#d05e2d", "#d4a359", "#2d1a12"],
+                });
+              } catch {
+                // Safe fallback
+              }
+            } else {
+              alert(verifyData.message || "Payment verification failed. Please contact Astro Raj support.");
+            }
+          } catch (err) {
+            console.error("Verification error:", err);
+            alert("Error confirming payment with server. Your payment will be verified by reconciliation.");
+          } finally {
+            setIsProcessingPayment(false);
+          }
+        },
+        modal: {
+          ondismiss: function () {
+            setIsProcessingPayment(false);
+          },
+        },
       };
 
-      const record = await createBooking(bookingData);
-      setConfirmedBooking(record);
-      setCurrentStep(6); // Step 6: Confirmation
-
-      // Trigger Confetti!
-      try {
-        confetti({
-          particleCount: 80,
-          spread: 70,
-          origin: { y: 0.6 },
-          colors: ["#d05e2d", "#d4a359", "#2d1a12"],
-        });
-      } catch {
-        // Safe fallback
+      if (!window.Razorpay) {
+        alert("Razorpay is not available. Please refresh the page.");
+        setIsProcessingPayment(false);
+        return;
       }
-    } catch {
-      alert("Payment processing simulation error. Please try again.");
-    } finally {
+
+      const rzpInstance = new window.Razorpay(options);
+
+      rzpInstance.on("payment.failed", function (response: { error: { code?: string; description?: string } }) {
+        console.error("Razorpay Payment Failed:", response.error);
+        alert(`Payment Failed: ${response.error?.description || "Transaction declined."}`);
+        setIsProcessingPayment(false);
+      });
+
+      rzpInstance.open();
+    } catch (err: unknown) {
+      console.error("Payment initiation error:", err);
+      const errMsg = err instanceof Error ? err.message : "Error starting payment. Please try again.";
+      alert(errMsg);
       setIsProcessingPayment(false);
     }
   };

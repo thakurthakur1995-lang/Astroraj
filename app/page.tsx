@@ -3,8 +3,8 @@ import {
   getServices, 
   getProducts, 
   getTestimonials, 
-  getFaqs, 
-  getBlogPosts 
+  getFaqs,
+  getCourses
 } from "@/lib/supabase/repository";
 import { Hero } from "@/components/home/Hero";
 import { TrustBar } from "@/components/home/TrustBar";
@@ -16,19 +16,19 @@ import { AboutPreview } from "@/components/home/AboutPreview";
 import { PricingSection } from "@/components/home/PricingSection";
 import { TestimonialsSection } from "@/components/home/TestimonialsSection";
 import { FeaturedProducts } from "@/components/home/FeaturedProducts";
-import { BlogPreview } from "@/components/home/BlogPreview";
+import { CoursesPreview } from "@/components/home/CoursesPreview";
 import { FaqSection } from "@/components/home/FaqSection";
 import { FinalCta } from "@/components/home/FinalCta";
 
 export const revalidate = 3600; // 1 hour cache
 
 export default async function HomePage() {
-  const [services, products, testimonials, faqs, blogPosts] = await Promise.all([
+  const [services, products, testimonials, faqs, courses] = await Promise.all([
     getServices(),
     getProducts(),
     getTestimonials(),
     getFaqs(),
-    getBlogPosts(),
+    getCourses(),
   ]);
 
   return (
@@ -63,8 +63,8 @@ export default async function HomePage() {
       {/* 10. Consecrated Products */}
       <FeaturedProducts products={products} />
 
-      {/* 11. Blog & Vedic Insights */}
-      <BlogPreview posts={blogPosts} />
+      {/* 11. Certified Vedic Courses & Academy */}
+      <CoursesPreview courses={courses} />
 
       {/* 12. FAQ Accordion */}
       <FaqSection faqs={faqs} />

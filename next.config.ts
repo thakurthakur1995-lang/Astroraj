@@ -19,6 +19,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "placehold.co",
       },
+      {
+        protocol: "https",
+        hostname: "darkcyan-marten-836084.hostingersite.com",
+      },
     ],
   },
   reactStrictMode: true,
@@ -47,6 +51,16 @@ const nextConfig: NextConfig = {
       {
         source: "/ayurveda",
         destination: "/services/ayurveda",
+        permanent: true,
+      },
+      {
+        source: "/blog",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/blog/:slug*",
+        destination: "/",
         permanent: true,
       },
     ];

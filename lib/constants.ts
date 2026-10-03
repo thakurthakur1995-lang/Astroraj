@@ -113,7 +113,7 @@ export const NAV_LINKS = [
     ],
   },
   { label: "Kundli", href: "/kundli" },
+  { label: "Courses", href: "/courses" },
   { label: "Shop", href: "/shop" },
-  { label: "Blog", href: "/blog" },
   { label: "Contact", href: "/contact" },
 ];

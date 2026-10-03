@@ -1,13 +1,13 @@
 import { MetadataRoute } from "next";
-import { getServices, getProducts, getBlogPosts } from "@/lib/supabase/repository";
+import { getServices, getProducts, getCourses } from "@/lib/supabase/repository";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://astroraj.org";
 
-  const [services, products, blogPosts] = await Promise.all([
+  const [services, products, courses] = await Promise.all([
     getServices(),
     getProducts(),
-    getBlogPosts(),
+    getCourses(),
   ]);
 
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -19,9 +19,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/services/gemstones`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.9 },
     { url: `${baseUrl}/services/ayurveda`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
     { url: `${baseUrl}/kundli`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.9 },
+    { url: `${baseUrl}/courses`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.9 },
     { url: `${baseUrl}/book-consultation`, lastModified: new Date(), changeFrequency: "daily", priority: 0.95 },
     { url: `${baseUrl}/shop`, lastModified: new Date(), changeFrequency: "daily", priority: 0.85 },
-    { url: `${baseUrl}/blog`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
     { url: `${baseUrl}/contact`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
     { url: `${baseUrl}/privacy-policy`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
     { url: `${baseUrl}/terms-and-conditions`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
@@ -43,12 +43,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.75,
   }));
 
-  const blogRoutes: MetadataRoute.Sitemap = blogPosts.map((b) => ({
-    url: `${baseUrl}/blog/${b.slug}`,
+  const courseRoutes: MetadataRoute.Sitemap = courses.map((c) => ({
+    url: `${baseUrl}/courses/${c.slug}`,
     lastModified: new Date(),
-    changeFrequency: "monthly",
-    priority: 0.7,
+    changeFrequency: "weekly",
+    priority: 0.85,
   }));
 
-  return [...staticRoutes, ...serviceRoutes, ...productRoutes, ...blogRoutes];
+  return [...staticRoutes, ...serviceRoutes, ...productRoutes, ...courseRoutes];
 }

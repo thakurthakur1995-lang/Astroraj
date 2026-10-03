@@ -18,16 +18,20 @@ export function ShopCatalog({ products }: ShopCatalogProps) {
 
   const categories = [
     { id: "all", label: "All Items" },
+    { id: "diwali-items", label: "Diwali Items" },
     { id: "gemstones", label: "Certified Gemstones" },
+    { id: "rudraksha", label: "Rudraksh" },
+    { id: "mala", label: "Mala" },
     { id: "yantra", label: "Siddh Yantras" },
-    { id: "rudraksha", label: "Beads & Bracelets" },
-    { id: "spiritual", label: "Spiritual Samagri" },
+    { id: "spiritual", label: "Bracelets & Spiritual Corner" },
     { id: "ayurveda", label: "Ayurveda Wellness" },
   ];
 
   const filtered = products.filter((item) => {
     const matchesCategory =
-      selectedCategory === "all" || item.category === selectedCategory;
+      selectedCategory === "all" ||
+      item.category === selectedCategory ||
+      (Array.isArray(item.categories) && item.categories.includes(selectedCategory));
     const matchesSearch =
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.shortDescription.toLowerCase().includes(searchQuery.toLowerCase());

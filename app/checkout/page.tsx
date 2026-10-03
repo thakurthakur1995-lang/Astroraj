@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CreditCard, ShieldCheck, ArrowLeft, Lock, Truck } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
-import { createOrder } from "@/lib/supabase/repository";
+import { loadRazorpayScript, RazorpaySuccessResponse } from "@/lib/razorpay-client";
+import { SITE_SETTINGS } from "@/lib/constants";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -65,40 +66,123 @@ export default function CheckoutPage() {
 
     setIsProcessing(true);
     try {
-      const order = await createOrder({
-        customer: {
-          fullName: customer.fullName,
-          email: customer.email,
-          phone: customer.phone,
-          shippingAddress: {
-            street: customer.street,
-            city: customer.city,
-            state: customer.state,
-            postalCode: customer.postalCode,
-            country: customer.country,
+      // 1. Safely load Razorpay checkout script
+      const scriptLoaded = await loadRazorpayScript();
+      if (!scriptLoaded) {
+        alert("Unable to load Razorpay payment gateway. Please check your internet connection.");
+        setIsProcessing(false);
+        return;
+      }
+
+      // 2. Request order creation from server (price calculated server-side)
+      const createOrderRes = await fetch("/api/razorpay/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "order",
+          items: cart.map((item) => ({
+            productId: item.product.id,
+            quantity: item.quantity,
+          })),
+          customerDetails: {
+            fullName: customer.fullName,
+            email: customer.email,
+            phone: customer.phone,
+            shippingAddress: {
+              street: customer.street,
+              city: customer.city,
+              state: customer.state,
+              postalCode: customer.postalCode,
+              country: customer.country,
+            },
+            orderNotes: customer.orderNotes,
           },
-          orderNotes: customer.orderNotes,
-        },
-        items: cart.map((item) => ({
-          productId: item.product.id,
-          productName: item.product.name,
-          price: item.product.price,
-          quantity: item.quantity,
-          image: item.product.images[0] || "",
-        })),
-        subtotal,
-        shippingFee: 0,
-        total: subtotal,
-        paymentStatus: "paid",
-        orderStatus: "processing",
-        paymentId: `pay_${Date.now()}`,
+        }),
       });
 
-      clearCart();
-      router.push(`/order-confirmation?orderNumber=${order.orderNumber}`);
-    } catch {
-      alert("Error processing your order. Please try again.");
-    } finally {
+      const orderData = await createOrderRes.json();
+      if (!createOrderRes.ok || !orderData.success) {
+        alert(orderData.message || "Failed to initiate payment. Please try again.");
+        setIsProcessing(false);
+        return;
+      }
+
+      // 3. Open Razorpay Standard Checkout
+      const options = {
+        key: orderData.keyId,
+        amount: orderData.amount, // in paise
+        currency: orderData.currency || "INR",
+        name: SITE_SETTINGS.brandName || "Astro Raj",
+        description: `Order of ${cart.length} sacred item(s) from Rishikesh`,
+        image: "/favicon.ico",
+        order_id: orderData.orderId,
+        prefill: {
+          name: customer.fullName,
+          email: customer.email,
+          contact: customer.phone,
+        },
+        notes: {
+          orderNumber: orderData.orderNumber,
+        },
+        theme: {
+          color: "#d05e2d",
+        },
+        handler: async function (response: RazorpaySuccessResponse) {
+          try {
+            // 4. Server-side HMAC SHA256 Signature Verification
+            const verifyRes = await fetch("/api/razorpay/verify-payment", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                entityType: "order",
+                entityId: orderData.orderNumber,
+              }),
+            });
+
+            const verifyData = await verifyRes.json();
+
+            if (verifyRes.ok && verifyData.success) {
+              clearCart();
+              router.push(`/order-confirmation?orderNumber=${orderData.orderNumber}`);
+            } else {
+              alert(verifyData.message || "Payment verification failed. Please contact Astro Raj support.");
+            }
+          } catch (err) {
+            console.error("Verification error:", err);
+            alert("Payment verification encountered a network error. If amount was deducted, your order will be fulfilled.");
+          } finally {
+            setIsProcessing(false);
+          }
+        },
+        modal: {
+          ondismiss: function () {
+            setIsProcessing(false);
+          },
+        },
+      };
+
+      if (!window.Razorpay) {
+        alert("Razorpay is not available. Please refresh the page.");
+        setIsProcessing(false);
+        return;
+      }
+
+      const rzpInstance = new window.Razorpay(options);
+
+      rzpInstance.on("payment.failed", function (response: { error: { code?: string; description?: string } }) {
+        console.error("Razorpay Payment Failed:", response.error);
+        alert(`Payment Failed: ${response.error?.description || "Transaction was declined."}`);
+        setIsProcessing(false);
+      });
+
+      rzpInstance.open();
+    } catch (err: unknown) {
+      console.error("Checkout order creation error:", err);
+      const errMsg = err instanceof Error ? err.message : "Error processing your order. Please try again.";
+      alert(errMsg);
       setIsProcessing(false);
     }
   };
