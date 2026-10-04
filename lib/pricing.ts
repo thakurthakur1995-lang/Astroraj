@@ -53,18 +53,6 @@ export async function validateAndCalculateBookingPrice(params: {
     if (found) serviceTitle = found.title;
   }
 
-  // Handle Demo Consultation (Payment Test - ₹1)
-  if (serviceId === "demo-consultation") {
-    return {
-      priceInINR: 1,
-      originalPrice: 100,
-      amountInPaise: 100, // 1 INR = 100 paise (Razorpay minimum transaction)
-      serviceTitle: `Demo Consultation (Payment Test - ₹1) (${durationMinutes} Min ${
-        consultationType === "video" ? "Video" : "Audio"
-      })`,
-    };
-  }
-
   // Server-side pricing verification from official matrix
   const tier = CONSULTATION_PRICING_MATRIX.find(
     (t) =>
@@ -86,9 +74,8 @@ export async function validateAndCalculateBookingPrice(params: {
     priceInINR,
     originalPrice: tier.originalPrice,
     amountInPaise,
-    serviceTitle: `${serviceTitle} (${durationMinutes} Min ${
-      consultationType === "video" ? "Video" : "Audio"
-    })`,
+    serviceTitle: `${serviceTitle} (${durationMinutes} Min ${consultationType === "video" ? "Video" : "Audio"
+      })`,
   };
 }
 

@@ -1,43 +1,43 @@
 import { Product } from "../types";
 
 export const PRODUCTS: Product[] = [
-  {
-    "id": "demo-live-payment-test-product",
-    "slug": "demo-live-payment-test-product",
-    "name": "Live Payment Verification Token (Demo ₹1)",
-    "category": "spiritual",
-    "categoryLabel": "Demo Test (₹1)",
-    "categories": [
-      "spiritual",
-      "diwali-items"
-    ],
-    "price": 1,
-    "originalPrice": 10,
-    "shortDescription": "Special demo item with ₹1 price to test live Razorpay payment processing, UPI/Card flow & order confirmation.",
-    "description": "This demo product is configured with a nominal price of ₹1 (One Rupee) to test and verify the live Razorpay payment gateway integration on Astro Raj. It allows you to test real transactions using UPI, Credit/Debit Cards, or Net Banking, verifying order creation, webhook handling, and real-time order confirmation.",
-    "images": [
-      "https://images.unsplash.com/photo-1607344645866-009c320c5ab8?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80"
-    ],
-    "inStock": true,
-    "sku": "AR-TEST-DEMO-01",
-    "featured": true,
-    "certified": true,
-    "certificationAuthority": "Astro Raj Gateway Verification",
-    "spiritualBenefits": [
-      "Nominal ₹1 charge for real Razorpay live checkout testing",
-      "Verifies real-time order generation and invoice receipt",
-      "Confirms webhook and cryptographic signature verification",
-      "Safe to test using UPI, Google Pay, PhonePe, Paytm, or Cards"
-    ],
-    "specifications": {
-      "Item Type": "Live Payment Demo Token",
-      "Price": "₹1.00 INR (100 Paise)",
-      "Payment Mode": "Razorpay Standard Checkout (UPI, Cards, NetBanking)",
-      "Purpose": "Real Payment Flow Testing"
-    },
-    "origin": "Astro Raj Digital Gateway, Rishikesh"
-  },
+  // {
+  //   "id": "demo-live-payment-test-product",
+  //   "slug": "demo-live-payment-test-product",
+  //   "name": "Live Payment Verification Token (Demo ₹1)",
+  //   "category": "spiritual",
+  //   "categoryLabel": "Demo Test (₹1)",
+  //   "categories": [
+  //     "spiritual",
+  //     "diwali-items"
+  //   ],
+  //   "price": 1,
+  //   "originalPrice": 10,
+  //   "shortDescription": "Special demo item with ₹1 price to test live Razorpay payment processing, UPI/Card flow & order confirmation.",
+  //   "description": "This demo product is configured with a nominal price of ₹1 (One Rupee) to test and verify the live Razorpay payment gateway integration on Astro Raj. It allows you to test real transactions using UPI, Credit/Debit Cards, or Net Banking, verifying order creation, webhook handling, and real-time order confirmation.",
+  //   "images": [
+  //     "https://images.unsplash.com/photo-1607344645866-009c320c5ab8?auto=format&fit=crop&w=800&q=80",
+  //     "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80"
+  //   ],
+  //   "inStock": true,
+  //   "sku": "AR-TEST-DEMO-01",
+  //   "featured": true,
+  //   "certified": true,
+  //   "certificationAuthority": "Astro Raj Gateway Verification",
+  //   "spiritualBenefits": [
+  //     "Nominal ₹1 charge for real Razorpay live checkout testing",
+  //     "Verifies real-time order generation and invoice receipt",
+  //     "Confirms webhook and cryptographic signature verification",
+  //     "Safe to test using UPI, Google Pay, PhonePe, Paytm, or Cards"
+  //   ],
+  //   "specifications": {
+  //     "Item Type": "Live Payment Demo Token",
+  //     "Price": "₹1.00 INR (100 Paise)",
+  //     "Payment Mode": "Razorpay Standard Checkout (UPI, Cards, NetBanking)",
+  //     "Purpose": "Real Payment Flow Testing"
+  //   },
+  //   "origin": "Astro Raj Digital Gateway, Rishikesh"
+  // },
   {
     "id": "all-siddh-shree-yantra-main-sphatik",
     "slug": "all-siddh-shree-yantra-main-sphatik",

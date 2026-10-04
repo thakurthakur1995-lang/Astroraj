@@ -9,7 +9,7 @@ interface PopularServicesProps {
 }
 
 export function PopularServices({ services }: PopularServicesProps) {
-  const featured = services.filter((s) => s.id !== "demo-consultation").slice(0, 6);
+  const featured = services.slice(0, 6);
 
   return (
     <section className="py-20 bg-ivory">
@@ -56,7 +56,7 @@ export function PopularServices({ services }: PopularServicesProps) {
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-vedic-dark/80 via-transparent to-transparent" />
-                
+
                 {/* Price Tag */}
                 <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-xs px-3 py-1 rounded-lg shadow-sm">
                   <span className="text-[11px] text-vedic-muted font-medium block">Starting from</span>
