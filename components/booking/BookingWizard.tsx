@@ -89,6 +89,27 @@ export function BookingWizard() {
     }
   }, [preselectedPlan]);
 
+  // Automatically scroll to the top of the page whenever step, booking mode, or confirmation changes
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const performScroll = () => {
+        window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+        if (document.documentElement) document.documentElement.scrollTop = 0;
+        if (document.body) document.body.scrollTop = 0;
+      };
+
+      performScroll();
+      const t1 = setTimeout(performScroll, 80);
+      const t2 = setTimeout(performScroll, 250);
+      const t3 = setTimeout(performScroll, 500);
+      return () => {
+        clearTimeout(t1);
+        clearTimeout(t2);
+        clearTimeout(t3);
+      };
+    }
+  }, [currentStep, bookingMode, confirmedBooking]);
+
   // Calculate pricing from matrix
   const currentTier = CONSULTATION_PRICING_MATRIX.find(
     (tier) =>
@@ -247,6 +268,12 @@ export function BookingWizard() {
 
               setCurrentStep(6); // Step 6: Confirmation
 
+              setTimeout(() => {
+                window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+                if (document.documentElement) document.documentElement.scrollTop = 0;
+                if (document.body) document.body.scrollTop = 0;
+              }, 150);
+
               try {
                 confetti({
                   particleCount: 80,
@@ -305,8 +332,8 @@ export function BookingWizard() {
     )}`;
 
     return (
-      <div className="max-w-3xl mx-auto py-12 px-4 sm:px-6">
-        <div className="bg-white rounded-3xl border border-gold-400/40 p-8 sm:p-10 shadow-xl text-center space-y-6">
+      <div className="max-w-3xl mx-auto py-8 sm:py-12 px-4 sm:px-6">
+        <div className="bg-white rounded-2xl sm:rounded-3xl border border-gold-400/40 p-5 sm:p-10 shadow-xl text-center space-y-6 overflow-hidden">
           {/* Success Check */}
           <div className="w-20 h-20 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto text-3xl font-bold ring-8 ring-emerald-50/50 shadow-inner">
             ✓
@@ -480,7 +507,7 @@ export function BookingWizard() {
 
       {/* STEP 1: CHOOSE SERVICE */}
       {currentStep === 1 && (
-        <div className="bg-white rounded-2xl sm:rounded-3xl border border-border p-4 sm:p-8 space-y-5 sm:space-y-6 shadow-xs">
+        <div className="bg-white rounded-2xl sm:rounded-3xl border border-border p-4 sm:p-8 space-y-5 sm:space-y-6 shadow-xs overflow-hidden">
           <div className="space-y-1">
             <h2 className="font-serif text-xl font-bold text-vedic-dark">
               Step 1: Choose Your Consultation Service
@@ -570,7 +597,7 @@ export function BookingWizard() {
 
       {/* STEP 2: CHOOSE MODE & DURATION */}
       {currentStep === 2 && (
-        <div className="bg-white rounded-2xl sm:rounded-3xl border border-border p-4 sm:p-8 space-y-5 sm:space-y-6 shadow-xs">
+        <div className="bg-white rounded-2xl sm:rounded-3xl border border-border p-4 sm:p-8 space-y-5 sm:space-y-6 shadow-xs overflow-hidden">
           <div className="space-y-1">
             <h2 className="font-serif text-xl font-bold text-vedic-dark">
               Step 2: Choose Mode, Duration & Urgency
@@ -731,7 +758,7 @@ export function BookingWizard() {
 
       {/* STEP 3: CHOOSE DATE & TIME SLOT */}
       {currentStep === 3 && (
-        <div className="bg-white rounded-2xl sm:rounded-3xl border border-border p-4 sm:p-8 space-y-5 sm:space-y-6 shadow-xs">
+        <div className="bg-white rounded-2xl sm:rounded-3xl border border-border p-4 sm:p-8 space-y-5 sm:space-y-6 shadow-xs overflow-hidden">
           <div className="space-y-1">
             <h2 className="font-serif text-xl font-bold text-vedic-dark">
               Step 3: Select Date & Available Time Slot
@@ -742,7 +769,7 @@ export function BookingWizard() {
           </div>
 
           {/* Date Picker */}
-          <div className="space-y-2">
+          <div className="space-y-2 min-w-0">
             <label className="text-xs font-bold uppercase tracking-wider text-vedic-dark block">
               Appointment Date
             </label>
@@ -751,7 +778,7 @@ export function BookingWizard() {
               min={getMinDate()}
               value={bookingDate}
               onChange={(e) => setBookingDate(e.target.value)}
-              className="w-full sm:w-64 p-3 bg-ivory rounded-xl border border-border text-sm font-semibold text-vedic-dark focus:outline-hidden focus:border-saffron-600"
+              className="w-full max-w-full sm:w-64 p-3 bg-ivory rounded-xl border border-border text-base sm:text-sm font-semibold text-vedic-dark focus:outline-hidden focus:border-saffron-600 block min-w-0"
             />
           </div>
 
@@ -850,7 +877,7 @@ export function BookingWizard() {
 
       {/* STEP 4: ENTER BIRTH & CONTACT DETAILS */}
       {currentStep === 4 && (
-        <div className="bg-white rounded-2xl sm:rounded-3xl border border-border p-4 sm:p-8 space-y-5 sm:space-y-6 shadow-xs">
+        <div className="bg-white rounded-2xl sm:rounded-3xl border border-border p-4 sm:p-8 space-y-5 sm:space-y-6 shadow-xs overflow-hidden">
           <div className="space-y-1">
             <h2 className="font-serif text-xl font-bold text-vedic-dark">
               Step 4: Enter Client & Birth Particulars
@@ -915,13 +942,13 @@ export function BookingWizard() {
             </div>
 
             {/* Date of Birth */}
-            <div className="space-y-1">
+            <div className="space-y-1 min-w-0">
               <label className="text-xs font-semibold text-vedic-dark">Date of Birth *</label>
               <input
                 type="date"
                 value={customerDetails.dateOfBirth}
                 onChange={(e) => setCustomerDetails({ ...customerDetails, dateOfBirth: e.target.value })}
-                className="w-full p-3 bg-ivory rounded-xl border border-border text-base sm:text-sm focus:outline-hidden focus:border-saffron-600"
+                className="w-full max-w-full p-3 bg-ivory rounded-xl border border-border text-base sm:text-sm focus:outline-hidden focus:border-saffron-600 block min-w-0"
               />
               {formErrors.dateOfBirth && <p className="text-xs text-red-600">{formErrors.dateOfBirth}</p>}
             </div>
@@ -1023,7 +1050,7 @@ export function BookingWizard() {
 
       {/* STEP 5: REVIEW & COMPLETE PAYMENT */}
       {currentStep === 5 && (
-        <div className="bg-white rounded-2xl sm:rounded-3xl border border-border p-4 sm:p-8 space-y-5 sm:space-y-6 shadow-xs">
+        <div className="bg-white rounded-2xl sm:rounded-3xl border border-border p-4 sm:p-8 space-y-5 sm:space-y-6 shadow-xs overflow-hidden">
           <div className="space-y-1">
             <h2 className="font-serif text-xl font-bold text-vedic-dark">
               Step 5: Review Booking & Complete Payment

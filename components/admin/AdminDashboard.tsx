@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { 
@@ -78,6 +78,28 @@ export function AdminDashboard({
   const [modalMeetingLink, setModalMeetingLink] = useState<string>("");
   const [modalAdminNotes, setModalAdminNotes] = useState<string>("");
   const [isSavingModal, setIsSavingModal] = useState<boolean>(false);
+
+  // Prevent background scrolling and enable Escape key to close modals
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setSelectedBooking(null);
+        setSelectedOrder(null);
+      }
+    };
+
+    if (selectedBooking || selectedOrder) {
+      document.body.style.overflow = "hidden";
+      window.addEventListener("keydown", handleKeyDown);
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    return () => {
+      document.body.style.overflow = "unset";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [selectedBooking, selectedOrder]);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -1064,13 +1086,20 @@ export function AdminDashboard({
       {/* MODAL 1: CONSULTATION BOOKING DEEP DETAILS */}
       {/* ======================================================== */}
       {selectedBooking && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
-          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 space-y-6 shadow-2xl border border-border my-8 animate-in fade-in zoom-in-95">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-border pb-4">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="font-mono text-base font-bold text-saffron-700">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 bg-black/60 backdrop-blur-xs">
+          {/* Backdrop click to close */}
+          <div
+            className="fixed inset-0"
+            onClick={() => setSelectedBooking(null)}
+            aria-hidden="true"
+          />
+
+          <div className="relative bg-white rounded-2xl sm:rounded-3xl max-w-2xl w-full shadow-2xl border border-border flex flex-col max-h-[92vh] sm:max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 z-10">
+            {/* Sticky Modal Header */}
+            <div className="flex items-center justify-between border-b border-border p-4 sm:p-6 bg-white shrink-0 z-20">
+              <div className="space-y-1 min-w-0 pr-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-mono text-sm sm:text-base font-bold text-saffron-700">
                     {selectedBooking.bookingCode}
                   </span>
                   <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold capitalize ${
@@ -1082,19 +1111,22 @@ export function AdminDashboard({
                     {selectedBooking.status}
                   </span>
                 </div>
-                <h3 className="font-serif text-lg font-bold text-vedic-dark">
+                <h3 className="font-serif text-base sm:text-lg font-bold text-vedic-dark truncate">
                   Consultation & Kundli Birth Coordinates
                 </h3>
               </div>
               <button
                 onClick={() => setSelectedBooking(null)}
-                className="w-8 h-8 rounded-full bg-ivory hover:bg-ivory-card border border-border flex items-center justify-center text-vedic-dark"
+                className="w-8 h-8 rounded-full bg-ivory hover:bg-ivory-card border border-border flex items-center justify-center text-vedic-dark shrink-0 cursor-pointer transition-colors"
+                aria-label="Close modal"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Client Coordinates & Vedic Info */}
+            {/* Scrollable Content Body */}
+            <div className="overflow-y-auto p-4 sm:p-6 space-y-5 sm:space-y-6 flex-1">
+              {/* Client Coordinates & Vedic Info */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               <div className="p-4 rounded-2xl bg-ivory border border-border space-y-2">
                 <div className="flex items-center gap-1.5 font-bold text-vedic-dark text-sm">
@@ -1249,6 +1281,8 @@ export function AdminDashboard({
                 </button>
               </div>
             </div>
+            {/* End Scrollable Content Body */}
+            </div>
           </div>
         </div>
       )}
@@ -1257,13 +1291,20 @@ export function AdminDashboard({
       {/* MODAL 2: ORDER & DELIVERY DETAILS DEEP INSPECTION */}
       {/* ======================================================== */}
       {selectedOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
-          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 space-y-6 shadow-2xl border border-border my-8 animate-in fade-in zoom-in-95">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-border pb-4">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="font-mono text-base font-bold text-saffron-700">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 bg-black/60 backdrop-blur-xs">
+          {/* Backdrop click to close */}
+          <div
+            className="fixed inset-0"
+            onClick={() => setSelectedOrder(null)}
+            aria-hidden="true"
+          />
+
+          <div className="relative bg-white rounded-2xl sm:rounded-3xl max-w-2xl w-full shadow-2xl border border-border flex flex-col max-h-[92vh] sm:max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 z-10">
+            {/* Sticky Modal Header */}
+            <div className="flex items-center justify-between border-b border-border p-4 sm:p-6 bg-white shrink-0 z-20">
+              <div className="space-y-1 min-w-0 pr-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-mono text-sm sm:text-base font-bold text-saffron-700">
                     {selectedOrder.orderNumber}
                   </span>
                   <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold capitalize ${
@@ -1275,19 +1316,22 @@ export function AdminDashboard({
                     Fulfillment: {selectedOrder.orderStatus}
                   </span>
                 </div>
-                <h3 className="font-serif text-lg font-bold text-vedic-dark">
+                <h3 className="font-serif text-base sm:text-lg font-bold text-vedic-dark truncate">
                   Delivery Coordinates & Sacred Order Fulfillment
                 </h3>
               </div>
               <button
                 onClick={() => setSelectedOrder(null)}
-                className="w-8 h-8 rounded-full bg-ivory hover:bg-ivory-card border border-border flex items-center justify-center text-vedic-dark"
+                className="w-8 h-8 rounded-full bg-ivory hover:bg-ivory-card border border-border flex items-center justify-center text-vedic-dark shrink-0 cursor-pointer transition-colors"
+                aria-label="Close modal"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Delivery Shipping Coordinates */}
+            {/* Scrollable Content Body */}
+            <div className="overflow-y-auto p-4 sm:p-6 space-y-5 sm:space-y-6 flex-1">
+              {/* Delivery Shipping Coordinates */}
             <div className="p-5 rounded-2xl bg-ivory border border-border space-y-3 text-xs">
               <div className="flex items-center gap-2 font-bold text-vedic-dark text-sm border-b border-border pb-2">
                 <Truck className="w-4 h-4 text-saffron-600" />
@@ -1422,7 +1466,8 @@ export function AdminDashboard({
                 </div>
               </div>
             </div>
-
+            {/* End Scrollable Content Body */}
+            </div>
           </div>
         </div>
       )}

@@ -162,10 +162,10 @@ export function CourseEnrollModal({ course, isOpen, onClose }: CourseEnrollModal
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200">
-      <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-border overflow-hidden">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 md:p-6 animate-in fade-in duration-200">
+      <div className="relative w-full max-w-2xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-border overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[90vh]">
         {/* Top Header */}
-        <div className="bg-gradient-to-r from-vedic-dark via-vedic-brown to-vedic-dark p-6 text-white relative">
+        <div className="bg-gradient-to-r from-vedic-dark via-vedic-brown to-vedic-dark p-5 sm:p-6 text-white relative shrink-0">
           <button
             onClick={onClose}
             className="absolute top-5 right-5 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
@@ -202,7 +202,7 @@ export function CourseEnrollModal({ course, isOpen, onClose }: CourseEnrollModal
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 sm:p-8 space-y-6 max-h-[80vh] overflow-y-auto">
+        <div className="p-5 sm:p-8 space-y-6 overflow-y-auto flex-1">
           {isSuccess ? (
             /* Success State */
             <div className="text-center py-8 space-y-4">

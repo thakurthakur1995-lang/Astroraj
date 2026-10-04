@@ -144,6 +144,43 @@ label:has(input[type="radio"]) {
   }
 }
 
+/* ========================================================
+   FIX IOS SAFARI DATE & TIME INPUT OVERFLOW
+   iOS Safari native date inputs have an intrinsic min-content
+   width (~320px) in WebKit that overrides width: 100% when
+   min-width is auto. Enforcing min-width: 0, max-width: 100%,
+   and display: block prevents date fields from overflowing containers.
+   ======================================================== */
+input[type="date"],
+input[type="time"] {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+
+input[type="date"]::-webkit-date-and-time-value,
+input[type="time"]::-webkit-date-and-time-value {
+  text-align: left !important;
+  display: block !important;
+  width: 100% !important;
+  min-height: 1.25em !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Ensure all form elements strictly respect parent container boundaries */
+input,
+select,
+textarea {
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
 
 /* Elegant Spiritual Typography & Details */
 h1,

@@ -99,6 +99,27 @@ export function OfflineBookingForm({
     whatsappUrl: string;
   } | null>(null);
 
+  // Automatically scroll to the top when submission succeeds to show confirmation details
+  useEffect(() => {
+    if (submissionSuccess) {
+      if (typeof window !== "undefined") {
+        const performScroll = () => {
+          window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+          if (document.documentElement) document.documentElement.scrollTop = 0;
+          if (document.body) document.body.scrollTop = 0;
+        };
+
+        performScroll();
+        const t1 = setTimeout(performScroll, 80);
+        const t2 = setTimeout(performScroll, 250);
+        return () => {
+          clearTimeout(t1);
+          clearTimeout(t2);
+        };
+      }
+    }
+  }, [submissionSuccess]);
+
   // Validation
   const validateForm = () => {
     const errors: Record<string, string> = {};
@@ -281,7 +302,7 @@ export function OfflineBookingForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className={`bg-white rounded-2xl sm:rounded-3xl border border-border p-4 sm:p-8 lg:p-10 space-y-8 shadow-xs ${className}`}
+      className={`bg-white rounded-2xl sm:rounded-3xl border border-border p-4 sm:p-8 lg:p-10 space-y-8 shadow-xs overflow-hidden ${className}`}
     >
       {/* Header */}
       <div className="border-b border-border pb-4 space-y-1">
@@ -553,7 +574,7 @@ export function OfflineBookingForm({
           5. Preferred Appointment Slot <span className="text-red-500">*</span>
         </label>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
+          <div className="min-w-0">
             <label className="text-xs text-vedic-muted block mb-1">
               Preferred Date
             </label>
@@ -562,18 +583,18 @@ export function OfflineBookingForm({
               min={getMinDate()}
               value={preferredDate}
               onChange={(e) => setPreferredDate(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-border text-sm text-vedic-dark focus:outline-hidden focus:ring-2 focus:ring-saffron-500"
+              className="w-full max-w-full px-3.5 py-2.5 rounded-xl border border-border text-base sm:text-sm text-vedic-dark focus:outline-hidden focus:ring-2 focus:ring-saffron-500 block min-w-0 bg-ivory"
             />
           </div>
 
-          <div>
+          <div className="min-w-0">
             <label className="text-xs text-vedic-muted block mb-1">
               Preferred Time Window
             </label>
             <select
               value={preferredSlot}
               onChange={(e) => setPreferredSlot(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-white text-sm text-vedic-dark focus:outline-hidden focus:ring-2 focus:ring-saffron-500"
+              className="w-full max-w-full px-3.5 py-2.5 rounded-xl border border-border bg-white text-base sm:text-sm text-vedic-dark focus:outline-hidden focus:ring-2 focus:ring-saffron-500 block min-w-0"
             >
               <option value="Morning (10:00 AM - 01:00 PM)">Morning (10:00 AM - 01:00 PM)</option>
               <option value="Afternoon (02:00 PM - 05:00 PM)">Afternoon (02:00 PM - 05:00 PM)</option>
@@ -599,27 +620,27 @@ export function OfflineBookingForm({
         </div>
 
         {hasBirthDetails && (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 bg-ivory rounded-2xl border border-border">
-            <div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 bg-ivory rounded-2xl border border-border min-w-0 overflow-hidden">
+            <div className="min-w-0">
               <label className="text-xs text-vedic-muted block mb-1">Date of Birth</label>
               <input
                 type="date"
                 value={dateOfBirth}
                 onChange={(e) => setDateOfBirth(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-border bg-white text-xs text-vedic-dark"
+                className="w-full max-w-full px-3 py-2 rounded-lg border border-border bg-white text-base sm:text-xs text-vedic-dark block min-w-0"
               />
             </div>
-            <div>
+            <div className="min-w-0">
               <label className="text-xs text-vedic-muted block mb-1">Time of Birth</label>
               <input
                 type="text"
                 placeholder="e.g. 10:30 AM or Unknown"
                 value={timeOfBirth}
                 onChange={(e) => setTimeOfBirth(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-border bg-white text-xs text-vedic-dark"
+                className="w-full max-w-full px-3 py-2 rounded-lg border border-border bg-white text-base sm:text-xs text-vedic-dark block min-w-0"
               />
             </div>
-            <div>
+            <div className="min-w-0">
               <label className="text-xs text-vedic-muted block mb-1">
                 Place of Birth {selectedCategory === "astrology" && <span className="text-red-500">*</span>}
               </label>
@@ -628,7 +649,7 @@ export function OfflineBookingForm({
                 placeholder="City, State"
                 value={placeOfBirth}
                 onChange={(e) => setPlaceOfBirth(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-border bg-white text-xs text-vedic-dark"
+                className="w-full max-w-full px-3 py-2 rounded-lg border border-border bg-white text-base sm:text-xs text-vedic-dark block min-w-0"
               />
               {formErrors.placeOfBirth && (
                 <span className="text-[10px] text-red-600 mt-0.5 block font-medium">
