@@ -9,7 +9,7 @@ interface PopularServicesProps {
 }
 
 export function PopularServices({ services }: PopularServicesProps) {
-  const featured = services.slice(0, 6);
+  const featured = services.filter((s) => s.id !== "demo-consultation").slice(0, 6);
 
   return (
     <section className="py-20 bg-ivory">

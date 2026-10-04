@@ -81,17 +81,26 @@ export function BookingWizard() {
     }
   }, [preselectedPlan]);
 
-  // Calculate pricing from matrix
-  const currentTier = CONSULTATION_PRICING_MATRIX.find(
-    (tier) =>
-      tier.type === consultationType &&
-      tier.durationMinutes === durationMinutes &&
-      tier.urgency === urgency
-  ) || {
-    price: 3100,
-    originalPrice: 6200,
-    turnaroundDays: "7-15 Days",
-  };
+  // Check if current selected service is demo consultation (₹1 testing)
+  const isDemo = selectedServiceId === "demo-consultation";
+
+  // Calculate pricing from matrix or demo service
+  const currentTier = isDemo
+    ? {
+        price: 1,
+        originalPrice: 100,
+        turnaroundDays: "Instant Test",
+      }
+    : CONSULTATION_PRICING_MATRIX.find(
+        (tier) =>
+          tier.type === consultationType &&
+          tier.durationMinutes === durationMinutes &&
+          tier.urgency === urgency
+      ) || {
+        price: 3100,
+        originalPrice: 6200,
+        turnaroundDays: "7-15 Days",
+      };
 
   const selectedService = SERVICES.find((s) => s.id === selectedServiceId) || SERVICES[0];
 
@@ -449,27 +458,65 @@ export function BookingWizard() {
             </p>
           </div>
 
+          {/* Quick Demo Test Callout Banner */}
+          <div className="p-4 bg-emerald-50 border border-emerald-300 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-emerald-950">
+            <div className="flex items-center gap-2.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+              <div>
+                <strong className="block text-emerald-900 text-sm">Testing Consultation Payment Flow?</strong>
+                <span className="text-emerald-700 text-xs">
+                  Select the Demo Consultation to test live Razorpay checkout, booking code generation, and email receipts for ₹1 only.
+                </span>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSelectedServiceId("demo-consultation")}
+              className={`px-4 py-2 rounded-xl font-bold transition-all text-xs whitespace-nowrap shrink-0 ${
+                selectedServiceId === "demo-consultation"
+                  ? "bg-emerald-700 text-white shadow-sm ring-2 ring-emerald-400"
+                  : "bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm"
+              }`}
+            >
+              {selectedServiceId === "demo-consultation" ? "✓ Demo Selected (₹1)" : "Select Demo (₹1)"}
+            </button>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {SERVICES.filter((s) => s.categoryId === "astrology" || s.categoryId === "gemstones").map(
               (service) => {
                 const isSelected = selectedServiceId === service.id;
+                const isDemoItem = service.id === "demo-consultation";
                 return (
                   <div
                     key={service.id}
                     onClick={() => setSelectedServiceId(service.id)}
-                    className={`p-5 rounded-2xl border cursor-pointer transition-all ${
-                      isSelected
+                    className={`p-5 rounded-2xl border cursor-pointer transition-all relative ${
+                      isDemoItem
+                        ? isSelected
+                          ? "border-emerald-600 bg-emerald-50/70 shadow-md ring-2 ring-emerald-500/40"
+                          : "border-emerald-300 bg-emerald-50/25 hover:border-emerald-500"
+                        : isSelected
                         ? "border-saffron-600 bg-saffron-50/50 shadow-md ring-1 ring-saffron-600/30"
                         : "border-border hover:border-gold-400 bg-ivory"
                     }`}
                   >
+                    {isDemoItem && (
+                      <span className="absolute -top-2.5 right-4 bg-emerald-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
+                        Live Payment Test • ₹1
+                      </span>
+                    )}
                     <div className="flex items-start justify-between">
                       <h3 className="font-serif text-base font-bold text-vedic-dark">
                         {service.title}
                       </h3>
                       <div
                         className={`w-5 h-5 rounded-full border flex items-center justify-center ${
-                          isSelected ? "border-saffron-600 bg-saffron-600 text-white" : "border-border"
+                          isSelected
+                            ? isDemoItem
+                              ? "border-emerald-600 bg-emerald-600 text-white"
+                              : "border-saffron-600 bg-saffron-600 text-white"
+                            : "border-border"
                         }`}
                       >
                         {isSelected && <Check className="w-3.5 h-3.5" />}
@@ -478,8 +525,8 @@ export function BookingWizard() {
                     <p className="text-xs text-vedic-muted mt-2 line-clamp-2">
                       {service.shortDescription}
                     </p>
-                    <div className="text-xs font-semibold text-saffron-700 mt-3">
-                      Starts from ₹{service.priceStartingFrom.toLocaleString("en-IN")}
+                    <div className={`text-xs font-semibold mt-3 ${isDemoItem ? "text-emerald-700 font-bold text-sm" : "text-saffron-700"}`}>
+                      {isDemoItem ? "Special Test Fee: ₹1" : `Starts from ₹${service.priceStartingFrom.toLocaleString("en-IN")}`}
                     </div>
                   </div>
                 );
@@ -627,17 +674,26 @@ export function BookingWizard() {
           </div>
 
           {/* Price Banner */}
-          <div className="p-4 bg-ivory rounded-2xl border border-gold-400/40 flex items-center justify-between">
+          <div className={`p-4 rounded-2xl border flex items-center justify-between ${
+            isDemo ? "bg-emerald-50 border-emerald-300" : "bg-ivory border-gold-400/40"
+          }`}>
             <div>
               <span className="text-xs text-vedic-muted block">Selected Plan Fee</span>
-              <span className="font-serif text-2xl font-bold text-saffron-700">
-                ₹{currentTier.price.toLocaleString("en-IN")}
-              </span>
-              {currentTier.originalPrice && (
-                <span className="text-xs text-vedic-muted line-through ml-2">
-                  ₹{currentTier.originalPrice.toLocaleString("en-IN")}
+              <div className="flex items-center gap-2">
+                <span className={`font-serif text-2xl font-bold ${isDemo ? "text-emerald-700" : "text-saffron-700"}`}>
+                  ₹{currentTier.price.toLocaleString("en-IN")}
                 </span>
-              )}
+                {currentTier.originalPrice && (
+                  <span className="text-xs text-vedic-muted line-through">
+                    ₹{currentTier.originalPrice.toLocaleString("en-IN")}
+                  </span>
+                )}
+                {isDemo && (
+                  <span className="text-xs bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">
+                    🧪 Test Charge (₹1 Only)
+                  </span>
+                )}
+              </div>
             </div>
 
             <span className="text-xs font-semibold text-vedic-dark bg-white px-3 py-1.5 rounded-lg border border-border">
@@ -791,13 +847,41 @@ export function BookingWizard() {
       {/* STEP 4: ENTER BIRTH & CONTACT DETAILS */}
       {currentStep === 4 && (
         <div className="bg-white rounded-3xl border border-border p-6 sm:p-8 space-y-6 shadow-xs">
-          <div className="space-y-1">
-            <h2 className="font-serif text-xl font-bold text-vedic-dark">
-              Step 4: Enter Client & Birth Particulars
-            </h2>
-            <p className="text-xs text-vedic-muted">
-              Vedic Jyotish calculations rely on precise astronomical coordinates at the time of your birth.
-            </p>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="space-y-1">
+              <h2 className="font-serif text-xl font-bold text-vedic-dark">
+                Step 4: Enter Client & Birth Particulars
+              </h2>
+              <p className="text-xs text-vedic-muted">
+                Vedic Jyotish calculations rely on precise astronomical coordinates at the time of your birth.
+              </p>
+            </div>
+            {isDemo && (
+              <button
+                type="button"
+                onClick={() => {
+                  setCustomerDetails({
+                    fullName: "Rajat Test Client",
+                    email: "thakur.thakur1995@gmail.com",
+                    phone: "916398754093",
+                    whatsappSameAsPhone: true,
+                    whatsappNumber: "916398754093",
+                    gender: "male",
+                    dateOfBirth: "1995-05-15",
+                    timeOfBirth: "10:30 AM",
+                    timeIsApproximate: false,
+                    placeOfBirth: "Rishikesh, Uttarakhand, India",
+                    preferredLanguage: "Hindi",
+                    concernsTopic: "Career",
+                    questionOrNotes: "Payment gateway live flow test - ₹1",
+                  });
+                  setFormErrors({});
+                }}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-semibold border border-emerald-300 transition-all self-start sm:self-auto cursor-pointer"
+              >
+                <span>🧪 Auto-fill Sample Details</span>
+              </button>
+            )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -984,7 +1068,7 @@ export function BookingWizard() {
                   {consultationType} Consultation • {durationMinutes} Minutes ({urgency} scheduling)
                 </span>
               </div>
-              <span className="font-serif text-2xl font-bold text-saffron-700">
+              <span className={`font-serif text-2xl font-bold ${isDemo ? "text-emerald-700" : "text-saffron-700"}`}>
                 ₹{currentTier.price.toLocaleString("en-IN")}
               </span>
             </div>
@@ -1040,7 +1124,11 @@ export function BookingWizard() {
             <button
               onClick={handlePayment}
               disabled={isProcessingPayment}
-              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-saffron-600 hover:bg-saffron-700 text-white font-semibold text-sm shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
+              className={`inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl text-white font-semibold text-sm shadow-lg hover:shadow-xl transition-all disabled:opacity-50 ${
+                isDemo
+                  ? "bg-emerald-600 hover:bg-emerald-700"
+                  : "bg-saffron-600 hover:bg-saffron-700"
+              }`}
             >
               <CreditCard className="w-4 h-4" />
               <span>
