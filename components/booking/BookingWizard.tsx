@@ -18,17 +18,25 @@ import {
   MessageCircle,
   Sparkles,
   HelpCircle,
-  FileText
+  FileText,
+  Globe,
+  Building,
 } from "lucide-react";
-import { SERVICES } from "@/lib/data/services";
+import { SERVICES, SERVICE_CATEGORIES } from "@/lib/data/services";
 import { CONSULTATION_PRICING_MATRIX, SITE_SETTINGS } from "@/lib/constants";
 import { ConsultationType, ConsultationUrgency, BookingCustomerDetails, BookingRecord } from "@/lib/types";
 import { loadRazorpayScript, RazorpaySuccessResponse } from "@/lib/razorpay-client";
+import { OfflineBookingForm } from "./OfflineBookingForm";
 
 export function BookingWizard() {
   const searchParams = useSearchParams();
   const preselectedService = searchParams.get("service");
   const preselectedPlan = searchParams.get("plan");
+  const preselectedMode = searchParams.get("mode") === "offline" ? "offline" : "online";
+
+  // Top-level Mode: Online (Razorpay) vs Offline (WhatsApp & Manual Payment)
+  const [bookingMode, setBookingMode] = useState<"online" | "offline">(preselectedMode);
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
 
   // Step state (1 to 5)
   const [currentStep, setCurrentStep] = useState<number>(1);
@@ -398,10 +406,46 @@ export function BookingWizard() {
           Book Your Personal Consultation
         </h1>
         <p className="text-xs sm:text-sm text-vedic-muted max-w-lg mx-auto">
-          Select your service, choose your preferred slot, and share your birth coordinates for deep chart preparation.
+          Choose Online consultation (Live Audio/Video) or Offline consultation (In-Person Ashram / Site Visit with manual payment).
         </p>
       </div>
 
+      {/* Mode Switcher: Online vs Offline */}
+      <div className="mb-8 p-1.5 bg-ivory rounded-2xl border border-border flex items-center justify-center max-w-md mx-auto shadow-inner">
+        <button
+          type="button"
+          onClick={() => setBookingMode("online")}
+          className={`flex-1 py-3 px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+            bookingMode === "online"
+              ? "bg-white text-saffron-700 shadow-md ring-1 ring-border"
+              : "text-vedic-muted hover:text-vedic-dark"
+          }`}
+        >
+          <Globe className="w-4 h-4" />
+          <span>Online Consultation</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setBookingMode("offline")}
+          className={`flex-1 py-3 px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+            bookingMode === "offline"
+              ? "bg-white text-saffron-700 shadow-md ring-1 ring-border"
+              : "text-vedic-muted hover:text-vedic-dark"
+          }`}
+        >
+          <Building className="w-4 h-4" />
+          <span>Offline Consultation</span>
+        </button>
+      </div>
+
+      {bookingMode === "offline" ? (
+        <OfflineBookingForm
+          initialServiceId={selectedServiceId}
+          initialCategory={selectedService?.categoryId}
+        />
+      ) : (
+        <>
       {/* Stepper Progress Bar */}
       <div className="mb-10 bg-white rounded-2xl p-4 border border-border shadow-xs">
         <div className="flex items-center justify-between relative">
@@ -436,18 +480,48 @@ export function BookingWizard() {
 
       {/* STEP 1: CHOOSE SERVICE */}
       {currentStep === 1 && (
-        <div className="bg-white rounded-3xl border border-border p-6 sm:p-8 space-y-6 shadow-xs">
+        <div className="bg-white rounded-2xl sm:rounded-3xl border border-border p-4 sm:p-8 space-y-5 sm:space-y-6 shadow-xs">
           <div className="space-y-1">
             <h2 className="font-serif text-xl font-bold text-vedic-dark">
               Step 1: Choose Your Consultation Service
             </h2>
             <p className="text-xs text-vedic-muted">
-              Select the area of life where you seek clarity and astrological guidance.
+              Select the area of life or sacred ritual where you seek clarity and astrological guidance.
             </p>
           </div>
 
+          {/* Category Filter Chips */}
+          <div className="flex flex-wrap gap-1.5 pb-2 border-b border-border/70">
+            {[
+              { id: "all", label: "All Offerings" },
+              { id: "astrology", label: "Astrology" },
+              { id: "vastu", label: "Vastu Shastra" },
+              { id: "puja", label: "Pooja & Havans" },
+              { id: "mantra-diksha", label: "Mantra Diksha" },
+              { id: "ayurveda", label: "Ayurveda" },
+              { id: "gemstones", label: "Gemstones" },
+            ].map((cat) => (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => setCategoryFilter(cat.id)}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                  categoryFilter === cat.id
+                    ? "bg-saffron-600 text-white shadow-xs"
+                    : "bg-ivory text-vedic-muted hover:text-vedic-dark border border-border"
+                }`}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {SERVICES.filter((s) => s.categoryId === "astrology" || s.categoryId === "gemstones").map(
+            {SERVICES.filter(
+              (s) =>
+                s.onlineAvailable !== false &&
+                (categoryFilter === "all" || s.categoryId === categoryFilter)
+            ).map(
               (service) => {
                 const isSelected = selectedServiceId === service.id;
                 return (
@@ -496,7 +570,7 @@ export function BookingWizard() {
 
       {/* STEP 2: CHOOSE MODE & DURATION */}
       {currentStep === 2 && (
-        <div className="bg-white rounded-3xl border border-border p-6 sm:p-8 space-y-6 shadow-xs">
+        <div className="bg-white rounded-2xl sm:rounded-3xl border border-border p-4 sm:p-8 space-y-5 sm:space-y-6 shadow-xs">
           <div className="space-y-1">
             <h2 className="font-serif text-xl font-bold text-vedic-dark">
               Step 2: Choose Mode, Duration & Urgency
@@ -657,7 +731,7 @@ export function BookingWizard() {
 
       {/* STEP 3: CHOOSE DATE & TIME SLOT */}
       {currentStep === 3 && (
-        <div className="bg-white rounded-3xl border border-border p-6 sm:p-8 space-y-6 shadow-xs">
+        <div className="bg-white rounded-2xl sm:rounded-3xl border border-border p-4 sm:p-8 space-y-5 sm:space-y-6 shadow-xs">
           <div className="space-y-1">
             <h2 className="font-serif text-xl font-bold text-vedic-dark">
               Step 3: Select Date & Available Time Slot
@@ -776,7 +850,7 @@ export function BookingWizard() {
 
       {/* STEP 4: ENTER BIRTH & CONTACT DETAILS */}
       {currentStep === 4 && (
-        <div className="bg-white rounded-3xl border border-border p-6 sm:p-8 space-y-6 shadow-xs">
+        <div className="bg-white rounded-2xl sm:rounded-3xl border border-border p-4 sm:p-8 space-y-5 sm:space-y-6 shadow-xs">
           <div className="space-y-1">
             <h2 className="font-serif text-xl font-bold text-vedic-dark">
               Step 4: Enter Client & Birth Particulars
@@ -949,7 +1023,7 @@ export function BookingWizard() {
 
       {/* STEP 5: REVIEW & COMPLETE PAYMENT */}
       {currentStep === 5 && (
-        <div className="bg-white rounded-3xl border border-border p-6 sm:p-8 space-y-6 shadow-xs">
+        <div className="bg-white rounded-2xl sm:rounded-3xl border border-border p-4 sm:p-8 space-y-5 sm:space-y-6 shadow-xs">
           <div className="space-y-1">
             <h2 className="font-serif text-xl font-bold text-vedic-dark">
               Step 5: Review Booking & Complete Payment
@@ -960,7 +1034,7 @@ export function BookingWizard() {
           </div>
 
           {/* Summary Box */}
-          <div className="bg-ivory rounded-2xl p-6 border border-border space-y-4 text-xs sm:text-sm">
+          <div className="bg-ivory rounded-2xl p-4 sm:p-6 border border-border space-y-4 text-xs sm:text-sm">
             <div className="flex items-center justify-between border-b border-border/80 pb-3">
               <div>
                 <span className="font-serif text-lg font-bold text-vedic-dark block">
@@ -1035,6 +1109,8 @@ export function BookingWizard() {
             </button>
           </div>
         </div>
+      )}
+        </>
       )}
     </div>
   );

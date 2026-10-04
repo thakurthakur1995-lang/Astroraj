@@ -204,8 +204,8 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div className="bg-ivory min-h-screen py-16">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <div className="bg-ivory min-h-screen py-8 sm:py-16">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
         <div>
           <Link
             href="/cart"
@@ -214,14 +214,14 @@ export default function CheckoutPage() {
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to Cart</span>
           </Link>
-          <h1 className="font-serif text-3xl font-bold text-vedic-dark mt-2">
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-vedic-dark mt-2">
             Secure Checkout
           </h1>
         </div>
 
         <form onSubmit={handlePlaceOrder} className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Shipping & Contact Form */}
-          <div className="lg:col-span-8 bg-white rounded-3xl border border-border p-6 sm:p-8 space-y-6 shadow-xs">
+          <div className="lg:col-span-8 bg-white rounded-2xl sm:rounded-3xl border border-border p-4 sm:p-8 space-y-6 shadow-xs">
             <div className="space-y-1">
               <h2 className="font-serif text-lg font-bold text-vedic-dark">
                 {hasPhysicalItems ? "1. Customer & Delivery Information" : "1. Student & Contact Information"}

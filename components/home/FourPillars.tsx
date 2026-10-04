@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Compass, Flame, Sparkles, Leaf, ArrowRight } from "lucide-react";
+import { Compass, Home, Flame, Sparkles, Leaf, ArrowRight, ShieldCheck } from "lucide-react";
 
 export function FourPillars() {
   const pillars = [
@@ -9,45 +9,67 @@ export function FourPillars() {
       id: "astrology",
       title: "Astrology Consultation",
       tagline: "Career • Marriage • Kundli • Life Path",
-      description: "Direct 1-on-1 audio or video consultation with Guruji. Thorough examination of Janma Kundli, Navamsha, and current Mahadasha for practical clarity.",
+      description: "Direct 1-on-1 consultation with Guruji. Thorough examination of Janma Kundli, Navamsha, and current Mahadasha for practical clarity without fear.",
       icon: Compass,
       image: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=600&q=80",
       link: "/services/astrology-consultation",
-      cta: "Learn More",
-      badge: "Most Consulted",
+      cta: "Explore Astrology",
+      badge: "Online & Offline",
+    },
+    {
+      id: "vastu",
+      title: "Vastu Shastra Consultation",
+      tagline: "Homes • Offices • Factories • Non-Demolition",
+      description: "Scientific & Vedic spatial energy alignment for residential and commercial premises. Balance the 16 zones and 5 elements without breaking walls.",
+      icon: Home,
+      image: "/images/services/vastu-consultation.jpg",
+      link: "/services/vastu-consultation",
+      cta: "Explore Vastu",
+      badge: "Non-Demolition",
     },
     {
       id: "puja",
-      title: "Puja & Spiritual Services",
+      title: "Pooja Services & Havans",
       tagline: "Shri Vidya • Baglamukhi • Vastu • Havans",
-      description: "Traditional Vedic havans and rituals conducted on the banks of Maa Ganga in Rishikesh with personalized Sankalp on your family gotra.",
+      description: "Traditional Vedic havans conducted on the banks of Maa Ganga in Rishikesh with personalized Gotra Sankalp. Join online live or attend in-person.",
       icon: Flame,
       image: "https://images.unsplash.com/photo-1609342122563-a43ac8917a3a?auto=format&fit=crop&w=600&q=80",
       link: "/services/online-puja",
-      cta: "Learn More",
+      cta: "Explore Pujas",
       badge: "Rishikesh Vidhi",
+    },
+    {
+      id: "mantra-diksha",
+      title: "Mantra Diksha & Sadhana",
+      tagline: "Dash Mahavidya • Bhairav • Shiv • Ganesh",
+      description: "Sacred Gurumukhi initiation under the Shankaracharya tradition. Receive authentic Beej Mantras, Nyasa Vidhi, and daily sadhana disciplines.",
+      icon: Sparkles,
+      image: "/images/services/swarnakarshan-bhairav.jpg",
+      link: "/services/mantra-diksha",
+      cta: "Explore Diksha",
+      badge: "7 Sacred Deities",
+    },
+    {
+      id: "ayurveda",
+      title: "Ayurveda Consultation",
+      tagline: "Nadi Pariksha • Dosha Balance • Herbs",
+      description: "Integrate ancient Vedic health wisdom, Dinacharya, and classical Dhanvantari herbal formulations to revitalize bodily vitality and calm the mind.",
+      icon: Leaf,
+      image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80",
+      link: "/services/ayurveda",
+      cta: "Explore Ayurveda",
+      badge: "Holistic Health",
     },
     {
       id: "gemstones",
       title: "Certified Vedic Gemstones",
       tagline: "Planetary Recommendation & Energization",
       description: "100% natural, unheated, laboratory-tested gemstones prescribed strictly according to your Lagna and Yogakaraka planetary rulers.",
-      icon: Sparkles,
+      icon: ShieldCheck,
       image: "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?auto=format&fit=crop&w=600&q=80",
       link: "/services/gemstones",
       cta: "Explore Gemstones",
-      badge: "Govt Lab Certified",
-    },
-    {
-      id: "ayurveda",
-      title: "Ayurveda & Traditional Wellness",
-      tagline: "Dosha Balance • Classical Herbal Formulations",
-      description: "Integrate ancient Vedic health wisdom, Dinacharya, and classical Dhanvantari herbal formulations to revitalize bodily vitality and calm the mind.",
-      icon: Leaf,
-      image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80",
-      link: "/services/ayurveda",
-      cta: "Learn More",
-      badge: "Holistic Health",
+      badge: "100% Certified",
     },
   ];
 
@@ -60,15 +82,15 @@ export function FourPillars() {
             <span>Sacred Offerings</span>
           </div>
           <h2 className="font-serif text-3xl sm:text-4xl font-bold text-vedic-dark tracking-tight">
-            What Are You Looking For?
+            What Guidance Are You Seeking?
           </h2>
           <p className="text-sm sm:text-base text-vedic-muted leading-relaxed">
-            Choose from our four core spiritual pillars designed to bring authentic Vedic wisdom, sacred remedies, and harmonious wellness into your life.
+            Choose from our core spiritual offerings designed to bring authentic Vedic wisdom, sacred remedies, and harmonious wellness into your life.
           </p>
         </div>
 
-        {/* 4 Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* 6 Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {pillars.map((pillar) => {
             const Icon = pillar.icon;
             return (
@@ -111,18 +133,27 @@ export function FourPillars() {
                     <div className="text-xs font-semibold text-gold-600 tracking-wide">
                       {pillar.tagline}
                     </div>
-                    <p className="text-xs text-vedic-muted leading-relaxed">
+                    <p className="text-xs text-vedic-muted leading-relaxed line-clamp-3">
                       {pillar.description}
                     </p>
                   </div>
 
-                  <Link
-                    href={pillar.link}
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-saffron-700 hover:text-saffron-800 transition-colors pt-2 border-t border-border/60 cursor-pointer"
-                  >
-                    <span>{pillar.cta}</span>
-                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                  </Link>
+                  <div className="pt-2 border-t border-border/60 flex items-center justify-between">
+                    <Link
+                      href={pillar.link}
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-saffron-700 hover:text-saffron-800 transition-colors cursor-pointer"
+                    >
+                      <span>{pillar.cta}</span>
+                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+
+                    <Link
+                      href={`/book-consultation?mode=offline`}
+                      className="text-[11px] font-semibold text-emerald-700 hover:underline"
+                    >
+                      Offline In-Person
+                    </Link>
+                  </div>
                 </div>
               </div>
             );

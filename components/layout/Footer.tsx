@@ -99,32 +99,32 @@ export function Footer() {
             <ul className="space-y-2 text-sm text-amber-100/80">
               <li>
                 <Link href="/services/astrology-consultation" className="hover:text-gold-400 transition-colors">
-                  Personal Astrology Consultation
+                  Astrology Consultation (Online & Offline)
+                </Link>
+              </li>
+              <li>
+                <Link href="/services/vastu-consultation" className="hover:text-gold-400 transition-colors">
+                  Vastu Shastra (Home, Office & Plots)
                 </Link>
               </li>
               <li>
                 <Link href="/services/online-puja" className="hover:text-gold-400 transition-colors">
-                  Shri Chakra Sahasran Pooja
+                  Vedic Pooja & Sacred Havans
                 </Link>
               </li>
               <li>
-                <Link href="/services/online-puja" className="hover:text-gold-400 transition-colors">
-                  Maa Baglamukhi Brahmastra Pooja
-                </Link>
-              </li>
-              <li>
-                <Link href="/services/online-puja" className="hover:text-gold-400 transition-colors">
-                  Sudarshan Chakra Promotion Havan
-                </Link>
-              </li>
-              <li>
-                <Link href="/services/gemstones" className="hover:text-gold-400 transition-colors">
-                  Planetary Gemstone Recommendation
+                <Link href="/services/mantra-diksha" className="hover:text-gold-400 transition-colors">
+                  Mantra Diksha (7 Sacred Deities)
                 </Link>
               </li>
               <li>
                 <Link href="/services/ayurveda" className="hover:text-gold-400 transition-colors">
-                  Traditional Ayurveda Wellness
+                  Ayurveda & Nadi Pariksha
+                </Link>
+              </li>
+              <li>
+                <Link href="/book-consultation?mode=offline" className="text-emerald-400 hover:text-emerald-300 font-semibold transition-colors">
+                  🏛️ Book Offline Consultation (WhatsApp)
                 </Link>
               </li>
             </ul>

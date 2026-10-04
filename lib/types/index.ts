@@ -11,7 +11,7 @@ export interface ConsultationPricingTier {
   originalPrice?: number;
 }
 
-export type ServiceCategoryId = "astrology" | "puja" | "gemstones" | "ayurveda";
+export type ServiceCategoryId = "astrology" | "vastu" | "puja" | "mantra-diksha" | "ayurveda" | "gemstones";
 
 export interface ServiceCategory {
   id: ServiceCategoryId;
@@ -39,6 +39,32 @@ export interface Service {
   inclusions: string[];
   processSteps: { title: string; description: string }[];
   faqs?: { question: string; answer: string }[];
+  offlineAvailable?: boolean;
+  onlineAvailable?: boolean;
+  subCategory?: string;
+}
+
+export interface OfflineConsultationInquiry {
+  id: string;
+  inquiryCode: string; // e.g. "OFF-AR-2026-8912"
+  serviceCategory: string;
+  serviceTitle: string;
+  fullName: string;
+  phone: string;
+  whatsappNumber: string;
+  email?: string;
+  city: string;
+  address?: string;
+  consultationPreference: "ashram_rishikesh" | "onsite_visit" | "direct_coordination";
+  preferredDate: string;
+  preferredSlot: string;
+  dateOfBirth?: string;
+  timeOfBirth?: string;
+  placeOfBirth?: string;
+  notes?: string;
+  status: "pending_manual_payment" | "confirmed" | "completed" | "cancelled";
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Product {

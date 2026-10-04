@@ -43,8 +43,8 @@ export default function CartPage() {
   }
 
   return (
-    <div className="bg-ivory min-h-screen py-16">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <div className="bg-ivory min-h-screen py-8 sm:py-16">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
         <div className="border-b border-border pb-4 flex items-center justify-between">
           <div>
             <h1 className="font-serif text-2xl sm:text-3xl font-bold text-vedic-dark">
@@ -64,13 +64,13 @@ export default function CartPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Items List */}
-          <div className="lg:col-span-8 space-y-4">
+          <div className="lg:col-span-8 space-y-3 sm:space-y-4">
             {cart.map((item) => (
               <div
                 key={item.product.id}
-                className="bg-white rounded-2xl border border-border p-4 sm:p-5 flex gap-4 items-center shadow-xs"
+                className="bg-white rounded-2xl border border-border p-3.5 sm:p-5 flex gap-3 sm:gap-4 items-center shadow-xs"
               >
-                <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-ivory-card shrink-0">
+                <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-ivory-card shrink-0">
                   <Image
                     src={item.product.images[0] || "https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&w=400&q=80"}
                     alt={item.product.name}
@@ -83,7 +83,7 @@ export default function CartPage() {
                   <span className="text-[10px] font-bold uppercase tracking-wider text-gold-600">
                     {item.product.categoryLabel}
                   </span>
-                  <h3 className="font-serif text-base font-bold text-vedic-dark truncate">
+                  <h3 className="font-serif text-sm sm:text-base font-bold text-vedic-dark truncate">
                     <Link
                       href={item.product.isCourse ? `/courses/${item.product.slug}` : `/shop/${item.product.slug}`}
                       className="hover:text-saffron-700 transition-colors"
@@ -91,36 +91,36 @@ export default function CartPage() {
                       {item.product.name}
                     </Link>
                   </h3>
-                  <div className="font-serif font-bold text-saffron-700 text-sm mt-0.5">
+                  <div className="font-serif font-bold text-saffron-700 text-xs sm:text-sm mt-0.5">
                     ₹{item.product.price.toLocaleString("en-IN")}
                   </div>
 
-                  <div className="flex items-center justify-between mt-3">
+                  <div className="flex flex-wrap items-center justify-between mt-2.5 sm:mt-3 gap-2">
                     <div className="flex items-center border border-border rounded-lg bg-ivory">
                       <button
                         onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                        className="p-1.5 hover:bg-white text-vedic-muted hover:text-vedic-dark cursor-pointer transition-colors"
+                        className="p-1 sm:p-1.5 hover:bg-white text-vedic-muted hover:text-vedic-dark cursor-pointer transition-colors"
                         aria-label="Decrease quantity"
                       >
                         <Minus className="w-3.5 h-3.5" />
                       </button>
-                      <span className="px-3 text-xs font-semibold">{item.quantity}</span>
+                      <span className="px-2.5 sm:px-3 text-xs font-semibold">{item.quantity}</span>
                       <button
                         onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                        className="p-1.5 hover:bg-white text-vedic-muted hover:text-vedic-dark cursor-pointer transition-colors"
+                        className="p-1 sm:p-1.5 hover:bg-white text-vedic-muted hover:text-vedic-dark cursor-pointer transition-colors"
                         aria-label="Increase quantity"
                       >
                         <Plus className="w-3.5 h-3.5" />
                       </button>
                     </div>
 
-                    <div className="flex items-center gap-4">
-                      <span className="font-serif font-bold text-sm text-vedic-dark">
+                    <div className="flex items-center gap-3 sm:gap-4">
+                      <span className="font-serif font-bold text-xs sm:text-sm text-vedic-dark">
                         ₹{(item.product.price * item.quantity).toLocaleString("en-IN")}
                       </span>
                       <button
                         onClick={() => removeFromCart(item.product.id)}
-                        className="p-1.5 text-red-500 hover:text-red-700 cursor-pointer transition-colors"
+                        className="p-1.5 text-red-500 hover:text-red-700 cursor-pointer transition-colors rounded-md hover:bg-red-50"
                         title="Remove"
                       >
                         <Trash2 className="w-4 h-4" />

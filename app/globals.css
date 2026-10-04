@@ -184,3 +184,33 @@ h3,
   box-shadow: 0 14px 30px -8px rgba(71, 43, 32, 0.12);
   border-color: rgba(208, 94, 45, 0.4);
 }
+
+/* ========================================================
+   CART DRAWER & MODAL ANIMATIONS
+   Smooth, hardware-accelerated slide-in transitions
+   ======================================================== */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-drawer-in {
+  animation: slideInRight 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInBackdrop {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-backdrop-in {
+  animation: fadeInBackdrop 0.22s ease-out forwards;
+}

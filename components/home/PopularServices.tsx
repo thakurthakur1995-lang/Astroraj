@@ -98,20 +98,28 @@ export function PopularServices({ services }: PopularServicesProps) {
                 </div>
 
                 {/* Actions */}
-                <div className="pt-4 border-t border-border/80 flex items-center justify-between gap-3">
+                <div className="pt-4 border-t border-border/80 flex items-center justify-between gap-2">
                   <Link
                     href={`/services/${service.slug}`}
                     className="text-xs font-semibold text-vedic-muted hover:text-vedic-dark transition-colors cursor-pointer"
                   >
-                    View Details
+                    Details
                   </Link>
 
-                  <Link
-                    href={`/book-consultation?service=${service.slug}`}
-                    className="px-4 py-2 bg-saffron-600 hover:bg-saffron-700 text-white text-xs font-semibold rounded-lg shadow-xs hover:shadow-md transition-all cursor-pointer"
-                  >
-                    Book Now
-                  </Link>
+                  <div className="flex items-center gap-1.5">
+                    <Link
+                      href={`/book-consultation?service=${service.slug}&mode=offline`}
+                      className="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg text-[11px] font-bold border border-emerald-200 transition-colors"
+                    >
+                      Offline
+                    </Link>
+                    <Link
+                      href={`/book-consultation?service=${service.slug}&mode=online`}
+                      className="px-3.5 py-1.5 bg-saffron-600 hover:bg-saffron-700 text-white text-xs font-semibold rounded-lg shadow-xs hover:shadow-md transition-all cursor-pointer"
+                    >
+                      Book Online
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>

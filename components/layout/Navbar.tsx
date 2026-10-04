@@ -14,6 +14,7 @@ import {
   MapPin,
   Sparkles,
   Compass,
+  Home,
   Flame,
   Leaf
 } from "lucide-react";
@@ -140,11 +141,15 @@ export function Navbar() {
                           const IconComponent =
                             subItem.href.includes("astrology")
                               ? Compass
-                              : subItem.href.includes("puja")
-                                ? Flame
-                                : subItem.href.includes("gemstones")
-                                  ? Sparkles
-                                  : Leaf;
+                              : subItem.href.includes("vastu")
+                                ? Home
+                                : subItem.href.includes("puja")
+                                  ? Flame
+                                  : subItem.href.includes("mantra")
+                                    ? Sparkles
+                                    : subItem.href.includes("ayurveda")
+                                      ? Leaf
+                                      : Sparkles;
 
                           return (
                             <Link

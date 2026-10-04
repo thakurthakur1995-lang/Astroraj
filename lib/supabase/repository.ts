@@ -173,6 +173,98 @@ export async function createBooking(
   return record;
 }
 
+export async function createOfflineBookingInquiry(data: {
+  serviceId: string;
+  serviceCategory: string;
+  serviceTitle: string;
+  fullName: string;
+  phone: string;
+  whatsappNumber: string;
+  email?: string;
+  city: string;
+  address?: string;
+  consultationPreference: string;
+  preferredDate: string;
+  preferredSlot: string;
+  dateOfBirth?: string;
+  timeOfBirth?: string;
+  placeOfBirth?: string;
+  notes?: string;
+}): Promise<BookingRecord> {
+  const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+  const code = `OFF-AR-2026-${randomSuffix}`;
+  const now = new Date().toISOString();
+
+  const notesText = [
+    `[OFFLINE CONSULTATION INQUIRY]`,
+    `Mode: ${data.consultationPreference}`,
+    `City/Location: ${data.city}`,
+    data.address ? `Address: ${data.address}` : "",
+    data.notes ? `Client Notes: ${data.notes}` : "",
+  ].filter(Boolean).join(" | ");
+
+  const record: BookingRecord = {
+    id: `off-${Date.now()}`,
+    bookingCode: code,
+    serviceId: data.serviceId,
+    serviceTitle: `[Offline] ${data.serviceTitle}`,
+    consultationType: "in-person",
+    durationMinutes: 30,
+    urgency: "normal",
+    date: data.preferredDate,
+    timeSlot: data.preferredSlot,
+    price: 0,
+    fullName: data.fullName,
+    email: data.email || "",
+    phone: data.phone,
+    whatsappSameAsPhone: data.whatsappNumber === data.phone,
+    whatsappNumber: data.whatsappNumber,
+    dateOfBirth: data.dateOfBirth || "N/A",
+    timeOfBirth: data.timeOfBirth || "N/A",
+    placeOfBirth: data.placeOfBirth || data.city,
+    questionOrNotes: notesText,
+    status: "pending",
+    paymentStatus: "pending",
+    adminNotes: "Offline consultation booking received via WhatsApp inquiry. Manual payment processing pending.",
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  if (isSupabaseConfigured) {
+    try {
+      const client = getServiceSupabase();
+      await client.from("bookings").insert({
+        booking_code: record.bookingCode,
+        service_id: record.serviceId,
+        service_title: record.serviceTitle,
+        consultation_type: record.consultationType,
+        duration_minutes: record.durationMinutes,
+        urgency: record.urgency,
+        booking_date: record.date,
+        time_slot: record.timeSlot,
+        price: record.price,
+        full_name: record.fullName,
+        email: record.email,
+        phone: record.phone,
+        whatsapp_number: record.whatsappNumber,
+        gender: "other",
+        date_of_birth: record.dateOfBirth,
+        time_of_birth: record.timeOfBirth,
+        place_of_birth: record.placeOfBirth,
+        question_or_notes: record.questionOrNotes,
+        status: record.status,
+        payment_status: record.paymentStatus,
+        admin_notes: record.adminNotes,
+      });
+    } catch {
+      // In-memory fallback
+    }
+  }
+
+  runtimeBookings.unshift(record);
+  return record;
+}
+
 export async function getBookingByCode(code: string): Promise<BookingRecord | null> {
   if (isSupabaseConfigured) {
     try {
