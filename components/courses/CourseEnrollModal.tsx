@@ -168,7 +168,7 @@ export function CourseEnrollModal({ course, isOpen, onClose }: CourseEnrollModal
         <div className="bg-gradient-to-r from-vedic-dark via-vedic-brown to-vedic-dark p-6 text-white relative">
           <button
             onClick={onClose}
-            className="absolute top-5 right-5 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+            className="absolute top-5 right-5 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
             aria-label="Close modal"
           >
             <X className="w-5 h-5" />
@@ -241,7 +241,7 @@ export function CourseEnrollModal({ course, isOpen, onClose }: CourseEnrollModal
                 </a>
                 <button
                   onClick={onClose}
-                  className="w-full sm:w-auto px-6 py-3 bg-ivory hover:bg-ivory-card border border-border text-vedic-dark rounded-xl text-xs font-semibold"
+                  className="w-full sm:w-auto px-6 py-3 bg-ivory hover:bg-ivory-card border border-border text-vedic-dark rounded-xl text-xs font-semibold cursor-pointer"
                 >
                   Close & Explore Dashboard
                 </button>
@@ -350,7 +350,7 @@ export function CourseEnrollModal({ course, isOpen, onClose }: CourseEnrollModal
                 <button
                   type="submit"
                   disabled={isProcessing}
-                  className="w-full py-3.5 bg-gradient-to-r from-saffron-600 via-saffron-700 to-saffron-800 hover:from-saffron-700 hover:to-saffron-900 text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 group disabled:opacity-50"
+                  className="w-full py-3.5 bg-gradient-to-r from-saffron-600 via-saffron-700 to-saffron-800 hover:from-saffron-700 hover:to-saffron-900 text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 group disabled:opacity-50 cursor-pointer"
                 >
                   <Lock className="w-4 h-4 text-gold-300" />
                   <span>

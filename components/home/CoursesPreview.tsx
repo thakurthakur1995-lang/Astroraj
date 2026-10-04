@@ -88,8 +88,11 @@ export function CoursesPreview({ courses }: CoursesPreviewProps) {
                 key={course.id}
                 className="group relative flex flex-col bg-stone-900/80 rounded-2xl border border-gold-500/20 hover:border-gold-400/60 shadow-xl hover:shadow-2xl hover:shadow-saffron-500/10 transition-all duration-300 overflow-hidden"
               >
-                {/* Course Image */}
-                <div className="relative aspect-[16/10] w-full overflow-hidden bg-stone-950">
+                {/* Course Image Link */}
+                <Link
+                  href={`/courses/${course.slug}`}
+                  className="relative aspect-[16/10] w-full overflow-hidden bg-stone-950 block cursor-pointer"
+                >
                   <Image
                     src={course.image}
                     alt={course.title}
@@ -116,7 +119,7 @@ export function CoursesPreview({ courses }: CoursesPreviewProps) {
                     <Users className="w-3.5 h-3.5 text-gold-400" />
                     <span>{course.studentsEnrolled}+ Students</span>
                   </div>
-                </div>
+                </Link>
 
                 {/* Content */}
                 <div className="p-6 flex-1 flex flex-col">
@@ -133,7 +136,7 @@ export function CoursesPreview({ courses }: CoursesPreviewProps) {
                     </span>
                   </div>
 
-                  <Link href={`/courses/${course.slug}`}>
+                  <Link href={`/courses/${course.slug}`} className="cursor-pointer">
                     <h3 className="font-serif text-xl font-bold text-white group-hover:text-gold-300 transition-colors line-clamp-1 mb-2">
                       {course.title}
                     </h3>

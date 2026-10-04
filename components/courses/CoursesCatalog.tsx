@@ -71,7 +71,7 @@ export function CoursesCatalog({ courses }: CoursesCatalogProps) {
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold cursor-pointer transition-all flex items-center gap-1.5 ${
                   selectedCategory === cat.id
                     ? "bg-saffron-600 text-white shadow-xs"
                     : "bg-ivory text-vedic-dark hover:bg-ivory-card border border-border"
@@ -114,7 +114,7 @@ export function CoursesCatalog({ courses }: CoursesCatalogProps) {
               setSelectedCategory("all");
               setSearchQuery("");
             }}
-            className="px-4 py-2 bg-saffron-600 text-white rounded-lg text-xs font-semibold"
+            className="px-4 py-2 bg-saffron-600 hover:bg-saffron-700 text-white rounded-lg text-xs font-semibold cursor-pointer transition-colors"
           >
             Clear Filters
           </button>
@@ -131,8 +131,11 @@ export function CoursesCatalog({ courses }: CoursesCatalogProps) {
                 key={course.id}
                 className="bg-white rounded-3xl border border-border overflow-hidden hover:border-saffron-500/50 hover:shadow-2xl transition-all duration-300 flex flex-col justify-between group"
               >
-                {/* Course Thumbnail Image */}
-                <div className="relative h-56 w-full overflow-hidden bg-ivory-card">
+                {/* Course Thumbnail Image Link */}
+                <Link
+                  href={`/courses/${course.slug}`}
+                  className="relative h-56 w-full overflow-hidden bg-ivory-card block cursor-pointer"
+                >
                   <Image
                     src={course.image}
                     alt={course.title}
@@ -161,7 +164,7 @@ export function CoursesCatalog({ courses }: CoursesCatalogProps) {
                       <span>Certificate Included</span>
                     </span>
                   </div>
-                </div>
+                </Link>
 
                 {/* Course Content */}
                 <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
@@ -218,7 +221,7 @@ export function CoursesCatalog({ courses }: CoursesCatalogProps) {
                     <div className="grid grid-cols-2 gap-2 pt-1">
                       <Link
                         href={`/courses/${course.slug}`}
-                        className="py-2.5 px-3 rounded-xl bg-ivory hover:bg-ivory-card border border-border text-vedic-dark text-xs font-semibold text-center transition-colors flex items-center justify-center gap-1"
+                        className="py-2.5 px-3 rounded-xl bg-ivory hover:bg-ivory-card border border-border text-vedic-dark text-xs font-semibold text-center transition-colors flex items-center justify-center gap-1 cursor-pointer"
                       >
                         <span>Syllabus</span>
                         <ArrowRight className="w-3.5 h-3.5 text-vedic-muted" />
@@ -226,7 +229,7 @@ export function CoursesCatalog({ courses }: CoursesCatalogProps) {
 
                       <button
                         onClick={() => handleEnrollClick(course)}
-                        className="py-2.5 px-3 rounded-xl bg-gradient-to-r from-saffron-600 to-saffron-700 hover:from-saffron-700 hover:to-saffron-800 text-white text-xs font-bold shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-1.5"
+                        className="py-2.5 px-3 rounded-xl bg-gradient-to-r from-saffron-600 to-saffron-700 hover:from-saffron-700 hover:to-saffron-800 text-white text-xs font-bold shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                       >
                         <Sparkles className="w-3.5 h-3.5 text-gold-300" />
                         <span>Enroll Now</span>

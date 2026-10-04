@@ -48,7 +48,7 @@ export function ShopCatalog({ products }: ShopCatalogProps) {
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all ${
                 selectedCategory === cat.id
                   ? "bg-saffron-600 text-white shadow-xs"
                   : "bg-ivory text-vedic-dark hover:bg-ivory-card border border-border"
@@ -81,7 +81,7 @@ export function ShopCatalog({ products }: ShopCatalogProps) {
               setSelectedCategory("all");
               setSearchQuery("");
             }}
-            className="px-4 py-2 bg-saffron-600 text-white rounded-lg text-xs font-semibold"
+            className="px-4 py-2 bg-saffron-600 hover:bg-saffron-700 text-white rounded-lg text-xs font-semibold cursor-pointer transition-colors"
           >
             Clear Filters
           </button>
@@ -93,8 +93,11 @@ export function ShopCatalog({ products }: ShopCatalogProps) {
               key={product.id}
               className="bg-white rounded-2xl border border-border overflow-hidden hover:border-saffron-500/50 hover:shadow-xl transition-all duration-300 flex flex-col justify-between group"
             >
-              {/* Product Image */}
-              <div className="relative h-56 w-full overflow-hidden bg-ivory-card">
+              {/* Product Image Link */}
+              <Link
+                href={`/shop/${product.slug}`}
+                className="relative h-56 w-full overflow-hidden bg-ivory-card block cursor-pointer"
+              >
                 <Image
                   src={product.images[0] || "https://images.unsplash.com/photo-1609342122563-a43ac8917a3a?auto=format&fit=crop&w=400&q=80"}
                   alt={product.name}
@@ -114,13 +117,13 @@ export function ShopCatalog({ products }: ShopCatalogProps) {
                 <span className="absolute top-2.5 right-2.5 bg-vedic-dark/80 text-white px-2 py-0.5 rounded text-[10px] font-semibold">
                   {product.categoryLabel}
                 </span>
-              </div>
+              </Link>
 
               {/* Product Info */}
               <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
                 <div>
                   <h3 className="font-serif text-sm font-bold text-vedic-dark group-hover:text-saffron-700 transition-colors line-clamp-1">
-                    <Link href={`/shop/${product.slug}`}>
+                    <Link href={`/shop/${product.slug}`} className="cursor-pointer">
                       {product.name}
                     </Link>
                   </h3>
@@ -143,7 +146,7 @@ export function ShopCatalog({ products }: ShopCatalogProps) {
 
                   <button
                     onClick={() => addToCart(product, 1)}
-                    className="p-2 rounded-lg bg-saffron-600 hover:bg-saffron-700 text-white shadow-xs transition-colors"
+                    className="p-2 rounded-lg bg-saffron-600 hover:bg-saffron-700 text-white shadow-xs transition-colors cursor-pointer"
                     title="Add to cart"
                     aria-label={`Add ${product.name} to cart`}
                   >

@@ -55,7 +55,7 @@ export function ContactForm() {
         </p>
         <button
           onClick={() => setIsSubmitted(false)}
-          className="text-xs font-semibold text-emerald-700 underline"
+          className="text-xs font-semibold text-emerald-700 underline cursor-pointer"
         >
           Send Another Message
         </button>
@@ -136,7 +136,7 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-saffron-600 hover:bg-saffron-700 text-white font-semibold text-xs shadow-md transition-all disabled:opacity-50"
+        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-saffron-600 hover:bg-saffron-700 text-white font-semibold text-xs shadow-md transition-all disabled:opacity-50 cursor-pointer"
       >
         <Send className="w-4 h-4" />
         <span>{isSubmitting ? "Sending..." : "Submit Inquiry"}</span>

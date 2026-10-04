@@ -65,7 +65,7 @@ export function FaqSection({ faqs }: FaqSectionProps) {
               >
                 <button
                   onClick={() => toggleAccordion(index)}
-                  className="w-full py-4 px-6 text-left flex items-center justify-between gap-4 font-serif text-base sm:text-lg font-bold text-vedic-dark hover:text-saffron-700 transition-colors focus:outline-hidden"
+                  className="w-full py-4 px-6 text-left flex items-center justify-between gap-4 font-serif text-base sm:text-lg font-bold text-vedic-dark hover:text-saffron-700 transition-colors focus:outline-hidden cursor-pointer"
                   aria-expanded={isOpen}
                 >
                   <span>{faq.question}</span>

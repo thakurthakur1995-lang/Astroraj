@@ -168,7 +168,7 @@ export function CourseDetailClient({ course, relatedCourses }: CourseDetailClien
                   });
                   setExpandedModules(next);
                 }}
-                className="text-xs text-saffron-700 font-semibold hover:underline text-left sm:text-right"
+                className="text-xs text-saffron-700 font-semibold hover:underline text-left sm:text-right cursor-pointer"
               >
                 Toggle All Modules
               </button>
@@ -184,7 +184,7 @@ export function CourseDetailClient({ course, relatedCourses }: CourseDetailClien
                   >
                     <button
                       onClick={() => toggleModule(mod.id)}
-                      className="w-full p-4 bg-ivory/50 hover:bg-ivory text-left flex items-center justify-between gap-4 transition-colors"
+                      className="w-full p-4 bg-ivory/50 hover:bg-ivory text-left flex items-center justify-between gap-4 transition-colors cursor-pointer"
                     >
                       <div className="flex items-center gap-3">
                         <span className="w-7 h-7 rounded-lg bg-saffron-100 text-saffron-800 text-xs font-bold flex items-center justify-center shrink-0">

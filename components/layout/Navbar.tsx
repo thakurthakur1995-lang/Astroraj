@@ -193,7 +193,7 @@ export function Navbar() {
             {/* Cart Trigger */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative p-2.5 rounded-lg text-vedic-dark hover:bg-ivory transition-colors"
+              className="relative p-2.5 rounded-lg text-vedic-dark hover:bg-ivory transition-colors cursor-pointer"
               aria-label="View shopping cart"
             >
               <ShoppingBag className="w-5 h-5 text-vedic-brown" />
@@ -207,7 +207,7 @@ export function Navbar() {
             {/* Book Consultation Button (Desktop) */}
             <Link
               href="/book-consultation"
-              className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-saffron-600 hover:bg-saffron-700 text-white font-semibold text-sm shadow-md hover:shadow-lg transition-all active:scale-98"
+              className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-saffron-600 hover:bg-saffron-700 text-white font-semibold text-sm shadow-md hover:shadow-lg transition-all active:scale-98 cursor-pointer"
             >
               <Calendar className="w-4 h-4" />
               <span>Book Consultation</span>
@@ -216,7 +216,7 @@ export function Navbar() {
             {/* Mobile Hamburger Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg text-vedic-dark hover:bg-ivory transition-colors"
+              className="md:hidden p-2 rounded-lg text-vedic-dark hover:bg-ivory transition-colors cursor-pointer"
               aria-label="Toggle mobile menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}

@@ -8,6 +8,10 @@ import {
   getOrderByRazorpayOrderId,
   recordPaymentTransaction,
 } from "@/lib/supabase/repository";
+import {
+  sendBookingConfirmationEmails,
+  sendOrderConfirmationEmails,
+} from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 
@@ -97,7 +101,7 @@ export async function POST(req: NextRequest) {
           }
 
           const effectivePaymentId = paymentId || booking.paymentId || "webhook_captured";
-          await markBookingPaymentPaid({
+          const updatedBooking = await markBookingPaymentPaid({
             razorpayOrderId: orderId,
             razorpayPaymentId: effectivePaymentId,
           });
@@ -109,6 +113,15 @@ export async function POST(req: NextRequest) {
             status: "captured",
             razorpayPaymentId: effectivePaymentId,
           });
+
+          // Dispatch confirmation emails to customer and admin (non-blocking)
+          sendBookingConfirmationEmails({
+            booking: updatedBooking || booking,
+            paymentId: effectivePaymentId,
+          }).catch((err) => {
+            console.error("[Razorpay Webhook] Error dispatching booking emails:", err);
+          });
+
           console.log(
             `[Razorpay Webhook] Successfully verified and updated Booking ${booking.bookingCode} to PAID.`
           );
@@ -136,7 +149,7 @@ export async function POST(req: NextRequest) {
           }
 
           const effectivePaymentId = paymentId || order.paymentId || "webhook_captured";
-          await markOrderPaymentPaid({
+          const updatedOrder = await markOrderPaymentPaid({
             razorpayOrderId: orderId,
             razorpayPaymentId: effectivePaymentId,
           });
@@ -148,6 +161,15 @@ export async function POST(req: NextRequest) {
             status: "captured",
             razorpayPaymentId: effectivePaymentId,
           });
+
+          // Dispatch confirmation emails to customer and admin (non-blocking)
+          sendOrderConfirmationEmails({
+            order: updatedOrder || order,
+            paymentId: effectivePaymentId,
+          }).catch((err) => {
+            console.error("[Razorpay Webhook] Error dispatching order emails:", err);
+          });
+
           console.log(
             `[Razorpay Webhook] Successfully verified and updated Order ${order.orderNumber} to PAID.`
           );

@@ -99,7 +99,7 @@ export default function CartPage() {
                     <div className="flex items-center border border-border rounded-lg bg-ivory">
                       <button
                         onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                        className="p-1.5 hover:bg-white text-vedic-muted hover:text-vedic-dark"
+                        className="p-1.5 hover:bg-white text-vedic-muted hover:text-vedic-dark cursor-pointer transition-colors"
                         aria-label="Decrease quantity"
                       >
                         <Minus className="w-3.5 h-3.5" />
@@ -107,7 +107,7 @@ export default function CartPage() {
                       <span className="px-3 text-xs font-semibold">{item.quantity}</span>
                       <button
                         onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                        className="p-1.5 hover:bg-white text-vedic-muted hover:text-vedic-dark"
+                        className="p-1.5 hover:bg-white text-vedic-muted hover:text-vedic-dark cursor-pointer transition-colors"
                         aria-label="Increase quantity"
                       >
                         <Plus className="w-3.5 h-3.5" />
@@ -120,7 +120,7 @@ export default function CartPage() {
                       </span>
                       <button
                         onClick={() => removeFromCart(item.product.id)}
-                        className="p-1.5 text-red-500 hover:text-red-700"
+                        className="p-1.5 text-red-500 hover:text-red-700 cursor-pointer transition-colors"
                         title="Remove"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -163,7 +163,7 @@ export default function CartPage() {
               <div className="pt-2">
                 <Link
                   href="/checkout"
-                  className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-saffron-600 hover:bg-saffron-700 text-white font-semibold text-xs shadow-md transition-colors"
+                  className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-saffron-600 hover:bg-saffron-700 text-white font-semibold text-xs shadow-md transition-colors cursor-pointer"
                 >
                   <span>Proceed to Checkout</span>
                   <ArrowRight className="w-4 h-4" />

@@ -106,7 +106,7 @@ export function PricingSection() {
           <div className="inline-flex p-1 bg-ivory rounded-xl border border-border mt-4">
             <button
               onClick={() => setSelectedMode("all")}
-              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 selectedMode === "all"
                   ? "bg-white text-vedic-dark shadow-xs"
                   : "text-vedic-muted hover:text-vedic-dark"
@@ -116,7 +116,7 @@ export function PricingSection() {
             </button>
             <button
               onClick={() => setSelectedMode("audio")}
-              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                 selectedMode === "audio"
                   ? "bg-white text-vedic-dark shadow-xs"
                   : "text-vedic-muted hover:text-vedic-dark"
@@ -127,7 +127,7 @@ export function PricingSection() {
             </button>
             <button
               onClick={() => setSelectedMode("video")}
-              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                 selectedMode === "video"
                   ? "bg-white text-vedic-dark shadow-xs"
                   : "text-vedic-muted hover:text-vedic-dark"

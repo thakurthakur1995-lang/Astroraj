@@ -76,8 +76,11 @@ export function FourPillars() {
                 key={pillar.id}
                 className="group relative bg-white rounded-2xl border border-border overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
               >
-                {/* Image Top */}
-                <div className="relative h-48 w-full overflow-hidden bg-ivory-card">
+                {/* Image Top Link */}
+                <Link
+                  href={pillar.link}
+                  className="relative h-48 w-full overflow-hidden bg-ivory-card block cursor-pointer"
+                >
                   <Image
                     src={pillar.image}
                     alt={pillar.title}
@@ -95,13 +98,15 @@ export function FourPillars() {
                   <div className="absolute bottom-3 left-3 w-10 h-10 rounded-xl bg-saffron-600 text-white flex items-center justify-center shadow-md">
                     <Icon className="w-5 h-5" />
                   </div>
-                </div>
+                </Link>
 
                 {/* Content */}
                 <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                   <div className="space-y-2">
                     <h3 className="font-serif text-xl font-bold text-vedic-dark group-hover:text-saffron-700 transition-colors">
-                      {pillar.title}
+                      <Link href={pillar.link} className="cursor-pointer">
+                        {pillar.title}
+                      </Link>
                     </h3>
                     <div className="text-xs font-semibold text-gold-600 tracking-wide">
                       {pillar.tagline}
@@ -113,7 +118,7 @@ export function FourPillars() {
 
                   <Link
                     href={pillar.link}
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-saffron-700 hover:text-saffron-800 transition-colors pt-2 border-t border-border/60"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-saffron-700 hover:text-saffron-800 transition-colors pt-2 border-t border-border/60 cursor-pointer"
                   >
                     <span>{pillar.cta}</span>
                     <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />

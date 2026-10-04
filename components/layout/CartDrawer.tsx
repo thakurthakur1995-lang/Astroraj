@@ -15,7 +15,7 @@ export function CartDrawer() {
     <div className="fixed inset-0 z-50 overflow-hidden">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-vedic-dark/60 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-vedic-dark/60 backdrop-blur-sm transition-opacity cursor-pointer"
         onClick={() => setIsCartOpen(false)}
       />
 
@@ -31,7 +31,7 @@ export function CartDrawer() {
             </div>
             <button
               onClick={() => setIsCartOpen(false)}
-              className="p-2 text-vedic-muted hover:text-vedic-dark hover:bg-ivory-card rounded-full transition-colors"
+              className="p-2 text-vedic-muted hover:text-vedic-dark hover:bg-ivory-card rounded-full transition-colors cursor-pointer"
               aria-label="Close cart"
             >
               <X className="w-5 h-5" />
@@ -52,7 +52,7 @@ export function CartDrawer() {
                 <Link
                   href="/shop"
                   onClick={() => setIsCartOpen(false)}
-                  className="px-6 py-2.5 bg-saffron-600 hover:bg-saffron-700 text-white rounded-lg font-medium text-sm transition-colors shadow-sm"
+                  className="px-6 py-2.5 bg-saffron-600 hover:bg-saffron-700 text-white rounded-lg font-medium text-sm transition-colors shadow-sm cursor-pointer"
                 >
                   Explore Sacred Shop
                 </Link>
@@ -80,7 +80,7 @@ export function CartDrawer() {
                       <Link
                         href={item.product.isCourse ? `/courses/${item.product.slug}` : `/shop/${item.product.slug}`}
                         onClick={() => setIsCartOpen(false)}
-                        className="hover:text-saffron-700 transition-colors"
+                        className="hover:text-saffron-700 transition-colors cursor-pointer"
                       >
                         {item.product.name}
                       </Link>
@@ -93,7 +93,7 @@ export function CartDrawer() {
                       <div className="flex items-center border border-border rounded-md bg-ivory">
                         <button
                           onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                          className="p-1 hover:bg-white text-vedic-muted hover:text-vedic-dark transition-colors"
+                          className="p-1 hover:bg-white text-vedic-muted hover:text-vedic-dark transition-colors cursor-pointer"
                           aria-label="Decrease quantity"
                         >
                           <Minus className="w-3.5 h-3.5" />
@@ -101,7 +101,7 @@ export function CartDrawer() {
                         <span className="px-2.5 text-xs font-semibold">{item.quantity}</span>
                         <button
                           onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                          className="p-1 hover:bg-white text-vedic-muted hover:text-vedic-dark transition-colors"
+                          className="p-1 hover:bg-white text-vedic-muted hover:text-vedic-dark transition-colors cursor-pointer"
                           aria-label="Increase quantity"
                         >
                           <Plus className="w-3.5 h-3.5" />
@@ -110,7 +110,7 @@ export function CartDrawer() {
 
                       <button
                         onClick={() => removeFromCart(item.product.id)}
-                        className="text-red-500 hover:text-red-700 p-1 transition-colors"
+                        className="text-red-500 hover:text-red-700 p-1 transition-colors cursor-pointer"
                         title="Remove item"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -140,14 +140,14 @@ export function CartDrawer() {
                 <Link
                   href="/cart"
                   onClick={() => setIsCartOpen(false)}
-                  className="py-2.5 px-4 text-center border border-border text-vedic-dark hover:bg-ivory rounded-lg text-sm font-semibold transition-colors"
+                  className="py-2.5 px-4 text-center border border-border text-vedic-dark hover:bg-ivory rounded-lg text-sm font-semibold transition-colors cursor-pointer"
                 >
                   View Cart
                 </Link>
                 <Link
                   href="/checkout"
                   onClick={() => setIsCartOpen(false)}
-                  className="py-2.5 px-4 text-center bg-saffron-600 hover:bg-saffron-700 text-white rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-sm"
+                  className="py-2.5 px-4 text-center bg-saffron-600 hover:bg-saffron-700 text-white rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
                 >
                   Checkout
                   <ArrowRight className="w-4 h-4" />

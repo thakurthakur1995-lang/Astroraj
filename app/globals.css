@@ -63,6 +63,65 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* ========================================================
+   GLOBAL INTERACTIVE ELEMENTS & CURSOR POINTER
+   Ensures all buttons, links, inputs, and interactive UI
+   elements always display cursor: pointer across the site
+   ======================================================== */
+button,
+[role="button"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+input[type="checkbox"],
+input[type="radio"],
+input[type="file"],
+select,
+summary,
+a {
+  cursor: pointer;
+}
+
+/* Disabled controls */
+button:disabled,
+button[disabled],
+[role="button"][aria-disabled="true"],
+input:disabled,
+input[disabled],
+select:disabled,
+select[disabled],
+textarea:disabled,
+[disabled],
+.disabled {
+  cursor: not-allowed !important;
+}
+
+/* Text fields keep standard text cursor */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="number"],
+input[type="search"],
+input[type="url"],
+textarea {
+  cursor: text;
+}
+
+/* Date/time pickers have pointer cursor for ease of picking */
+input[type="date"],
+input[type="time"] {
+  cursor: pointer;
+}
+
+/* Interactive labels */
+label[for],
+label:has(input[type="checkbox"]),
+label:has(input[type="radio"]) {
+  cursor: pointer;
+}
+
+
 /* Elegant Spiritual Typography & Details */
 h1,
 h2,

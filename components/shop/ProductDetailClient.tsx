@@ -69,7 +69,7 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
                 <button
                   key={idx}
                   onClick={() => setActiveImageIndex(idx)}
-                  className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${
+                  className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
                     activeImageIndex === idx
                       ? "border-saffron-600 shadow-sm"
                       : "border-border opacity-70 hover:opacity-100"
@@ -167,7 +167,7 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
               <div className="flex items-center border border-border rounded-lg bg-ivory">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="p-2 hover:bg-white text-vedic-muted hover:text-vedic-dark"
+                  className="p-2 hover:bg-white text-vedic-muted hover:text-vedic-dark cursor-pointer transition-colors"
                   aria-label="Decrease quantity"
                 >
                   <Minus className="w-4 h-4" />
@@ -175,7 +175,7 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
                 <span className="px-4 text-xs font-bold">{quantity}</span>
                 <button
                   onClick={() => setQuantity(quantity + 1)}
-                  className="p-2 hover:bg-white text-vedic-muted hover:text-vedic-dark"
+                  className="p-2 hover:bg-white text-vedic-muted hover:text-vedic-dark cursor-pointer transition-colors"
                   aria-label="Increase quantity"
                 >
                   <Plus className="w-4 h-4" />
@@ -186,7 +186,7 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               <button
                 onClick={() => addToCart(product, quantity)}
-                className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl border border-saffron-600 text-saffron-700 hover:bg-saffron-50 font-semibold text-xs shadow-xs transition-colors"
+                className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl border border-saffron-600 text-saffron-700 hover:bg-saffron-50 font-semibold text-xs shadow-xs transition-colors cursor-pointer"
               >
                 <ShoppingBag className="w-4 h-4" />
                 <span>Add to Cart</span>
@@ -194,7 +194,7 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
 
               <button
                 onClick={handleBuyNow}
-                className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-saffron-600 hover:bg-saffron-700 text-white font-semibold text-xs shadow-md transition-colors"
+                className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-saffron-600 hover:bg-saffron-700 text-white font-semibold text-xs shadow-md transition-colors cursor-pointer"
               >
                 <span>Buy Now with Free Delivery</span>
               </button>
@@ -205,7 +205,7 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
                 href={whatsappInquiryUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100 font-semibold text-xs transition-colors"
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100 font-semibold text-xs transition-colors cursor-pointer"
               >
                 <MessageCircle className="w-4 h-4 text-emerald-600" />
                 <span>Ask Guruji on WhatsApp About This Item</span>

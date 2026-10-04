@@ -48,8 +48,11 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
               key={product.id}
               className="bg-ivory rounded-2xl border border-border overflow-hidden hover:border-saffron-500/40 hover:shadow-lg transition-all duration-300 flex flex-col justify-between group"
             >
-              {/* Product Image */}
-              <div className="relative h-56 w-full overflow-hidden bg-white">
+              {/* Product Image Link */}
+              <Link
+                href={`/shop/${product.slug}`}
+                className="relative h-56 w-full overflow-hidden bg-white block cursor-pointer"
+              >
                 <Image
                   src={product.images[0] || "https://images.unsplash.com/photo-1609342122563-a43ac8917a3a?auto=format&fit=crop&w=400&q=80"}
                   alt={product.name}
@@ -69,13 +72,13 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
                 <span className="absolute top-2.5 right-2.5 bg-vedic-dark/80 text-white px-2 py-0.5 rounded text-[10px] font-semibold">
                   {product.categoryLabel}
                 </span>
-              </div>
+              </Link>
 
               {/* Product Details */}
               <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
                 <div>
                   <h3 className="font-serif text-sm font-bold text-vedic-dark group-hover:text-saffron-700 transition-colors line-clamp-1">
-                    <Link href={`/shop/${product.slug}`}>
+                    <Link href={`/shop/${product.slug}`} className="cursor-pointer">
                       {product.name}
                     </Link>
                   </h3>
@@ -98,7 +101,7 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
 
                   <button
                     onClick={() => addToCart(product, 1)}
-                    className="p-2 rounded-lg bg-saffron-600 hover:bg-saffron-700 text-white shadow-xs transition-colors"
+                    className="p-2 rounded-lg bg-saffron-600 hover:bg-saffron-700 text-white shadow-xs transition-colors cursor-pointer"
                     title="Add to cart"
                     aria-label={`Add ${product.name} to cart`}
                   >
