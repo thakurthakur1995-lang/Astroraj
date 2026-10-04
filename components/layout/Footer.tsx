@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Phone, MessageCircle, Mail, MapPin, ShieldCheck, HeartHandshake, Compass } from "lucide-react";
 import { SITE_SETTINGS } from "@/lib/constants";
 
@@ -15,19 +16,15 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-gold-500/20">
           {/* Column 1 & 2: Brand & Ashram Identity */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-full bg-gradient-to-br from-saffron-500 via-saffron-600 to-vedic-brown flex items-center justify-center text-white shadow-lg ring-2 ring-gold-400/40">
-                <span className="font-serif text-xl font-bold">ॐ</span>
-              </div>
-              <div>
-                <span className="font-serif text-2xl font-bold tracking-tight text-white block">
-                  ASTRO RAJ
-                </span>
-                <span className="text-xs uppercase tracking-widest text-gold-400 font-semibold block">
-                  Astrologer Rajat Thakur
-                </span>
-              </div>
-            </div>
+            <Link href="/" className="inline-block group mb-2" aria-label="Astro Raj Home">
+              <Image
+                src="/images/logo/logo-dark.png"
+                alt="Astro Raj - Astrologer Rajat Thakur"
+                width={220}
+                height={56}
+                className="h-12 sm:h-14 w-auto object-contain transition-transform group-hover:scale-102"
+              />
+            </Link>
 
             <p className="text-sm text-amber-100/75 leading-relaxed pr-4">
               Authentic Vedic Astrology, Kundli Analysis, Sacred Online Pujas, and Certified Gemstones rooted in traditional Shri Vidya Upasana. Preserving ancient spiritual science with transparent, compassionate, and non-fear-based guidance.

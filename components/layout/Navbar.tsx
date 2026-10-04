@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   Phone,
@@ -93,18 +94,15 @@ export function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-saffron-500 via-saffron-600 to-vedic-brown flex items-center justify-center text-white shadow-md ring-2 ring-gold-400/30 group-hover:scale-105 transition-transform">
-              <span className="font-serif text-lg font-bold">ॐ</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-vedic-dark leading-none">
-                ASTRO RAJ
-              </span>
-              <span className="text-[11px] font-medium tracking-wider uppercase text-saffron-700 mt-0.5">
-                Astrologer Rajat Thakur
-              </span>
-            </div>
+          <Link href="/" className="flex items-center group py-0.5" aria-label="Astro Raj Home">
+            <Image
+              src="/images/logo/logo-saffron.png"
+              alt="Astro Raj - Astrologer Rajat Thakur"
+              width={208}
+              height={51}
+              className="h-10 sm:h-11 md:h-12 w-auto object-contain transition-transform group-hover:scale-102"
+              priority
+            />
           </Link>
 
           {/* Desktop Nav Links */}
