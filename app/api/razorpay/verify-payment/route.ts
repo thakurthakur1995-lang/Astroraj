@@ -91,12 +91,14 @@ export async function POST(req: NextRequest) {
       }
 
       if (existing.paymentStatus === "paid") {
-        sendBookingConfirmationEmails({
-          booking: existing,
-          paymentId: razorpay_payment_id || existing.razorpayPaymentId,
-        }).catch((err) => {
+        try {
+          await sendBookingConfirmationEmails({
+            booking: existing,
+            paymentId: razorpay_payment_id || existing.razorpayPaymentId,
+          });
+        } catch (err) {
           console.error("[verify-payment] Error dispatching booking emails on already verified:", err);
-        });
+        }
 
         return NextResponse.json({
           success: true,
@@ -122,14 +124,16 @@ export async function POST(req: NextRequest) {
         razorpaySignature: razorpay_signature,
       });
 
-      // Dispatch confirmation emails to customer and admin (non-blocking)
+      // Dispatch confirmation emails to customer and admin (awaited for serverless compatibility)
       const bookingData = updated || existing;
-      sendBookingConfirmationEmails({
-        booking: bookingData,
-        paymentId: razorpay_payment_id,
-      }).catch((err) => {
+      try {
+        await sendBookingConfirmationEmails({
+          booking: bookingData,
+          paymentId: razorpay_payment_id,
+        });
+      } catch (err) {
         console.error("[verify-payment] Error dispatching booking emails:", err);
-      });
+      }
 
       return NextResponse.json({
         success: true,
@@ -165,12 +169,14 @@ export async function POST(req: NextRequest) {
       }
 
       if (existing.paymentStatus === "paid") {
-        sendOrderConfirmationEmails({
-          order: existing,
-          paymentId: razorpay_payment_id || existing.razorpayPaymentId,
-        }).catch((err) => {
+        try {
+          await sendOrderConfirmationEmails({
+            order: existing,
+            paymentId: razorpay_payment_id || existing.razorpayPaymentId,
+          });
+        } catch (err) {
           console.error("[verify-payment] Error dispatching order emails on already verified:", err);
-        });
+        }
 
         return NextResponse.json({
           success: true,
@@ -196,14 +202,16 @@ export async function POST(req: NextRequest) {
         razorpaySignature: razorpay_signature,
       });
 
-      // Dispatch confirmation emails to customer and admin (non-blocking)
+      // Dispatch confirmation emails to customer and admin (awaited for serverless compatibility)
       const orderData = updated || existing;
-      sendOrderConfirmationEmails({
-        order: orderData,
-        paymentId: razorpay_payment_id,
-      }).catch((err) => {
+      try {
+        await sendOrderConfirmationEmails({
+          order: orderData,
+          paymentId: razorpay_payment_id,
+        });
+      } catch (err) {
         console.error("[verify-payment] Error dispatching order emails:", err);
-      });
+      }
 
       return NextResponse.json({
         success: true,
@@ -220,10 +228,14 @@ export async function POST(req: NextRequest) {
         razorpayPaymentId: razorpay_payment_id,
         razorpaySignature: razorpay_signature,
       });
-      sendBookingConfirmationEmails({
-        booking: updated || bkg,
-        paymentId: razorpay_payment_id,
-      }).catch((err) => console.error("[verify-payment fallback] Email error:", err));
+      try {
+        await sendBookingConfirmationEmails({
+          booking: updated || bkg,
+          paymentId: razorpay_payment_id,
+        });
+      } catch (err) {
+        console.error("[verify-payment fallback] Email error:", err);
+      }
       return NextResponse.json({ success: true, message: "Payment verified successfully." });
     }
 
@@ -234,10 +246,14 @@ export async function POST(req: NextRequest) {
         razorpayPaymentId: razorpay_payment_id,
         razorpaySignature: razorpay_signature,
       });
-      sendOrderConfirmationEmails({
-        order: updated || ord,
-        paymentId: razorpay_payment_id,
-      }).catch((err) => console.error("[verify-payment fallback] Email error:", err));
+      try {
+        await sendOrderConfirmationEmails({
+          order: updated || ord,
+          paymentId: razorpay_payment_id,
+        });
+      } catch (err) {
+        console.error("[verify-payment fallback] Email error:", err);
+      }
       return NextResponse.json({ success: true, message: "Payment verified successfully." });
     }
 

@@ -114,13 +114,15 @@ export async function POST(req: NextRequest) {
             razorpayPaymentId: effectivePaymentId,
           });
 
-          // Dispatch confirmation emails to customer and admin (non-blocking)
-          sendBookingConfirmationEmails({
-            booking: updatedBooking || booking,
-            paymentId: effectivePaymentId,
-          }).catch((err) => {
+          // Dispatch confirmation emails to customer and admin (awaited for serverless compatibility)
+          try {
+            await sendBookingConfirmationEmails({
+              booking: updatedBooking || booking,
+              paymentId: effectivePaymentId,
+            });
+          } catch (err) {
             console.error("[Razorpay Webhook] Error dispatching booking emails:", err);
-          });
+          }
 
           console.log(
             `[Razorpay Webhook] Successfully verified and updated Booking ${booking.bookingCode} to PAID.`
@@ -162,13 +164,15 @@ export async function POST(req: NextRequest) {
             razorpayPaymentId: effectivePaymentId,
           });
 
-          // Dispatch confirmation emails to customer and admin (non-blocking)
-          sendOrderConfirmationEmails({
-            order: updatedOrder || order,
-            paymentId: effectivePaymentId,
-          }).catch((err) => {
+          // Dispatch confirmation emails to customer and admin (awaited for serverless compatibility)
+          try {
+            await sendOrderConfirmationEmails({
+              order: updatedOrder || order,
+              paymentId: effectivePaymentId,
+            });
+          } catch (err) {
             console.error("[Razorpay Webhook] Error dispatching order emails:", err);
-          });
+          }
 
           console.log(
             `[Razorpay Webhook] Successfully verified and updated Order ${order.orderNumber} to PAID.`

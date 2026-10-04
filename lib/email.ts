@@ -11,17 +11,22 @@ function getTransporter() {
 
   if (!pass) {
     console.warn(
-      "[Email Service] GMAIL_APP_PASSWORD is not configured. Email will not be sent. Please set GMAIL_APP_PASSWORD in .env.local"
+      "[Email Service] GMAIL_APP_PASSWORD is not configured. Email will not be sent. Please set GMAIL_APP_PASSWORD in environment variables."
     );
     return null;
   }
 
   return nodemailer.createTransport({
-    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true, // Direct SSL handshake for serverless environments (faster & reliable on Vercel)
     auth: {
       user,
       pass,
     },
+    connectionTimeout: 10000, // 10s connection timeout
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
   });
 }
 
