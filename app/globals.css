@@ -121,6 +121,29 @@ label:has(input[type="radio"]) {
   cursor: pointer;
 }
 
+/* ========================================================
+   PREVENT IOS SAFARI AUTO-ZOOM ON FORM INPUTS
+   iOS Safari automatically zooms in when any input, textarea,
+   or select has font-size < 16px upon focus.
+   Enforcing 16px font-size on mobile viewports (<= 768px)
+   completely eliminates this jarring screen magnification.
+   ======================================================== */
+@media screen and (max-width: 768px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="tel"],
+  input[type="number"],
+  input[type="search"],
+  input[type="url"],
+  input[type="date"],
+  input[type="time"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
 
 /* Elegant Spiritual Typography & Details */
 h1,

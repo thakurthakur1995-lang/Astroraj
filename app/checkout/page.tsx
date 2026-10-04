@@ -241,7 +241,7 @@ export default function CheckoutPage() {
                   placeholder="e.g. Ramesh Sharma"
                   value={customer.fullName}
                   onChange={(e) => setCustomer({ ...customer, fullName: e.target.value })}
-                  className="w-full p-3 bg-ivory rounded-xl border border-border text-xs focus:outline-hidden focus:border-saffron-600"
+                  className="w-full p-3 bg-ivory rounded-xl border border-border text-base sm:text-xs focus:outline-hidden focus:border-saffron-600"
                 />
                 {errors.fullName && <p className="text-[11px] text-red-600">{errors.fullName}</p>}
               </div>
@@ -255,7 +255,7 @@ export default function CheckoutPage() {
                   placeholder="name@example.com"
                   value={customer.email}
                   onChange={(e) => setCustomer({ ...customer, email: e.target.value })}
-                  className="w-full p-3 bg-ivory rounded-xl border border-border text-xs focus:outline-hidden focus:border-saffron-600"
+                  className="w-full p-3 bg-ivory rounded-xl border border-border text-base sm:text-xs focus:outline-hidden focus:border-saffron-600"
                 />
                 {errors.email && <p className="text-[11px] text-red-600">{errors.email}</p>}
               </div>
@@ -271,7 +271,7 @@ export default function CheckoutPage() {
                   placeholder="10-digit WhatsApp number"
                   value={customer.phone}
                   onChange={(e) => setCustomer({ ...customer, phone: e.target.value })}
-                  className="w-full p-3 bg-ivory rounded-xl border border-border text-xs focus:outline-hidden focus:border-saffron-600"
+                  className="w-full p-3 bg-ivory rounded-xl border border-border text-base sm:text-xs focus:outline-hidden focus:border-saffron-600"
                 />
                 {errors.phone && <p className="text-[11px] text-red-600">{errors.phone}</p>}
               </div>
@@ -285,7 +285,7 @@ export default function CheckoutPage() {
                   placeholder={hasPhysicalItems ? "House/Flat number, Street name, Landmark" : "Optional for online courses"}
                   value={customer.street}
                   onChange={(e) => setCustomer({ ...customer, street: e.target.value })}
-                  className="w-full p-3 bg-ivory rounded-xl border border-border text-xs focus:outline-hidden focus:border-saffron-600"
+                  className="w-full p-3 bg-ivory rounded-xl border border-border text-base sm:text-xs focus:outline-hidden focus:border-saffron-600"
                 />
                 {errors.street && <p className="text-[11px] text-red-600">{errors.street}</p>}
               </div>
@@ -299,7 +299,7 @@ export default function CheckoutPage() {
                   placeholder="e.g. New Delhi, Mumbai"
                   value={customer.city}
                   onChange={(e) => setCustomer({ ...customer, city: e.target.value })}
-                  className="w-full p-3 bg-ivory rounded-xl border border-border text-xs focus:outline-hidden focus:border-saffron-600"
+                  className="w-full p-3 bg-ivory rounded-xl border border-border text-base sm:text-xs focus:outline-hidden focus:border-saffron-600"
                 />
                 {errors.city && <p className="text-[11px] text-red-600">{errors.city}</p>}
               </div>
@@ -310,7 +310,7 @@ export default function CheckoutPage() {
                   type="text"
                   value={customer.state}
                   onChange={(e) => setCustomer({ ...customer, state: e.target.value })}
-                  className="w-full p-3 bg-ivory rounded-xl border border-border text-xs focus:outline-hidden focus:border-saffron-600"
+                  className="w-full p-3 bg-ivory rounded-xl border border-border text-base sm:text-xs focus:outline-hidden focus:border-saffron-600"
                 />
               </div>
 
@@ -323,7 +323,7 @@ export default function CheckoutPage() {
                   placeholder="6-digit postal PIN"
                   value={customer.postalCode}
                   onChange={(e) => setCustomer({ ...customer, postalCode: e.target.value })}
-                  className="w-full p-3 bg-ivory rounded-xl border border-border text-xs focus:outline-hidden focus:border-saffron-600"
+                  className="w-full p-3 bg-ivory rounded-xl border border-border text-base sm:text-xs focus:outline-hidden focus:border-saffron-600"
                 />
                 {errors.postalCode && <p className="text-[11px] text-red-600">{errors.postalCode}</p>}
               </div>
@@ -334,7 +334,7 @@ export default function CheckoutPage() {
                   type="text"
                   disabled
                   value={customer.country}
-                  className="w-full p-3 bg-ivory-card rounded-xl border border-border text-xs font-semibold text-vedic-muted"
+                  className="w-full p-3 bg-ivory-card rounded-xl border border-border text-base sm:text-xs font-semibold text-vedic-muted"
                 />
               </div>
 
@@ -353,7 +353,7 @@ export default function CheckoutPage() {
                   }
                   value={customer.orderNotes}
                   onChange={(e) => setCustomer({ ...customer, orderNotes: e.target.value })}
-                  className="w-full p-3 bg-ivory rounded-xl border border-border text-xs focus:outline-hidden focus:border-saffron-600"
+                  className="w-full p-3 bg-ivory rounded-xl border border-border text-base sm:text-xs focus:outline-hidden focus:border-saffron-600"
                 />
               </div>
             </div>

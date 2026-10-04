@@ -869,7 +869,7 @@ export function BookingWizard() {
                 placeholder="e.g. Rahul Sharma"
                 value={customerDetails.fullName}
                 onChange={(e) => setCustomerDetails({ ...customerDetails, fullName: e.target.value })}
-                className="w-full p-3 bg-ivory rounded-xl border border-border text-sm focus:outline-hidden focus:border-saffron-600"
+                className="w-full p-3 bg-ivory rounded-xl border border-border text-base sm:text-sm focus:outline-hidden focus:border-saffron-600"
               />
               {formErrors.fullName && <p className="text-xs text-red-600">{formErrors.fullName}</p>}
             </div>
@@ -882,7 +882,7 @@ export function BookingWizard() {
                 placeholder="e.g. rahul@example.com"
                 value={customerDetails.email}
                 onChange={(e) => setCustomerDetails({ ...customerDetails, email: e.target.value })}
-                className="w-full p-3 bg-ivory rounded-xl border border-border text-sm focus:outline-hidden focus:border-saffron-600"
+                className="w-full p-3 bg-ivory rounded-xl border border-border text-base sm:text-sm focus:outline-hidden focus:border-saffron-600"
               />
               {formErrors.email && <p className="text-xs text-red-600">{formErrors.email}</p>}
             </div>
@@ -895,7 +895,7 @@ export function BookingWizard() {
                 placeholder="e.g. 9876543210"
                 value={customerDetails.phone}
                 onChange={(e) => setCustomerDetails({ ...customerDetails, phone: e.target.value })}
-                className="w-full p-3 bg-ivory rounded-xl border border-border text-sm focus:outline-hidden focus:border-saffron-600"
+                className="w-full p-3 bg-ivory rounded-xl border border-border text-base sm:text-sm focus:outline-hidden focus:border-saffron-600"
               />
               {formErrors.phone && <p className="text-xs text-red-600">{formErrors.phone}</p>}
             </div>
@@ -906,7 +906,7 @@ export function BookingWizard() {
               <select
                 value={customerDetails.gender}
                 onChange={(e) => setCustomerDetails({ ...customerDetails, gender: e.target.value as any })}
-                className="w-full p-3 bg-ivory rounded-xl border border-border text-sm focus:outline-hidden focus:border-saffron-600"
+                className="w-full p-3 bg-ivory rounded-xl border border-border text-base sm:text-sm focus:outline-hidden focus:border-saffron-600"
               >
                 <option value="male">Male</option>
                 <option value="female">Female</option>
@@ -921,7 +921,7 @@ export function BookingWizard() {
                 type="date"
                 value={customerDetails.dateOfBirth}
                 onChange={(e) => setCustomerDetails({ ...customerDetails, dateOfBirth: e.target.value })}
-                className="w-full p-3 bg-ivory rounded-xl border border-border text-sm focus:outline-hidden focus:border-saffron-600"
+                className="w-full p-3 bg-ivory rounded-xl border border-border text-base sm:text-sm focus:outline-hidden focus:border-saffron-600"
               />
               {formErrors.dateOfBirth && <p className="text-xs text-red-600">{formErrors.dateOfBirth}</p>}
             </div>
@@ -934,7 +934,7 @@ export function BookingWizard() {
                 placeholder="e.g. 10:45 AM or approx"
                 value={customerDetails.timeOfBirth}
                 onChange={(e) => setCustomerDetails({ ...customerDetails, timeOfBirth: e.target.value })}
-                className="w-full p-3 bg-ivory rounded-xl border border-border text-sm focus:outline-hidden focus:border-saffron-600"
+                className="w-full p-3 bg-ivory rounded-xl border border-border text-base sm:text-sm focus:outline-hidden focus:border-saffron-600"
               />
               {formErrors.timeOfBirth && <p className="text-xs text-red-600">{formErrors.timeOfBirth}</p>}
             </div>
@@ -947,7 +947,7 @@ export function BookingWizard() {
                 placeholder="e.g. Varanasi, Uttar Pradesh, India"
                 value={customerDetails.placeOfBirth}
                 onChange={(e) => setCustomerDetails({ ...customerDetails, placeOfBirth: e.target.value })}
-                className="w-full p-3 bg-ivory rounded-xl border border-border text-sm focus:outline-hidden focus:border-saffron-600"
+                className="w-full p-3 bg-ivory rounded-xl border border-border text-base sm:text-sm focus:outline-hidden focus:border-saffron-600"
               />
               {formErrors.placeOfBirth && <p className="text-xs text-red-600">{formErrors.placeOfBirth}</p>}
             </div>
@@ -958,7 +958,7 @@ export function BookingWizard() {
               <select
                 value={customerDetails.concernsTopic}
                 onChange={(e) => setCustomerDetails({ ...customerDetails, concernsTopic: e.target.value as any })}
-                className="w-full p-3 bg-ivory rounded-xl border border-border text-sm focus:outline-hidden focus:border-saffron-600"
+                className="w-full p-3 bg-ivory rounded-xl border border-border text-base sm:text-sm focus:outline-hidden focus:border-saffron-600"
               >
                 <option value="Career">Career & Promotion</option>
                 <option value="Marriage & Relationship">Marriage & Kundli Milan</option>
@@ -975,7 +975,7 @@ export function BookingWizard() {
               <select
                 value={customerDetails.preferredLanguage}
                 onChange={(e) => setCustomerDetails({ ...customerDetails, preferredLanguage: e.target.value as any })}
-                className="w-full p-3 bg-ivory rounded-xl border border-border text-sm focus:outline-hidden focus:border-saffron-600"
+                className="w-full p-3 bg-ivory rounded-xl border border-border text-base sm:text-sm focus:outline-hidden focus:border-saffron-600"
               >
                 <option value="Hindi">Hindi (हिंदी)</option>
                 <option value="English">English</option>
@@ -991,7 +991,7 @@ export function BookingWizard() {
                 placeholder="Feel free to outline any specific issues or milestones you wish Guruji to address..."
                 value={customerDetails.questionOrNotes}
                 onChange={(e) => setCustomerDetails({ ...customerDetails, questionOrNotes: e.target.value })}
-                className="w-full p-3 bg-ivory rounded-xl border border-border text-sm focus:outline-hidden focus:border-saffron-600"
+                className="w-full p-3 bg-ivory rounded-xl border border-border text-base sm:text-sm focus:outline-hidden focus:border-saffron-600"
               />
             </div>
           </div>
