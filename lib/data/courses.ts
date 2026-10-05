@@ -9,8 +9,7 @@ export const COURSES: Course[] = [
       "Dive deep into the sacred science of Vastu Shastra. Master residential & commercial space planning, directional energy balancing, and powerful non-demolition remedies with Astrologer Rajat Thakur.",
     fullDescription:
       "Are you ready to unlock the hidden energy that shapes your environment? Astroraj presents the Advanced Vastu Course, a comprehensive program designed for those who want to dive deep into the science of Vastu Shastra. Whether you are a beginner seeking to explore the foundational principles of Vastu or an experienced practitioner looking to refine your knowledge, this course will provide you with the tools and techniques you need to create balanced and harmonious spaces.\n\nVastu Shastra, the ancient Indian science of architecture, focuses on aligning physical spaces with the natural forces of the universe. In this advanced masterclass, Astrologer Rajat Thakur will guide you through complex Vastu principles, helping you learn how to transform homes, corporate offices, and factories to enhance prosperity, health, and overall well-being.\n\nLearn practical, non-demolition remedies using color therapy, metallic energy strips, pyramid yantras, and sacred crystal placements so you can solve clients' Vastu doshas without structural destruction.",
-    image:
-      "https://darkcyan-marten-836084.hostingersite.com/wp-content/uploads/2025/10/istockphoto-1313456479-612x612-1.jpg",
+    image: "/images/courses/advanced-vastu.jpg",
     price: 6100,
     originalPrice: 9999,
     category: "vastu",
@@ -139,8 +138,7 @@ export const COURSES: Course[] = [
       "Unlock the extraordinary Vedic method of predicting life events accurately without exact birth details. Learn Prashna Kundli, planetary transit matrix, and time-frame predictive secrets.",
     fullDescription:
       "Are you curious about what the future holds but don’t have your exact birth details? Astroraj offers the Blank Chart Prediction Course & Masterclass, where Astrologer Rajat Thakur teaches the rare, high-accuracy method of astrological prediction based on blank charts, horary Prashna Kundli, and real-time cosmic energy matrices.\n\nThis system is designed for practitioners and enthusiasts who need to provide accurate guidance when clients do not possess an accurate birth time or when birth records are lost. Through Blank Chart Prediction, you will learn to decode real-time planetary alignments, current transit triggers, and planetary degrees to reveal career breakthroughs, marriage timing, legal outcomes, and health recovery.\n\nGain confidence in answering urgent client queries on the spot with pinpoint accuracy.",
-    image:
-      "https://darkcyan-marten-836084.hostingersite.com/wp-content/uploads/2025/10/about2.jpg",
+    image: "/images/courses/blank-chart-prediction.jpg",
     price: 4100,
     originalPrice: 6500,
     category: "prediction",
@@ -241,8 +239,7 @@ export const COURSES: Course[] = [
       "An elite, personalized mentorship program with Astrologer Rajat Thakur. Master advanced Vimshottari Dasha, Divisional Charts (D9, D10), Synastry, Muhurat, and professional client consultations.",
     fullDescription:
       "Are you ready to elevate your astrology skills to the master level? Astroraj presents the Advanced Astrology Mentorship Program, a comprehensive, expert-guided course designed for individuals who are serious about mastering Vedic astrology.\n\nWhether you are an aspiring professional astrologer seeking a lucrative career or a seasoned practitioner looking to deepen your understanding, this program will guide you through advanced concepts, proprietary techniques, and ethical counseling tools to unlock your full potential. The Advanced Astrology Mentorship Program offers personalized guidance directly under Astrologer Rajat Thakur.\n\nWith tailored lessons, practical chart workouts, and live case breakdowns, you will gain an in-depth understanding of Vimshottari Dasha-Antardasha intersections, planetary transits (Gochar), Navamsha (D9) decoding, Dasamsha (D10) career mapping, and specialized remedial measures.",
-    image:
-      "https://darkcyan-marten-836084.hostingersite.com/wp-content/uploads/2025/10/about4.jpg",
+    image: "/images/courses/advanced-astrology-mentorship.jpg",
     price: 2100,
     originalPrice: 4999,
     category: "astrology",
@@ -365,8 +362,7 @@ export const COURSES: Course[] = [
       "The definitive masterclass for beginners and enthusiasts. Learn to read birth charts from scratch, decode 12 houses, 9 planets, 27 nakshatras, and understand the cosmic forces governing destiny.",
     fullDescription:
       "Are you ready to explore the cosmos and understand the deeper connections between the stars and your life? Astroraj presents The Ultimate Astrology Course, a comprehensive program designed to take you from the very basics of astrology all the way to advanced predictive techniques.\n\nWhether you are a complete beginner or already have scattered knowledge from books and internet videos, this course will organize your understanding into a systematic, authentic Vedic framework. Under the guidance of Astrologer Rajat Thakur, you will learn how to read birth charts, interpret planetary positions, understand zodiac signs, and deliver practical insights for everyday life.\n\nOur curriculum blends ancient scriptural wisdom with modern, relatable examples so you can understand yourself, your family, and others on a profound spiritual level.",
-    image:
-      "https://darkcyan-marten-836084.hostingersite.com/wp-content/uploads/2025/10/images-2-1.jpg",
+    image: "/images/courses/ultimate-astrology.jpg",
     price: 3100,
     originalPrice: 5999,
     category: "astrology",
@@ -478,8 +474,7 @@ export const COURSES: Course[] = [
       "Unlock the secrets of divine Rudraksha beads. Learn 1 to 21 Mukhi classifications, medical & bio-magnetic benefits, authentic testing methods, and ritual wearing rules.",
     fullDescription:
       "Rudraksha, the sacred teardrop of Lord Shiva believed to hold immense spiritual, bio-magnetic, and healing power, is revered across ancient Vedic scriptures. Astroraj presents the Recorded Rudraksha Crash Course, designed to provide you with a comprehensive understanding of Rudraksha beads and their profound significance in spiritual practice, healing, and personal empowerment.\n\nWhether you are a spiritual seeker, yoga practitioner, or healer looking to deepen your wisdom, this crash course is the perfect way to learn about these divine beads. Under the expert guidance of Astrologer Rajat Thakur, you will discover how to choose, wear, and use Rudraksha for physical vitality, emotional stability, and spiritual awakening.\n\nThe course is pre-recorded in crystal-clear quality, allowing you to learn at your own pace anytime, anywhere.",
-    image:
-      "https://darkcyan-marten-836084.hostingersite.com/wp-content/uploads/2025/10/about1.jpg",
+    image: "/images/courses/rudraksha-course.jpg",
     price: 3100,
     originalPrice: 4500,
     category: "rudraksha",
@@ -587,8 +582,7 @@ export const COURSES: Course[] = [
       "Master Chaldean & Pythagorean numerology. Learn Mulank & Bhagyank calculations, auspicious name correction, mobile & vehicle numerology, and career forecasting.",
     fullDescription:
       "Numerology is a fundamental aspect of cosmic science, based on the principle that numbers shape our lives in every way—from our inborn personality traits to the events we attract. At Astroraj, we offer the best comprehensive numerology course in India, designed for anyone eager to learn this fascinating discipline and uncover the hidden vibrations behind numbers.\n\nWhether you are a beginner or aiming to become a seasoned professional consultant, this course structure will guide you step-by-step to success. Our numerology course is designed to be thorough, starting from the foundational vibrations of numbers 1 to 9 and advancing into master numbers, name spelling optimization, business brand naming, and compatibility analysis.\n\nLearn directly from the teachings of Astrologer Rajat Thakur and start analyzing family, friends, and clients immediately with practical confidence.",
-    image:
-      "https://darkcyan-marten-836084.hostingersite.com/wp-content/uploads/2025/10/origin-47-1024x682.jpg",
+    image: "/images/courses/numerology-course.jpg",
     price: 3100,
     originalPrice: 4500,
     category: "numerology",

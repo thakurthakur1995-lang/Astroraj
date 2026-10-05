@@ -53,8 +53,10 @@ export const PRODUCTS: Product[] = [
     "shortDescription": "Pure natural crystal quartz (Sphatik) Shree Yantra carved with sacred geometry and energized with 1008 Sri Suktam recitations.",
     "description": "The Shree Yantra is heralded as the king of all yantras (Yantraraj). Carved from genuine, unheated, natural Himalayan quartz crystal (Sphatik), this sacred emblem embodies the divine cosmological energy of Goddess Maha Tripura Sundari. Kept in the puja room or office safe, it radiates positive electromagnetic vibrations, magnetizing prosperity, financial stability, and peace.",
     "images": [
-      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1609342122563-a43ac8917a3a?auto=format&fit=crop&w=800&q=80"
+      "/images/products/sphatik-shree-yantra/sphatik-shree-yantra-1.jpg",
+      "/images/products/sphatik-shree-yantra/sphatik-shree-yantra-2.jpg",
+      "/images/products/sphatik-shree-yantra/sphatik-shree-yantra-3.jpg",
+      "/images/products/sphatik-shree-yantra/sphatik-shree-yantra-4.jpg"
     ],
     "inStock": true,
     "sku": "AR-YAN-SPH-01",
@@ -89,8 +91,10 @@ export const PRODUCTS: Product[] = [
     "shortDescription": "Magnificent top-tier Colombian Emerald with vivid green saturation, exceptional clarity, and zero synthetic treatment.",
     "description": "Emerald (Panna) is the primary gemstone of Mercury (Budha), the planetary ruler of intellect, commercial trade, eloquent communication, and analytical mastery. Sourced directly from prestigious Colombian mines, this gemstone exhibits the prized rich verdant green glow. Thoroughly laboratory certified with comprehensive origin reporting.",
     "images": [
-      "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80"
+      "/images/products/columbia-emerald/columbia-emerald-1.jpg",
+      "/images/products/columbia-emerald/columbia-emerald-2.jpg",
+      "/images/products/columbia-emerald/columbia-emerald-3.jpg",
+      "/images/products/columbia-emerald/columbia-emerald-4.jpg"
     ],
     "inStock": true,
     "sku": "AR-GEM-COL-EM-02",
@@ -131,7 +135,10 @@ export const PRODUCTS: Product[] = [
     "shortDescription": "Mesmerizing multi-color play-of-fire Natural Black Opal for Venus (Shukra) blessings in luxury, romance, and artistic success.",
     "description": "An exceptional substitute for Diamond, Black Opal activates planet Venus (Shukra) with profound intensity. Its dark body tone dramatically accentuates vibrant flashes of red, blue, and green fire, channeling artistic magnetism, charm, and marital romance.",
     "images": [
-      "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=800&q=80"
+      "/images/products/black-opal/black-opal-1.jpg",
+      "/images/products/black-opal/black-opal-2.jpg",
+      "/images/products/black-opal/black-opal-3.jpg",
+      "/images/products/black-opal/black-opal-4.jpg"
     ],
     "inStock": true,
     "sku": "AR-GEM-BLK-OP-03",
@@ -171,7 +178,10 @@ export const PRODUCTS: Product[] = [
     "shortDescription": "Authentic Neyshabur Iranian Turquoise with pure sky-blue matrix for Jupiter (Guru) protection, victory, and stress relief.",
     "description": "Irani Firoza mined from historic Neyshabur (Nishapur) has been revered for millennia by Vedic scholars, Sufis, and royal dynasties. It shields the wearer from unexpected accidents, psychic hostility, and planetary afflictions while deepening intuition.",
     "images": [
-      "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=800&q=80"
+      "/images/products/irani-firoza/irani-firoza-1.jpg",
+      "/images/products/irani-firoza/irani-firoza-2.jpg",
+      "/images/products/irani-firoza/irani-firoza-3.jpg",
+      "/images/products/irani-firoza/irani-firoza-4.jpg"
     ],
     "inStock": true,
     "sku": "AR-GEM-IRN-FZ-04",
@@ -210,7 +220,10 @@ export const PRODUCTS: Product[] = [
     "shortDescription": "Classical traditional wealth amulet consecrated under strict Tantrik principles for unblocking trapped wealth.",
     "description": "Revered in traditional North Indian Tantra and Jyotish folklore, consecrated in auspicious Ravi Pushya or Guru Pushya Yoga with vermilion (sindoor) and clove, used to overcome lingering poverty and severe financial delays.",
     "images": [
-      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80"
+      "/images/products/billi-ki-jer/billi-ki-jer-1.jpg",
+      "/images/products/billi-ki-jer/billi-ki-jer-2.jpg",
+      "/images/products/billi-ki-jer/billi-ki-jer-3.jpg",
+      "/images/products/billi-ki-jer/billi-ki-jer-4.jpg"
     ],
     "inStock": true,
     "sku": "AR-SPI-BIL-11",
@@ -239,7 +252,10 @@ export const PRODUCTS: Product[] = [
     "shortDescription": "Consecrated yellow cotton Raksha Sutra tied during Baglamukhi Havan for personal victory, legal shield, and speech clarity.",
     "description": "Imbued with the sacred vibrations of 11,000 chants of Maa Baglamukhi Beej Mantra ('Hlim') by Guruji and priests in Rishikesh. Wear on the right wrist (for men) or left wrist (for women) during critical confrontations, interviews, or court hearings.",
     "images": [
-      "https://images.unsplash.com/photo-1620619767323-b95a89183081?auto=format&fit=crop&w=800&q=80"
+      "/images/products/baglamukhi-thread/baglamukhi-thread-1.png",
+      "/images/products/baglamukhi-thread/baglamukhi-thread-2.png",
+      "/images/products/baglamukhi-thread/baglamukhi-thread-3.png",
+      "/images/products/baglamukhi-thread/baglamukhi-thread-4.png"
     ],
     "inStock": true,
     "sku": "AR-SPI-BAG-TH-12",
@@ -268,7 +284,10 @@ export const PRODUCTS: Product[] = [
     "shortDescription": "Invoke divine prosperity, spiritual protection, and cosmic harmony this Diwali through the sacred Shree Chakra Aavaran Pooja — one of the most powerful tantric rituals dedicated to Goddess Lalita Tripura Sundari.\n\nThis special Diwali ritual...",
     "description": "Invoke divine wealth, prosperity, and abundance with the sacred Shri Lakshmi Yantra, dedicated to Goddess Mahalakshmi, the eternal bestower of fortune, luxury, and success. This Yantra radiates the pure vibrations of wealth and spiritual harmony, inviting blessings into every aspect of your life.\n\nThis powerful spiritual tool activates the eight forms of Mahalakshmi (Ashta Lakshmi), bringing material growth, prosperity, happiness, and inner peace. When worshipped with devotion, the Shri Lakshmi Yantra aligns your energy with divine abundance and removes financial obstacles and scarcity.\n\n✨ Benefits of Worshipping Shri Lakshmi Yantra:\n\nAttracts wealth, financial stability, and business growth\n\nPromotes peace, happiness, and harmony in home and workplace\n\nRemoves poverty, debts, and negative energies related to finances\n\nEnhances spiritual energy and brings balance to mind and soul\n\nInvokes continuous flow of prosperity through divine grace\n\nHow to Energize and Worship: \nPlace the Yantra on a clean altar, ideally in the northeast direction. Offer flowers, light a diya, and chant the Shree Mahalakshmi Mantra — “Om Shreem Mahalakshmaye Namah” daily for maximum benefit.\n\n🕉️ Performed by:Astrologer Rajat Thakur (AstroRaj) — Renowned Vedic astrologer and spiritual guide with over a decade of experience in sacred rituals, yantra energization, and astrology-based spiritual remedies.",
     "images": [
-      "https://darkcyan-marten-836084.hostingersite.com/wp-content/uploads/2025/10/Yantra.jpg"
+      "/images/products/shri-lakshmi-yantra/shri-lakshmi-yantra-1.jpg",
+      "/images/products/shri-lakshmi-yantra/shri-lakshmi-yantra-2.jpg",
+      "/images/products/shri-lakshmi-yantra/shri-lakshmi-yantra-3.jpg",
+      "/images/products/shri-lakshmi-yantra/shri-lakshmi-yantra-4.jpg"
     ],
     "inStock": true,
     "sku": "AR-DIW-5128",

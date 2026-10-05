@@ -43,11 +43,11 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
         {/* Left Column: Product Images */}
         <div className="lg:col-span-6 space-y-4">
-          <div className="relative h-96 w-full rounded-2xl overflow-hidden bg-ivory-card border border-border">
+          <div className="relative aspect-square w-full rounded-2xl overflow-hidden bg-ivory-card border border-border shadow-xs">
             <Image
               src={
                 product.images[activeImageIndex] ||
-                "https://images.unsplash.com/photo-1609342122563-a43ac8917a3a?auto=format&fit=crop&w=800&q=80"
+                "/images/products/sphatik-shree-yantra/sphatik-shree-yantra-1.jpg"
               }
               alt={product.name}
               fill
@@ -64,18 +64,19 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
 
           {/* Thumbnails */}
           {product.images.length > 1 && (
-            <div className="flex gap-3">
+            <div className="flex gap-3 overflow-x-auto pb-1">
               {product.images.map((img, idx) => (
                 <button
                   key={idx}
                   onClick={() => setActiveImageIndex(idx)}
-                  className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
+                  aria-label={`View photo ${idx + 1}`}
+                  className={`relative w-20 h-20 shrink-0 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
                     activeImageIndex === idx
-                      ? "border-saffron-600 shadow-sm"
+                      ? "border-saffron-600 shadow-sm ring-2 ring-saffron-500/20"
                       : "border-border opacity-70 hover:opacity-100"
                   }`}
                 >
-                  <Image src={img} alt="" fill className="object-cover" />
+                  <Image src={img} alt={`${product.name} photo ${idx + 1}`} fill className="object-cover" />
                 </button>
               ))}
             </div>
