@@ -23,6 +23,8 @@ export const metadata: Metadata = {
     "Explore authentic Vedic astrology consultations, Vastu Shastra audits, Rishikesh online pujas & havans, sacred Mantra Diksha, and traditional Ayurveda wellness guidance.",
 };
 
+export const revalidate = 3600;
+
 export default async function ServicesPage() {
   const [categories, services] = await Promise.all([
     getServiceCategories(),

@@ -247,9 +247,10 @@ export function CourseDetailClient({ course, relatedCourses }: CourseDetailClien
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
               <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-2xl overflow-hidden shrink-0 ring-4 ring-gold-400/30">
                 <Image
-                  src="https://darkcyan-marten-836084.hostingersite.com/wp-content/uploads/2025/10/fc160d79adac1616a30bd90860eba571884b7d6c-768x1024.jpg"
+                  src="/images/astrologer-rajat-study-portrait.jpg"
                   alt="Astrologer Rajat Thakur"
                   fill
+                  sizes="128px"
                   className="object-cover"
                 />
               </div>

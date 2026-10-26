@@ -11,6 +11,15 @@ interface ProductPageProps {
   params: Promise<{ slug: string }>;
 }
 
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const products = await getProducts();
+  return products.map((product) => ({
+    slug: product.slug,
+  }));
+}
+
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params;
   const product = await getProductBySlug(slug);

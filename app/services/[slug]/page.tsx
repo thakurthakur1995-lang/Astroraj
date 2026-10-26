@@ -38,6 +38,21 @@ function resolveSlug(slug: string): string {
   return slug;
 }
 
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const [services, categories] = await Promise.all([
+    getServices(),
+    getServiceCategories(),
+  ]);
+  const slugs = new Set<string>();
+  services.forEach((s) => slugs.add(s.slug));
+  categories.forEach((c) => slugs.add(c.slug));
+  slugs.add("pooja-services");
+  slugs.add("ayurveda-consultation");
+  return Array.from(slugs).map((slug) => ({ slug }));
+}
+
 export async function generateMetadata({ params }: ServicePageProps): Promise<Metadata> {
   const { slug } = await params;
   const targetSlug = resolveSlug(slug);

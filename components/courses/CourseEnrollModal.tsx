@@ -110,7 +110,7 @@ export function CourseEnrollModal({ course, isOpen, onClose }: CourseEnrollModal
         currency: data.currency || "INR",
         name: "Astro Raj Academy",
         description: `Enrollment: ${course.title}`,
-        image: "https://darkcyan-marten-836084.hostingersite.com/wp-content/uploads/2025/09/Group-1000005273.png",
+        image: "/images/logo/logo-saffron.png",
         order_id: data.orderId,
         prefill: {
           name: fullName,

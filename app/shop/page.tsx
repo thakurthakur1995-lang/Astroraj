@@ -12,6 +12,8 @@ export const metadata: Metadata = {
     "Buy 100% natural certified Vedic gemstones, Siddh Sphatik Shree Yantras, sacred rudraksha, and classical Ayurveda formulations consecrated in Rishikesh.",
 };
 
+export const revalidate = 3600;
+
 export default async function ShopPage() {
   const products = await getProducts();
 

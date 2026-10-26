@@ -2,6 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
+    formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 31536000,
     remotePatterns: [
       {
         protocol: "https",
@@ -19,13 +21,23 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "placehold.co",
       },
-      {
-        protocol: "https",
-        hostname: "darkcyan-marten-836084.hostingersite.com",
-      },
     ],
   },
+  compress: true,
   reactStrictMode: true,
+  async headers() {
+    return [
+      {
+        source: "/images/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+    ];
+  },
   async redirects() {
     return [
       {

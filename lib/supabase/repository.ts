@@ -92,7 +92,41 @@ export async function getProducts(category?: string): Promise<Product[]> {
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {
   const all = await getProducts();
-  return all.find((p) => p.slug === slug) || null;
+  const raw = slug.toLowerCase().trim();
+  let decoded = raw;
+  try {
+    decoded = decodeURIComponent(raw).toLowerCase().trim();
+  } catch {}
+
+  return (
+    all.find((p) => {
+      const pSlug = p.slug.toLowerCase().trim();
+      const pId = p.id.toLowerCase().trim();
+      if (pSlug === raw || pSlug === decoded || pId === raw || pId === decoded) {
+        return true;
+      }
+      // Backward-compatible slug resolution for historical/Hindi URLs
+      if (
+        p.id === "weight-loss-powder-chirchita-chirouta-kutki" &&
+        (raw.includes("weight-loss-powder") || decoded.includes("चिर्चिता") || decoded.includes("चिरौता"))
+      ) {
+        return true;
+      }
+      if (
+        p.id === "face-syrum-uttarakhand-brahmakamal" &&
+        (raw.includes("face-syrum") || decoded.includes("उत्तिाखंड") || decoded.includes("ब्रह्मकमल"))
+      ) {
+        return true;
+      }
+      if (
+        p.id === "kamshakti-nuskha-for-better-sex-life" &&
+        (raw.includes("kamshakti") || decoded.includes("kamshakti"))
+      ) {
+        return true;
+      }
+      return false;
+    }) || null
+  );
 }
 
 export async function getTestimonials(): Promise<Testimonial[]> {
