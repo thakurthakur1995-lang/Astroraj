@@ -125,7 +125,14 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                   className="bg-white rounded-2xl border border-border overflow-hidden hover:shadow-lg transition-all flex flex-col justify-between"
                 >
                   <div className="relative h-44 w-full bg-ivory-card">
-                    <Image src={item.images[0]} alt={item.name} fill className="object-cover" />
+                    <Image
+                      src={item.images[0]}
+                      alt={item.name}
+                      fill
+                      sizes="(max-width: 640px) 100vw, 33vw"
+                      unoptimized={Boolean(item.images[0]?.startsWith("/images/"))}
+                      className="object-cover"
+                    />
                   </div>
                   <div className="p-4 space-y-2">
                     <h3 className="font-serif text-sm font-bold text-vedic-dark truncate">

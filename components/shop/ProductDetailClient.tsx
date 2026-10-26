@@ -51,8 +51,10 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
               }
               alt={product.name}
               fill
-              className="object-cover"
               priority
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
+              unoptimized={Boolean(product.images[activeImageIndex]?.startsWith("/images/"))}
+              className="object-cover transition-opacity duration-300"
             />
             {product.certified && (
               <span className="absolute top-4 left-4 bg-white/95 backdrop-blur-xs text-vedic-dark px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-md">
@@ -76,7 +78,14 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
                       : "border-border opacity-70 hover:opacity-100"
                   }`}
                 >
-                  <Image src={img} alt={`${product.name} photo ${idx + 1}`} fill className="object-cover" />
+                  <Image
+                    src={img}
+                    alt={`${product.name} photo ${idx + 1}`}
+                    fill
+                    sizes="80px"
+                    unoptimized={Boolean(img.startsWith("/images/"))}
+                    className="object-cover"
+                  />
                 </button>
               ))}
             </div>

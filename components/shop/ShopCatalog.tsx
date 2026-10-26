@@ -123,6 +123,7 @@ export function ShopCatalog({ products }: ShopCatalogProps) {
                     fill
                     priority={index < 4}
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    unoptimized={Boolean(product.images[0]?.startsWith("/images/"))}
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                   />
 
