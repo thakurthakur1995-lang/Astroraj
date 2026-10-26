@@ -521,8 +521,8 @@ export const PRODUCTS: Product[] = [
       "diwali-items",
       "spiritual"
     ],
-    "price": 5100,
-    "originalPrice": 6630,
+    "price": 9100,
+    "originalPrice": 13000,
     "shortDescription": "Authentic & Mystical: The Hatha Jodi is one of the rarest Ayurvedic jadi bootis, handpicked, energized, and blessed for maximum spiritual potency. Widely revered in Vedic remedies, tantra, and spiritual practices, it brings protection, pros...",
     "description": "Authentic & Mystical: The Hatha Jodi is one of the rarest Ayurvedic jadi bootis, handpicked, energized, and blessed for maximum spiritual potency. Widely revered in Vedic remedies, tantra, and spiritual practices, it brings protection, prosperity, and divine blessings.\n\nSpiritual & Astrological Benefits:\n\nProtection from Negativity: Shields against evil forces, black magic, and negative energies \n\nWealth & Prosperity: Attracts financial abundance and removes obstacles in business and personal finance \n\nSuccess & Victory: Used in tantric rituals to overcome career and life hurdles \n\nImproved Relationships: Strengthens love, marriage, and personal bonds\n\nSpiritual Healing: Enhances meditation, divine connection, and spiritual power\n\nHow to Use Hatha Jodi:\n\nFor Wealth: Keep in your cash box, office, or business premises\n\nFor Protection: Place at home entrances or wear as a talisman\n\nFor Success: Use in tantric rituals or puja to overcome challenges\n\nWhy Choose Astroraj Hatha Jodi?\n\n100% Authentic & Rare Ayurvedic Herb\n\nEnergized & Blessed for maximum spiritual effect\n\nTrusted by devotees and spiritual seekers across generations\n\nAvailable now at astroraj.org \nFollow @astroraj for authentic spiritual remedies, puja samagri, and mystical tools.",
     "images": [
@@ -556,8 +556,8 @@ export const PRODUCTS: Product[] = [
       "diwali-items",
       "spiritual"
     ],
-    "price": 3499,
-    "originalPrice": 4548.7,
+    "price": 5100,
+    "originalPrice": 7286,
     "shortDescription": "Natural & Lab-Certified: The Siyar Singhi (also called Gidar Singhi) is a powerful spiritual tool, carefully energized and lab-certified to maximize protective and healing benefits. Handpicked and charged with positive energy, this male-fem...",
     "description": "Natural & Lab-Certified: The Siyar Singhi (also called Gidar Singhi) is a powerful spiritual tool, carefully energized and lab-certified to maximize protective and healing benefits. Handpicked and charged with positive energy, this male-female pair shields you from negativity and enhances overall vitality.\n\nBenefits of Siyar Singhi Energized:\n\nEnhanced Protection: Guards against negative energies and harmful influences\n\nIncreased Vitality: Boosts personal energy and overall well-being\n\nBalanced Environment: Promotes harmony and positive energy flow at home or office\n\nSupports Spiritual Practices: Ideal for meditation, puja, and other spiritual rituals\n\nVersatile Usage: Place them at home, office, or carry personally for continuous protection\n\nHow to Use: \nPlace the pair in a prominent location in your home, office, or carry with you during meditation to benefit from their protective and energy-enhancing properties.\n\nCare Instructions: \nKeep in a clean, dry space. Avoid harsh chemicals or physical damage to maintain effectiveness.\n\nTrusted Spiritual Tool: Combining ancient wisdom with modern certification, Siyar Singhi Energized is perfect for devotees, spiritual practitioners, and anyone seeking protection, vitality, and harmony in their life.\n\nOrder now at astroraj.org \nFollow @astroraj for authentic spiritual tools, remedies, and puja essentials.",
     "images": [
