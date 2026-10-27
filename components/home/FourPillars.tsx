@@ -55,7 +55,7 @@ export function FourPillars() {
       tagline: "Nadi Pariksha • Dosha Balance • Herbs",
       description: "Integrate ancient Vedic health wisdom, Dinacharya, and classical Dhanvantari herbal formulations to revitalize bodily vitality and calm the mind.",
       icon: Leaf,
-      image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80",
+      image: "/images/services/vedic-lifestyle-ayurveda-wellness.jpg",
       link: "/services/ayurveda",
       cta: "Explore Ayurveda",
       badge: "Holistic Health",

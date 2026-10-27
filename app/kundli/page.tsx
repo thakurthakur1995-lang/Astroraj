@@ -98,19 +98,25 @@ export default function KundliPage() {
             </div>
 
             <div className="lg:col-span-5 relative">
-              <div className="relative h-80 sm:h-96 w-full rounded-2xl overflow-hidden shadow-xl border border-border bg-vedic-dark">
+              <div className="relative h-80 sm:h-96 w-full rounded-2xl overflow-hidden shadow-xl border border-gold-500/30 bg-vedic-dark group">
                 <Image
-                  src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80"
-                  alt="Vedic Kundli Cosmic Chart"
+                  src="/images/vedic-janam-kundli.jpg"
+                  alt="Authentic Vedic Janma Kundli Birth Chart"
                   fill
-                  className="object-cover opacity-80"
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 500px"
+                  className="object-cover object-center group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-vedic-dark via-vedic-dark/40 to-transparent" />
-                <div className="absolute bottom-6 inset-x-6 text-white text-center space-y-1">
+                <div className="absolute inset-0 bg-gradient-to-t from-vedic-dark/90 via-vedic-dark/30 to-black/10" />
+                <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-gold-400/40 text-[11px] font-semibold text-gold-300 flex items-center gap-1.5 shadow-sm">
+                  <Sparkles className="w-3 h-3 text-gold-400" />
+                  <span>Authentic Janma Patri</span>
+                </div>
+                <div className="absolute bottom-5 inset-x-6 text-white text-center space-y-1">
                   <div className="text-xs uppercase tracking-widest text-gold-400 font-bold">
                     Parashara & Jaimini Jyotish
                   </div>
-                  <div className="font-serif text-xl font-bold">
+                  <div className="font-serif text-xl font-bold drop-shadow-sm">
                     Divisional Chart Scrutiny (D1, D9, D10)
                   </div>
                 </div>

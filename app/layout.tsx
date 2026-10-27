@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     siteName: "Astro Raj",
     images: [
       {
-        url: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1200&q=80",
+        url: "/images/services/personal-astrology-consultation.jpg",
         width: 1200,
         height: 630,
         alt: "Astrologer Rajat Thakur - Astro Raj",
@@ -69,7 +69,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Astro Raj | Vedic Astrology & Spiritual Guidance",
     description: "Personalized Vedic Astrology, Kundli analysis, and online pujas by Astrologer Rajat Thakur.",
-    images: ["https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1200&q=80"],
+    images: ["/images/services/personal-astrology-consultation.jpg"],
   },
   alternates: {
     canonical: "https://astroraj.org",
