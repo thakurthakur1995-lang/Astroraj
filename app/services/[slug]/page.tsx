@@ -217,6 +217,98 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
             </div>
           )}
 
+          {/* Special Highlights for Certified Vedic Gemstones */}
+          {matchedCategory.id === "gemstones" && (
+            <div className="bg-white rounded-3xl border border-border p-6 sm:p-8 shadow-xs space-y-6">
+              <div className="space-y-1">
+                <span className="text-xs font-bold uppercase tracking-wider text-saffron-700">
+                  Sacred Navratna & Planetary Science
+                </span>
+                <h2 className="font-serif text-2xl font-bold text-vedic-dark">
+                  The Nine Planetary Gemstones of Vedic Astrology
+                </h2>
+                <p className="text-xs sm:text-sm text-vedic-muted max-w-3xl leading-relaxed">
+                  Each authentic gemstone acts as an optical transducer of planetary rays (Kirana). In Vedic Jyotish, wearing the exact stone aligned with your Yogakaraka planet enhances vitality, prosperity, and divine grace.
+                </p>
+              </div>
+
+              {/* Real Gemstones Visual Guide Banner */}
+              <div className="rounded-2xl overflow-hidden border border-border bg-vedic-dark shadow-md">
+                <Image
+                  src="/images/services/vedic-astrology-gemstones-guide.webp"
+                  alt="Vedic Astrology Navratna Gemstones Complete Guide"
+                  width={1600}
+                  height={900}
+                  priority
+                  className="w-full h-auto object-cover"
+                />
+              </div>
+
+              {/* Real Certified Gemstones Showcase */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                <div className="p-4 rounded-2xl bg-ivory border border-border space-y-3">
+                  <div className="h-44 w-full rounded-xl overflow-hidden border border-border/80 bg-white flex items-center justify-center">
+                    <Image
+                      src="/images/services/yellow-sapphire-pukhraj-certified.png"
+                      alt="Certified Natural Ceylon Yellow Sapphire Pukhraj"
+                      width={400}
+                      height={300}
+                      className="w-full h-44 object-contain p-3"
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-sm font-bold text-vedic-dark">
+                      Pukhraj (Yellow Sapphire)
+                    </h3>
+                    <p className="text-[11px] text-vedic-muted leading-relaxed mt-1">
+                      Governed by Brihaspati (Guru). Recommended on Index Finger in Gold or Panchdhatu for knowledge, progeny, and auspicious fortune.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-ivory border border-border space-y-3">
+                  <div className="h-44 w-full rounded-xl overflow-hidden border border-border/80 bg-white flex items-center justify-center">
+                    <Image
+                      src="/images/products/columbia-emerald/columbia-emerald-1.jpg"
+                      alt="Natural Colombian Emerald Panna with genuine jardin inclusions"
+                      width={400}
+                      height={300}
+                      className="w-full h-44 object-contain p-2"
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-sm font-bold text-vedic-dark">
+                      Panna (Natural Colombian Emerald)
+                    </h3>
+                    <p className="text-[11px] text-vedic-muted leading-relaxed mt-1">
+                      Governed by Budha (Mercury). Tested for authentic crystal jardin. Activates sharp intellect, commerce, and expressive communication.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-ivory border border-border space-y-3">
+                  <div className="h-44 w-full rounded-xl overflow-hidden border border-border/80 flex items-center justify-center">
+                    <Image
+                      src="/images/services/gemstone-consultation-natural-gems.jpg"
+                      alt="Natural Untreated Ruby, Sapphire & Emerald on Slate"
+                      width={400}
+                      height={300}
+                      className="w-full h-44 object-cover"
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-sm font-bold text-vedic-dark">
+                      Manikya & Neelam (Ruby & Sapphire)
+                    </h3>
+                    <p className="text-[11px] text-vedic-muted leading-relaxed mt-1">
+                      Earth-mined untreated gemstones consecrated under auspicious Muhurta, ensuring genuine Vedic resonant frequencies.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Services List in Category */}
           <div className="space-y-6">
             <h2 className="font-serif text-2xl font-bold text-vedic-dark">
@@ -433,6 +525,141 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
             </div>
           </div>
         </div>
+
+        {/* Real Certified Gemstones Showcase for Gemstone Consultation */}
+        {matchedService.slug === "gemstone-consultation" && (
+          <div className="bg-white rounded-3xl border border-border p-6 sm:p-10 shadow-xs space-y-8">
+            <div className="space-y-2">
+              <span className="text-xs font-bold uppercase tracking-wider text-saffron-700">
+                100% Earth-Mined &amp; Lab-Certified
+              </span>
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-vedic-dark">
+                Authentic Jyotish Gemstone Standards &amp; Planetary Consecration
+              </h2>
+              <p className="text-xs sm:text-sm text-vedic-muted max-w-3xl leading-relaxed">
+                Astrological gemstones must be 100% natural, unheated, untreated, and free from internal dead fractures to transmit pure planetary energy (Kirana). Each stone is hand-inspected with gemological instruments and energized with Vedic Beej Mantras.
+              </p>
+            </div>
+
+            {/* Real Gemstones Guide Chart */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-vedic-dark uppercase tracking-wider">
+                  Vedic Navratna Planetary Reference Chart
+                </span>
+                <span className="text-[11px] text-vedic-muted">
+                  9 Sacred Planetary Correspondences
+                </span>
+              </div>
+              <div className="rounded-2xl overflow-hidden border border-border bg-vedic-dark shadow-md">
+                <Image
+                  src="/images/services/vedic-astrology-gemstones-guide.webp"
+                  alt="Vedic Astrology Navratna Gemstones Complete Guide"
+                  width={1600}
+                  height={900}
+                  priority
+                  className="w-full h-auto object-cover"
+                />
+              </div>
+            </div>
+
+            {/* Real Gemstones Gallery Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+              <div className="p-5 rounded-2xl bg-ivory border border-border space-y-4 flex flex-col justify-between">
+                <div className="space-y-3">
+                  <div className="h-48 w-full rounded-xl overflow-hidden border border-border/80 bg-white shadow-xs flex items-center justify-center">
+                    <Image
+                      src="/images/services/yellow-sapphire-pukhraj-certified.png"
+                      alt="Certified Ceylon Yellow Sapphire (Pukhraj)"
+                      width={400}
+                      height={320}
+                      className="w-full h-48 object-contain p-4"
+                    />
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-serif text-base font-bold text-vedic-dark">
+                        Pukhraj (Yellow Sapphire)
+                      </h3>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800">
+                        Guru (Jupiter)
+                      </span>
+                    </div>
+                    <p className="text-xs text-vedic-muted leading-relaxed mt-2">
+                      Untreated natural Ceylon sapphire with luminous golden fire. Sourced for spiritual wisdom, progeny, higher knowledge, and divine protection.
+                    </p>
+                  </div>
+                </div>
+                <div className="pt-3 border-t border-border/60 text-[11px] text-vedic-dark font-medium flex items-center justify-between">
+                  <span>Metal: Gold / Panchdhatu</span>
+                  <span>Finger: Index (Tarjani)</span>
+                </div>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-ivory border border-border space-y-4 flex flex-col justify-between">
+                <div className="space-y-3">
+                  <div className="h-48 w-full rounded-xl overflow-hidden border border-border/80 bg-white shadow-xs flex items-center justify-center">
+                    <Image
+                      src="/images/products/columbia-emerald/columbia-emerald-1.jpg"
+                      alt="Natural Colombian Emerald (Panna)"
+                      width={400}
+                      height={320}
+                      className="w-full h-48 object-contain p-3"
+                    />
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-serif text-base font-bold text-vedic-dark">
+                        Panna (Colombian Emerald)
+                      </h3>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">
+                        Budha (Mercury)
+                      </span>
+                    </div>
+                    <p className="text-xs text-vedic-muted leading-relaxed mt-2">
+                      Unheated with authentic natural &ldquo;jardin&rdquo; crystal inclusions. Enhances analytical brilliance, speech persuasion, and business growth.
+                    </p>
+                  </div>
+                </div>
+                <div className="pt-3 border-t border-border/60 text-[11px] text-vedic-dark font-medium flex items-center justify-between">
+                  <span>Metal: Silver / Gold</span>
+                  <span>Finger: Little (Kanishtha)</span>
+                </div>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-ivory border border-border space-y-4 flex flex-col justify-between">
+                <div className="space-y-3">
+                  <div className="h-48 w-full rounded-xl overflow-hidden border border-border/80 shadow-xs flex items-center justify-center">
+                    <Image
+                      src="/images/services/gemstone-consultation-natural-gems.jpg"
+                      alt="Natural Untreated Ruby, Sapphire &amp; Emerald on Slate"
+                      width={400}
+                      height={320}
+                      className="w-full h-48 object-cover"
+                    />
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-serif text-base font-bold text-vedic-dark">
+                        Manikya &amp; Neelam
+                      </h3>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-800">
+                        Surya &amp; Shani
+                      </span>
+                    </div>
+                    <p className="text-xs text-vedic-muted leading-relaxed mt-2">
+                      Natural unheated Rubies and Blue Sapphires on raw mineral slate. Tested rigorously for Shadbala strength before astrological recommendation.
+                    </p>
+                  </div>
+                </div>
+                <div className="pt-3 border-t border-border/60 text-[11px] text-vedic-dark font-medium flex items-center justify-between">
+                  <span>100% Earth-Mined</span>
+                  <span>Lab Certified</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Process Steps */}
         <div className="bg-white rounded-2xl p-6 sm:p-8 border border-border shadow-xs space-y-6">

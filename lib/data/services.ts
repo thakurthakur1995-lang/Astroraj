@@ -10,7 +10,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
     longDescription: "Rooted in authentic Parashari and Jaimini Vedic astrology, Guruji offers deep insights into planetary influences, karmic timelines, and practical spiritual remedies without fear-based predictions. Available both online via HD call and offline in-person at Rishikesh Ashram.",
     iconName: "Compass",
     badge: "Most Popular",
-    featuredImage: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=800&q=80",
+    featuredImage: "/images/vedic-janam-kundli.jpg",
   },
   {
     id: "vastu",
@@ -60,7 +60,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
     longDescription: "Avoid wearing random stones that can aggravate malefic planets. Receive precise gemstone consultations followed by Siddh energization with specific Vedic mantras.",
     iconName: "Sparkles",
     badge: "100% Certified",
-    featuredImage: "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?auto=format&fit=crop&w=800&q=80",
+    featuredImage: "/images/services/gemstone-consultation-natural-gems.jpg",
   },
 ];
 
@@ -794,7 +794,7 @@ export const SERVICES: Service[] = [
     title: "Personalized Gemstone Recommendation",
     shortDescription: "Precise planetary calculation to prescribe only favorable auspicious gemstones, metal, finger, and energization mantras.",
     fullDescription: "Wearing an incorrect gemstone (like Blue Sapphire or Ruby when Saturn or Sun is a functional malefic) can cause severe disruptions. Astrologer Rajat Thakur thoroughly checks Shadbala, Ashtakvarga, and House lordship before advising any stone.",
-    image: "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?auto=format&fit=crop&w=800&q=80",
+    image: "/images/services/gemstone-consultation-natural-gems.jpg",
     priceStartingFrom: 2100,
     featured: true,
     pricingTiers: CONSULTATION_PRICING_MATRIX,
