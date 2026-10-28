@@ -215,8 +215,8 @@ export const PRODUCTS: Product[] = [
     "categories": [
       "spiritual"
     ],
-    "price": 2999.25,
-    "originalPrice": 3800,
+    "price": 7100,
+    "originalPrice": 8900,
     "shortDescription": "Classical traditional wealth amulet consecrated under strict Tantrik principles for unblocking trapped wealth.",
     "description": "Revered in traditional North Indian Tantra and Jyotish folklore, consecrated in auspicious Ravi Pushya or Guru Pushya Yoga with vermilion (sindoor) and clove, used to overcome lingering poverty and severe financial delays.",
     "images": [
@@ -691,8 +691,8 @@ export const PRODUCTS: Product[] = [
     "categories": [
       "gemstones"
     ],
-    "price": 1500,
-    "originalPrice": 1875,
+    "price": 2100,
+    "originalPrice": 2625,
     "shortDescription": "Moldavite is a rare and powerful crystal formed from a meteorite impact over 15 million years ago, found only in the Czech Republic. Known as the Stone of Transformation, Moldavite carries intense cosmic energy that helps accelerate spiritu...",
     "description": "Moldavite is a rare and powerful crystal formed from a meteorite impact over 15 million years ago, found only in the Czech Republic. Known as the Stone of Transformation, Moldavite carries intense cosmic energy that helps accelerate spiritual awakening and personal evolution.\n\nThis green tektite is believed to open and activate the heart, third eye, and crown chakras, enhancing intuition, psychic abilities, and connection to higher realms. Moldavite’s high vibrational frequency assists in clearing emotional blockages, removing negativity, and aligning you with your soul’s true purpose.",
     "images": [

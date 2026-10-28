@@ -124,6 +124,12 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
       ) {
         return true;
       }
+      if (
+        p.id === "billi-ki-jer" &&
+        (raw.includes("billi-ki-zer") || decoded.includes("billi-ki-zer") || (raw.includes("billi") && raw.includes("zer")))
+      ) {
+        return true;
+      }
       return false;
     }) || null
   );
