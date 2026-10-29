@@ -526,6 +526,119 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
           </div>
         </div>
 
+        {/* Sacred Ritual Gallery for Shri Chakra Sahasran Pooja */}
+        {matchedService.slug === "shri-chakra-sahasran-pooja" && (
+          <div className="bg-white rounded-3xl border border-border p-6 sm:p-10 shadow-xs space-y-8">
+            <div className="space-y-2">
+              <span className="text-xs font-bold uppercase tracking-wider text-saffron-700">
+                श्री विद्या व महामेरु अनुष्ठान दर्शन
+              </span>
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-vedic-dark">
+                Sacred Shri Vidya Rituals &amp; Maha Meru Archana
+              </h2>
+              <p className="text-xs sm:text-sm text-vedic-muted max-w-3xl leading-relaxed">
+                Performed in Rishikesh under the sacred lineage of Jagatguru Shankaracharya Swaroopananda Saraswati with pure Kumkum, Vedic Bilva, and 1,008 names of Sri Lalita Maha Tripurasundari.
+              </p>
+            </div>
+
+            {/* Rituals Gallery Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+              {/* Image 1: Maha Meru Kumkum Archana */}
+              <div className="p-5 rounded-2xl bg-ivory border border-border space-y-4 flex flex-col justify-between hover:shadow-md transition-shadow">
+                <div className="space-y-3">
+                  <div className="h-64 sm:h-72 w-full rounded-xl overflow-hidden border border-border/80 bg-vedic-dark/5 shadow-xs flex items-center justify-center relative">
+                    <Image
+                      src="/images/services/shri-chakra-kumkum-archana.jpg"
+                      alt="Shri Lalita Sahasranama Maha Meru Kumkum Archana"
+                      fill
+                      className="object-cover hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-serif text-base font-bold text-vedic-dark">
+                        Maha Meru Kumkum Archana
+                      </h3>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-saffron-100 text-saffron-800">
+                        ललिता सहस्रनाम
+                      </span>
+                    </div>
+                    <p className="text-xs text-vedic-muted leading-relaxed mt-2">
+                      Continuous recitation of 1,008 divine secret names with pure vermilion (Kumkum) offered at the Bindu and Trikona of the sacred 3D Maha Meru.
+                    </p>
+                  </div>
+                </div>
+                <div className="pt-3 border-t border-border/60 text-[11px] text-vedic-dark font-medium flex items-center justify-between">
+                  <span>Ritual: Shri Suktam &amp; Nyasa</span>
+                  <span className="text-saffron-700 font-semibold">Tantrokta Vidhi</span>
+                </div>
+              </div>
+
+              {/* Image 2: Siddh Maha Meru Haldi & Pushpa Aradhana */}
+              <div className="p-5 rounded-2xl bg-ivory border border-border space-y-4 flex flex-col justify-between hover:shadow-md transition-shadow">
+                <div className="space-y-3">
+                  <div className="h-64 sm:h-72 w-full rounded-xl overflow-hidden border border-border/80 bg-vedic-dark/5 shadow-xs flex items-center justify-center relative">
+                    <Image
+                      src="/images/services/shri-chakra-mahameru-haldi.jpg"
+                      alt="Siddh Maha Meru Swarnapushpa & Haridra Archana"
+                      fill
+                      className="object-cover hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-serif text-base font-bold text-vedic-dark">
+                        Haridra &amp; Swarna Pushpa
+                      </h3>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800">
+                        महामेरु प्रतिष्ठा
+                      </span>
+                    </div>
+                    <p className="text-xs text-vedic-muted leading-relaxed mt-2">
+                      Consecration of the 9 Avaranas (circuits) using energized organic turmeric, saffron chandan, and fresh marigold offerings for sovereign prosperity.
+                    </p>
+                  </div>
+                </div>
+                <div className="pt-3 border-t border-border/60 text-[11px] text-vedic-dark font-medium flex items-center justify-between">
+                  <span>Significance: 9 Avarana Puja</span>
+                  <span className="text-emerald-700 font-semibold">Dhan &amp; Vaibhav</span>
+                </div>
+              </div>
+
+              {/* Image 3: Sphatik Shri Yantra Kshira Abhishekam */}
+              <div className="p-5 rounded-2xl bg-ivory border border-border space-y-4 flex flex-col justify-between hover:shadow-md transition-shadow">
+                <div className="space-y-3">
+                  <div className="h-64 sm:h-72 w-full rounded-xl overflow-hidden border border-border/80 bg-vedic-dark/5 shadow-xs flex items-center justify-center relative">
+                    <Image
+                      src="/images/services/shri-chakra-sphatik-abhishekam.jpg"
+                      alt="Sphatik Shri Yantra Kshira Abhishekam with Shankham"
+                      fill
+                      className="object-cover hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-serif text-base font-bold text-vedic-dark">
+                        Sphatik Kshira Abhishekam
+                      </h3>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-800">
+                        शंखोदक अभिषेक
+                      </span>
+                    </div>
+                    <p className="text-xs text-vedic-muted leading-relaxed mt-2">
+                      Holy Panchamrita and pure Gangajal poured via energized Dakshinavarti Shankha over the 100% natural Sphatik (crystal) Meru to absorb cosmic planetary rays.
+                    </p>
+                  </div>
+                </div>
+                <div className="pt-3 border-t border-border/60 text-[11px] text-vedic-dark font-medium flex items-center justify-between">
+                  <span>Medium: Sphatik (Quartz)</span>
+                  <span className="text-blue-700 font-semibold">Panchamrit Snan</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Real Certified Gemstones Showcase for Gemstone Consultation */}
         {matchedService.slug === "gemstone-consultation" && (
           <div className="bg-white rounded-3xl border border-border p-6 sm:p-10 shadow-xs space-y-8">

@@ -33,7 +33,7 @@ export function FourPillars() {
       tagline: "Shri Vidya • Baglamukhi • Vastu • Havans",
       description: "Traditional Vedic havans conducted on the banks of Maa Ganga in Rishikesh with personalized Gotra Sankalp. Join online live or attend in-person.",
       icon: Flame,
-      image: "/images/services/shri-chakra-sahasran-pooja.jpg",
+      image: "/images/services/pooja-services-havans.jpg",
       link: "/services/online-puja",
       cta: "Explore Pujas",
       badge: "Rishikesh Vidhi",
