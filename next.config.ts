@@ -71,6 +71,16 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
+        source: "/shop/gomati-chakrasiddh11-pcs",
+        destination: "/shop/gomati-chakrasiddh5-pcs",
+        permanent: true,
+      },
+      {
+        source: "/shop/pili-kodisiddh21-pcs",
+        destination: "/shop/pili-kodisiddh5-pcs",
+        permanent: true,
+      },
+      {
         source: "/blog/:slug*",
         destination: "/",
         permanent: true,

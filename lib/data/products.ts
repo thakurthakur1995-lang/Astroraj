@@ -340,9 +340,9 @@ export const PRODUCTS: Product[] = [
     "origin": "Rishikesh, Uttarakhand, India"
   },
   {
-    "id": "gomati-chakrasiddh11-pcs",
-    "slug": "gomati-chakrasiddh11-pcs",
-    "name": "Gomati Chakra(Siddh)(11 pcs)",
+    "id": "gomati-chakrasiddh5-pcs",
+    "slug": "gomati-chakrasiddh5-pcs",
+    "name": "Gomati Chakra(Siddh)(5 pcs)",
     "category": "diwali-items",
     "categoryLabel": "Diwali Items",
     "categories": [
@@ -354,7 +354,7 @@ export const PRODUCTS: Product[] = [
     "shortDescription": "Symbol of Luck, Wealth & Protection ?\n\n?? Natural & Auspicious: Each Gomati Chakra is naturally formed, handpicked, and purified for spiritual use. A sacred item revered in Vedic traditions.",
     "description": "?? Natural & Auspicious: Each Gomati Chakra is naturally formed, handpicked, and purified for spiritual use. A sacred item revered in Vedic traditions.\n\n?? Spiritual Benefits:\n\nBrings luck, prosperity, and abundance ??\n\nPromotes good health and overall well-being ??\n\nUsed in Pooja, rituals, and spiritual worships ??\n\nBelieved to protect children and the household ??\n\n?? Perfect for Gifting & Puja: Comes in premium packaging, making it ideal for personal worship or gifting to loved ones during festivals like Diwali, Navratri, or Lakshmi Puja.\n\n?? Trusted by Devotees: Astroraj delivers authentic spiritual items, handpicked for quality and positive energy, trusted by millions seeking divine blessings.\n\n? Order with Confidence: Return or replacement guaranteed if you face any concerns. Your spiritual satisfaction is our priority.\n\n?? Available now at ?? astroraj.org \n?? Follow @astroraj for authentic spiritual products, remedies, and puja essentials.",
     "images": [
-      "/images/products/gomati-chakrasiddh11-pcs/gomati-chakrasiddh11-pcs-1.webp"
+      "/images/products/gomati-chakrasiddh5-pcs/gomati-chakrasiddh5-pcs-1.webp"
     ],
     "inStock": true,
     "sku": "AR-DIW-4617",
@@ -374,9 +374,9 @@ export const PRODUCTS: Product[] = [
     "origin": "Gomati River, Dwarka, Gujarat"
   },
   {
-    "id": "pili-kodisiddh21-pcs",
-    "slug": "pili-kodisiddh21-pcs",
-    "name": "Pili Kodi(Siddh)(21 Pcs)",
+    "id": "pili-kodisiddh5-pcs",
+    "slug": "pili-kodisiddh5-pcs",
+    "name": "Pili Kodi(Siddh)(5 Pcs)",
     "category": "diwali-items",
     "categoryLabel": "Diwali Items",
     "categories": [
@@ -388,7 +388,7 @@ export const PRODUCTS: Product[] = [
     "shortDescription": "(Yellow Cowrie Shell) Symbol of Goddess Lakshmi \n\nNatural & Authentic: Each Pili Kodi is handpicked, naturally sourced, and quality-checked. 100% organic, earthly mined & authentic no artificial treatments!\n\n Spiritual Significance: A sacre...",
     "description": "Natural & Authentic: Each Pili Kodi is handpicked, naturally sourced, and quality-checked. 100% organic, earthly mined & authentic ? no artificial treatments!\n\nSpiritual Significance: A sacred symbol of Maa Lakshmi, it is widely used in Pooja, Meditation, Divination, Protection rituals, and for attracting prosperity & spiritual growth.\n\nPackaging & Quality: Comes in a beautiful gift box with Astroraj certificate of authenticity ? making it perfect for personal use or gifting.\n\nTrusted Value: From generations, cowrie shells have been revered as powerful spiritual tools. Astroraj brings the best, trusted by millions in the field of crystals, healing stones & astrology.\n\nWarranty of Faith: Your trust matters! If you face any concern, simply email us (details inside box) ? hassle-free replacement/return.\n\nBring home the divine blessings of Pili Kodi and invite wealth, positivity, and protection into your life.\n\nAvailable at astroraj.org \nFollow @astroraj for more authentic spiritual products & remedies.",
     "images": [
-      "/images/products/pili-kodisiddh21-pcs/pili-kodisiddh21-pcs-1.webp"
+      "/images/products/pili-kodisiddh5-pcs/pili-kodisiddh5-pcs-1.webp"
     ],
     "inStock": true,
     "sku": "AR-DIW-4616",

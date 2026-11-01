@@ -130,6 +130,18 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
       ) {
         return true;
       }
+      if (
+        p.id === "gomati-chakrasiddh5-pcs" &&
+        (raw.includes("gomati-chakrasiddh11-pcs") || decoded.includes("gomati-chakrasiddh11-pcs"))
+      ) {
+        return true;
+      }
+      if (
+        p.id === "pili-kodisiddh5-pcs" &&
+        (raw.includes("pili-kodisiddh21-pcs") || decoded.includes("pili-kodisiddh21-pcs"))
+      ) {
+        return true;
+      }
       return false;
     }) || null
   );
