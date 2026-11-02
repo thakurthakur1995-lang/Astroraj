@@ -7,6 +7,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { MobileStickyBar } from "@/components/layout/MobileStickyBar";
 import { CartDrawer } from "@/components/layout/CartDrawer";
+import { DiwaliPromoPopup } from "@/components/layout/DiwaliPromoPopup";
 import { SITE_SETTINGS } from "@/lib/constants";
 
 export const viewport: Viewport = {
@@ -104,6 +105,7 @@ export default function RootLayout({
         <CartProvider>
           <Navbar />
           <CartDrawer />
+          <DiwaliPromoPopup />
           <main className="flex-grow">{children}</main>
           <Footer />
           <MobileStickyBar />

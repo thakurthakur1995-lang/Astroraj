@@ -274,3 +274,34 @@ h3,
 .animate-backdrop-in {
   animation: fadeInBackdrop 0.22s ease-out forwards;
 }
+
+@keyframes popupZoomIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.92) translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-popup-in {
+  animation: popupZoomIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes festiveBlink {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(208, 94, 45, 0.4), 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(245, 158, 11, 0), 0 14px 28px -4px rgba(208, 94, 45, 0.35);
+    transform: scale(1.025);
+  }
+}
+
+.animate-festive-blink {
+  animation: festiveBlink 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+

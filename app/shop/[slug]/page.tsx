@@ -77,7 +77,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
               Spiritual Background & Vedic Significance
             </h2>
             <div className="text-sm text-vedic-dark/85 leading-relaxed space-y-3">
-              <p>{product.description}</p>
+              <p className="whitespace-pre-line">{product.description}</p>
               <p>
                 In the tradition of Astrologer Rajat Thakur, physical remedies must resonate with pure sattvic intention. Every sacred article is cleansed with holy Ganga water and sanctified with authentic Vedic stotras to awaken its subtle energetic matrix before dispatch.
               </p>

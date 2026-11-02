@@ -110,7 +110,7 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
             <h1 className="font-serif text-2xl sm:text-3xl font-bold text-vedic-dark">
               {product.name}
             </h1>
-            <p className="text-xs sm:text-sm text-vedic-muted leading-relaxed">
+            <p className="text-xs sm:text-sm text-vedic-muted leading-relaxed whitespace-pre-line">
               {product.shortDescription}
             </p>
           </div>
