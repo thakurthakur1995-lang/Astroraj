@@ -131,9 +131,15 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
               </div>
             </div>
 
-            <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
-              In Stock & Ready for Dispatch
-            </span>
+            {product.inStock ? (
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+                In Stock & Ready for Dispatch
+              </span>
+            ) : (
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200">
+                Out of Stock
+              </span>
+            )}
           </div>
 
           {/* Suitable Zodiacs (if gemstone) */}
@@ -176,16 +182,20 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
               <span className="text-xs font-bold text-vedic-dark">Quantity:</span>
               <div className="flex items-center border border-border rounded-lg bg-ivory">
                 <button
+                  type="button"
+                  disabled={!product.inStock}
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="p-2 hover:bg-white text-vedic-muted hover:text-vedic-dark cursor-pointer transition-colors"
+                  className="p-2 hover:bg-white text-vedic-muted hover:text-vedic-dark disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
                   aria-label="Decrease quantity"
                 >
                   <Minus className="w-4 h-4" />
                 </button>
                 <span className="px-4 text-xs font-bold">{quantity}</span>
                 <button
+                  type="button"
+                  disabled={!product.inStock}
                   onClick={() => setQuantity(quantity + 1)}
-                  className="p-2 hover:bg-white text-vedic-muted hover:text-vedic-dark cursor-pointer transition-colors"
+                  className="p-2 hover:bg-white text-vedic-muted hover:text-vedic-dark disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
                   aria-label="Increase quantity"
                 >
                   <Plus className="w-4 h-4" />
@@ -195,18 +205,30 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               <button
-                onClick={() => addToCart(product, quantity)}
-                className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl border border-saffron-600 text-saffron-700 hover:bg-saffron-50 font-semibold text-xs shadow-xs transition-colors cursor-pointer"
+                type="button"
+                disabled={!product.inStock}
+                onClick={() => product.inStock && addToCart(product, quantity)}
+                className={`w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl font-semibold text-xs shadow-xs transition-colors ${
+                  product.inStock
+                    ? "border border-saffron-600 text-saffron-700 hover:bg-saffron-50 cursor-pointer"
+                    : "border border-neutral-300 text-neutral-400 bg-neutral-100 cursor-not-allowed opacity-75"
+                }`}
               >
                 <ShoppingBag className="w-4 h-4" />
-                <span>Add to Cart</span>
+                <span>{product.inStock ? "Add to Cart" : "Out of Stock"}</span>
               </button>
 
               <button
-                onClick={handleBuyNow}
-                className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-saffron-600 hover:bg-saffron-700 text-white font-semibold text-xs shadow-md transition-colors cursor-pointer"
+                type="button"
+                disabled={!product.inStock}
+                onClick={product.inStock ? handleBuyNow : undefined}
+                className={`w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl font-semibold text-xs shadow-md transition-colors ${
+                  product.inStock
+                    ? "bg-saffron-600 hover:bg-saffron-700 text-white cursor-pointer"
+                    : "bg-neutral-300 text-neutral-500 cursor-not-allowed opacity-75"
+                }`}
               >
-                <span>Buy Now with Free Delivery</span>
+                <span>{product.inStock ? "Buy Now with Free Delivery" : "Currently Unavailable"}</span>
               </button>
             </div>
 

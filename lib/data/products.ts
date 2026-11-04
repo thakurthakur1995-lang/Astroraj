@@ -528,7 +528,7 @@ export const PRODUCTS: Product[] = [
     "images": [
       "/images/products/the-original-hatha-jodi/the-original-hatha-jodi-1.webp"
     ],
-    "inStock": true,
+    "inStock": false,
     "sku": "AR-DIW-4612",
     "featured": false,
     "certified": true,

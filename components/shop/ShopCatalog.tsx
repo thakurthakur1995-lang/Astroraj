@@ -139,6 +139,13 @@ export function ShopCatalog({ products }: ShopCatalogProps) {
                   <span className="absolute top-2.5 right-2.5 bg-vedic-dark/80 text-white px-2 py-0.5 rounded text-[10px] font-semibold">
                     {product.categoryLabel}
                   </span>
+
+                  {/* Out of Stock Badge */}
+                  {!product.inStock && (
+                    <span className="absolute bottom-2.5 left-2.5 bg-rose-600/90 text-white px-2 py-0.5 rounded text-[10px] font-bold shadow-xs">
+                      Out of Stock
+                    </span>
+                  )}
                 </Link>
 
                 {/* Product Info */}
@@ -167,10 +174,16 @@ export function ShopCatalog({ products }: ShopCatalogProps) {
                     </div>
 
                     <button
-                      onClick={() => addToCart(product, 1)}
-                      className="p-2 rounded-lg bg-saffron-600 hover:bg-saffron-700 text-white shadow-xs transition-colors cursor-pointer"
-                      title="Add to cart"
-                      aria-label={`Add ${product.name} to cart`}
+                      type="button"
+                      disabled={!product.inStock}
+                      onClick={() => product.inStock && addToCart(product, 1)}
+                      className={`p-2 rounded-lg text-white shadow-xs transition-colors ${
+                        product.inStock
+                          ? "bg-saffron-600 hover:bg-saffron-700 cursor-pointer"
+                          : "bg-neutral-300 text-neutral-400 cursor-not-allowed opacity-70"
+                      }`}
+                      title={product.inStock ? "Add to cart" : "Out of stock"}
+                      aria-label={product.inStock ? `Add ${product.name} to cart` : `${product.name} is out of stock`}
                     >
                       <ShoppingBag className="w-4 h-4" />
                     </button>
