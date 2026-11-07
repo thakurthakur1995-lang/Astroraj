@@ -142,6 +142,12 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
       ) {
         return true;
       }
+      if (
+        p.id === "dakshinamurthy-kavach" &&
+        (raw.includes("dakshinamurti") || raw.includes("dakshinamurthy") || decoded.includes("दक्षिणामूर्ति"))
+      ) {
+        return true;
+      }
       return false;
     }) || null
   );

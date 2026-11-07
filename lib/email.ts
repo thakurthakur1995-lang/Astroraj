@@ -1,37 +1,77 @@
-import nodemailer from "nodemailer";
+import nodemailer, { type SendMailOptions } from "nodemailer";
 import { BookingRecord, OrderRecord } from "@/lib/types";
 
 // Configuration
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "thakur.thakur1995@gmail.com";
 const FROM_NAME = "Astro Raj | Vedic Astrology";
 
-function getTransporter() {
-  const user = (process.env.GMAIL_USER || ADMIN_EMAIL).trim();
+function getSmtpCredentials() {
+  const user = (process.env.GMAIL_USER || ADMIN_EMAIL || "thakur.thakur1995@gmail.com").trim();
   const pass = process.env.GMAIL_APP_PASSWORD?.replace(/\s+/g, "").trim();
-
-  if (!pass) {
-    console.warn(
-      "[Email Service] GMAIL_APP_PASSWORD is not configured. Email will not be sent. Please set GMAIL_APP_PASSWORD in environment variables."
-    );
-    return null;
-  }
-
-  return nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true, // Direct SSL handshake for serverless environments (faster & reliable on Vercel)
-    auth: {
-      user,
-      pass,
-    },
-    connectionTimeout: 10000, // 10s connection timeout
-    greetingTimeout: 10000,
-    socketTimeout: 15000,
-  });
+  return { user, pass };
 }
 
-// Memory cache to prevent duplicate email dispatches
+// Resilient SMTP mail sender with automatic Port 465 (SSL) -> Port 587 (TLS) fallback and forced IPv4
+export async function sendMailWithFallback(mailOptions: SendMailOptions): Promise<void> {
+  const { user, pass } = getSmtpCredentials();
+
+  if (!pass) {
+    const errorMsg =
+      "[Email Service] GMAIL_APP_PASSWORD is not configured in server environment. Please set GMAIL_APP_PASSWORD in your VPS / server environment.";
+    console.error(errorMsg);
+    throw new Error(errorMsg);
+  }
+
+  const host = process.env.SMTP_HOST || "smtp.gmail.com";
+  const primaryPort = Number(process.env.SMTP_PORT || 465);
+
+  // 1. Try Primary: Port 465 (Direct SSL) with forced IPv4 (CRITICAL for DigitalOcean / Linux VPS)
+  const primaryTransporter = nodemailer.createTransport({
+    host,
+    port: primaryPort,
+    secure: primaryPort === 465,
+    family: 4, // CRITICAL FOR DIGITALOCEAN VPS: Prevents Gmail IPv6 connection timeouts & blocks
+    auth: { user, pass },
+    connectionTimeout: 12000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
+    tls: {
+      rejectUnauthorized: true,
+      servername: host,
+    },
+  } as any);
+
+  try {
+    await primaryTransporter.sendMail(mailOptions);
+    return;
+  } catch (primaryErr: any) {
+    console.warn(
+      `[Email Service] Primary SMTP port ${primaryPort} failed (${primaryErr?.message || primaryErr}). Retrying via Port 587 (STARTTLS)...`
+    );
+
+    // 2. Fallback: Port 587 (STARTTLS) with forced IPv4
+    const fallbackTransporter = nodemailer.createTransport({
+      host,
+      port: 587,
+      secure: false, // STARTTLS
+      family: 4, // Force IPv4
+      auth: { user, pass },
+      connectionTimeout: 12000,
+      greetingTimeout: 10000,
+      socketTimeout: 15000,
+      tls: {
+        rejectUnauthorized: true,
+        servername: host,
+      },
+    } as any);
+
+    await fallbackTransporter.sendMail(mailOptions);
+  }
+}
+
+// Memory cache & concurrency lock to prevent duplicate email dispatches
 const sentEmailsCache = new Set<string>();
+const inFlightEmailDispatches = new Map<string, Promise<{ success: boolean; error?: string }>>();
 
 // ============================================================================
 // 1. BOOKING CONFIRMATION EMAILS (CUSTOMER + ADMIN)
@@ -44,24 +84,45 @@ export async function sendBookingConfirmationEmails(params: {
   const { booking, paymentId } = params;
   const effectivePaymentId = paymentId || booking.razorpayPaymentId || booking.paymentId || "N/A";
 
-  const cacheKey = `booking_${booking.razorpayOrderId || booking.bookingCode}`;
-  if (sentEmailsCache.has(cacheKey)) {
-    console.log(`[Email Service] Emails already dispatched for ${cacheKey}. Skipping duplicate.`);
-    return { success: true };
-  }
-  sentEmailsCache.add(cacheKey);
-
-  const transporter = getTransporter();
-
-  if (!transporter) {
-    return {
-      success: false,
-      error: "GMAIL_APP_PASSWORD not configured on server.",
-    };
+  // Build all deduplication keys
+  const keys: string[] = [];
+  if (booking.razorpayOrderId) keys.push(`booking_rzp_${booking.razorpayOrderId.trim()}`);
+  if (booking.bookingCode) keys.push(`booking_code_${booking.bookingCode.trim()}`);
+  if (booking.id) keys.push(`booking_id_${booking.id.trim()}`);
+  if (effectivePaymentId && effectivePaymentId !== "N/A" && effectivePaymentId !== "webhook_captured") {
+    keys.push(`booking_pay_${effectivePaymentId.trim()}`);
   }
 
-  const senderUser = (process.env.GMAIL_USER || ADMIN_EMAIL).trim();
-  const fromHeader = `"${FROM_NAME}" <${senderUser}>`;
+  // 1. Deduplication check: Has email already been sent for this booking?
+  for (const k of keys) {
+    if (sentEmailsCache.has(k)) {
+      console.log(`[Email Service] Booking emails already dispatched for (${k}). Skipping duplicate.`);
+      return { success: true };
+    }
+  }
+
+  // 2. Concurrency lock (Mutex): If currently dispatching, await the same promise
+  const lockKey = keys[0] || `booking_${booking.bookingCode || Date.now()}`;
+  if (inFlightEmailDispatches.has(lockKey)) {
+    console.log(`[Email Service] Booking email dispatch already in-flight for ${lockKey}. Waiting...`);
+    return inFlightEmailDispatches.get(lockKey)!;
+  }
+
+  const dispatchPromise = (async (): Promise<{ success: boolean; error?: string }> => {
+    // Tentatively add keys to cache to prevent concurrent triggers
+    keys.forEach((k) => sentEmailsCache.add(k));
+
+    const { user, pass } = getSmtpCredentials();
+    if (!pass) {
+      keys.forEach((k) => sentEmailsCache.delete(k));
+      console.warn("[Email Service] GMAIL_APP_PASSWORD not configured on server.");
+      return {
+        success: false,
+        error: "GMAIL_APP_PASSWORD not configured on server.",
+      };
+    }
+
+    const fromHeader = `"${FROM_NAME}" <${user}>`;
 
   // --- Customer Email HTML ---
   const customerHtml = `
@@ -315,42 +376,60 @@ export async function sendBookingConfirmationEmails(params: {
 </html>
   `;
 
-  try {
-    const promises = [];
+    try {
+      const sendPromises: Promise<any>[] = [];
 
-    // 1. Send to Customer
-    if (booking.email) {
-      promises.push(
-        transporter.sendMail({
+      // 1. Send to Customer
+      if (booking.email) {
+        sendPromises.push(
+          sendMailWithFallback({
+            from: fromHeader,
+            to: booking.email,
+            subject: `Booking Confirmed: ${booking.serviceTitle} | Astro Raj (${booking.bookingCode})`,
+            html: customerHtml,
+          }).catch((err) => {
+            console.error(`[Email Service] Failed sending customer booking email to ${booking.email}:`, err);
+            throw err;
+          })
+        );
+      }
+
+      // 2. Send to Admin
+      sendPromises.push(
+        sendMailWithFallback({
           from: fromHeader,
-          to: booking.email,
-          subject: `Booking Confirmed: ${booking.serviceTitle} | Astro Raj (${booking.bookingCode})`,
-          html: customerHtml,
+          to: ADMIN_EMAIL,
+          subject: `🔔 [NEW BOOKING] ${booking.serviceTitle} - ${booking.fullName} (₹${booking.price})`,
+          html: adminHtml,
         }).catch((err) => {
-          console.error(`[Email Service] Failed sending customer booking email to ${booking.email}:`, err);
+          console.error(`[Email Service] Failed sending admin booking email to ${ADMIN_EMAIL}:`, err);
+          throw err;
         })
       );
+
+      const results = await Promise.allSettled(sendPromises);
+      const hasSuccess = results.some((r) => r.status === "fulfilled");
+
+      if (hasSuccess) {
+        console.log(`[Email Service] Booking confirmation emails dispatched for ${booking.bookingCode}`);
+        return { success: true };
+      } else {
+        // Unlock on complete failure
+        keys.forEach((k) => sentEmailsCache.delete(k));
+        const rejected = results.find((r) => r.status === "rejected");
+        return { success: false, error: String(rejected?.reason || "Failed to dispatch booking emails") };
+      }
+    } catch (error) {
+      keys.forEach((k) => sentEmailsCache.delete(k));
+      console.error("[Email Service] Error in sendBookingConfirmationEmails:", error);
+      return { success: false, error: String(error) };
+    } finally {
+      inFlightEmailDispatches.delete(lockKey);
     }
+  })();
 
-    // 2. Send to Admin
-    promises.push(
-      transporter.sendMail({
-        from: fromHeader,
-        to: ADMIN_EMAIL,
-        subject: `🔔 [NEW BOOKING] ${booking.serviceTitle} - ${booking.fullName} (₹${booking.price})`,
-        html: adminHtml,
-      }).catch((err) => {
-        console.error(`[Email Service] Failed sending admin booking email to ${ADMIN_EMAIL}:`, err);
-      })
-    );
-
-    await Promise.allSettled(promises);
-    console.log(`[Email Service] Booking confirmation emails dispatched for ${booking.bookingCode}`);
-    return { success: true };
-  } catch (error) {
-    console.error("[Email Service] Error in sendBookingConfirmationEmails:", error);
-    return { success: false, error: String(error) };
-  }
+  inFlightEmailDispatches.set(lockKey, dispatchPromise);
+  return dispatchPromise;
 }
 
 // ============================================================================
@@ -364,24 +443,45 @@ export async function sendOrderConfirmationEmails(params: {
   const { order, paymentId } = params;
   const effectivePaymentId = paymentId || order.razorpayPaymentId || order.paymentId || "N/A";
 
-  const cacheKey = `order_${order.razorpayOrderId || order.orderNumber}`;
-  if (sentEmailsCache.has(cacheKey)) {
-    console.log(`[Email Service] Emails already dispatched for ${cacheKey}. Skipping duplicate.`);
-    return { success: true };
-  }
-  sentEmailsCache.add(cacheKey);
-
-  const transporter = getTransporter();
-
-  if (!transporter) {
-    return {
-      success: false,
-      error: "GMAIL_APP_PASSWORD not configured on server.",
-    };
+  // Build all deduplication keys
+  const keys: string[] = [];
+  if (order.razorpayOrderId) keys.push(`order_rzp_${order.razorpayOrderId.trim()}`);
+  if (order.orderNumber) keys.push(`order_num_${order.orderNumber.trim()}`);
+  if (order.id) keys.push(`order_id_${order.id.trim()}`);
+  if (effectivePaymentId && effectivePaymentId !== "N/A" && effectivePaymentId !== "webhook_captured") {
+    keys.push(`order_pay_${effectivePaymentId.trim()}`);
   }
 
-  const senderUser = (process.env.GMAIL_USER || ADMIN_EMAIL).trim();
-  const fromHeader = `"${FROM_NAME}" <${senderUser}>`;
+  // 1. Deduplication check: Has email already been sent for this order?
+  for (const k of keys) {
+    if (sentEmailsCache.has(k)) {
+      console.log(`[Email Service] Order emails already dispatched for (${k}). Skipping duplicate.`);
+      return { success: true };
+    }
+  }
+
+  // 2. Concurrency lock (Mutex): If currently dispatching, await the same promise
+  const lockKey = keys[0] || `order_${order.orderNumber || Date.now()}`;
+  if (inFlightEmailDispatches.has(lockKey)) {
+    console.log(`[Email Service] Order email dispatch already in-flight for ${lockKey}. Waiting...`);
+    return inFlightEmailDispatches.get(lockKey)!;
+  }
+
+  const dispatchPromise = (async (): Promise<{ success: boolean; error?: string }> => {
+    // Tentatively add keys to cache to prevent concurrent triggers
+    keys.forEach((k) => sentEmailsCache.add(k));
+
+    const { user, pass } = getSmtpCredentials();
+    if (!pass) {
+      keys.forEach((k) => sentEmailsCache.delete(k));
+      console.warn("[Email Service] GMAIL_APP_PASSWORD not configured on server.");
+      return {
+        success: false,
+        error: "GMAIL_APP_PASSWORD not configured on server.",
+      };
+    }
+
+    const fromHeader = `"${FROM_NAME}" <${user}>`;
 
   // Defensive parsing for items
   const rawItems = order.items;
@@ -653,42 +753,60 @@ export async function sendOrderConfirmationEmails(params: {
 </html>
   `;
 
-  try {
-    const promises = [];
+    try {
+      const sendPromises: Promise<any>[] = [];
 
-    // 1. Send to Customer
-    if (order.customer.email) {
-      promises.push(
-        transporter.sendMail({
+      // 1. Send to Customer
+      if (order.customer.email) {
+        sendPromises.push(
+          sendMailWithFallback({
+            from: fromHeader,
+            to: order.customer.email,
+            subject: `Order Confirmed: #${order.orderNumber} | Astro Raj`,
+            html: customerHtml,
+          }).catch((err) => {
+            console.error(`[Email Service] Failed sending customer order email to ${order.customer.email}:`, err);
+            throw err;
+          })
+        );
+      }
+
+      // 2. Send to Admin
+      sendPromises.push(
+        sendMailWithFallback({
           from: fromHeader,
-          to: order.customer.email,
-          subject: `Order Confirmed: #${order.orderNumber} | Astro Raj`,
-          html: customerHtml,
+          to: ADMIN_EMAIL,
+          subject: `📦 [NEW ORDER] #${order.orderNumber} - ${order.customer.fullName} (₹${order.total})`,
+          html: adminHtml,
         }).catch((err) => {
-          console.error(`[Email Service] Failed sending customer order email to ${order.customer.email}:`, err);
+          console.error(`[Email Service] Failed sending admin order email to ${ADMIN_EMAIL}:`, err);
+          throw err;
         })
       );
+
+      const results = await Promise.allSettled(sendPromises);
+      const hasSuccess = results.some((r) => r.status === "fulfilled");
+
+      if (hasSuccess) {
+        console.log(`[Email Service] Order confirmation emails dispatched for #${order.orderNumber}`);
+        return { success: true };
+      } else {
+        // Unlock on complete failure
+        keys.forEach((k) => sentEmailsCache.delete(k));
+        const rejected = results.find((r) => r.status === "rejected");
+        return { success: false, error: String(rejected?.reason || "Failed to dispatch order emails") };
+      }
+    } catch (error) {
+      keys.forEach((k) => sentEmailsCache.delete(k));
+      console.error("[Email Service] Error in sendOrderConfirmationEmails:", error);
+      return { success: false, error: String(error) };
+    } finally {
+      inFlightEmailDispatches.delete(lockKey);
     }
+  })();
 
-    // 2. Send to Admin
-    promises.push(
-      transporter.sendMail({
-        from: fromHeader,
-        to: ADMIN_EMAIL,
-        subject: `📦 [NEW ORDER] #${order.orderNumber} - ${order.customer.fullName} (₹${order.total})`,
-        html: adminHtml,
-      }).catch((err) => {
-        console.error(`[Email Service] Failed sending admin order email to ${ADMIN_EMAIL}:`, err);
-      })
-    );
-
-    await Promise.allSettled(promises);
-    console.log(`[Email Service] Order confirmation emails dispatched for #${order.orderNumber}`);
-    return { success: true };
-  } catch (error) {
-    console.error("[Email Service] Error in sendOrderConfirmationEmails:", error);
-    return { success: false, error: String(error) };
-  }
+  inFlightEmailDispatches.set(lockKey, dispatchPromise);
+  return dispatchPromise;
 }
 
 // Helper function to escape HTML special characters to prevent injection
@@ -707,21 +825,19 @@ function escapeHtml(str: string | number | undefined | null): string {
 // ============================================================================
 
 export async function sendTestEmail(targetEmail?: string): Promise<{ success: boolean; message: string }> {
-  const transporter = getTransporter();
   const recipient = targetEmail || ADMIN_EMAIL;
+  const { user, pass } = getSmtpCredentials();
 
-  if (!transporter) {
+  if (!pass) {
     return {
       success: false,
-      message: "GMAIL_APP_PASSWORD is not configured in .env.local. Please add your 16-character Google App Password.",
+      message: "GMAIL_APP_PASSWORD is not configured in server environment variables. Please add your 16-character Google App Password in your VPS settings.",
     };
   }
 
-  const senderUser = (process.env.GMAIL_USER || ADMIN_EMAIL).trim();
-
   try {
-    await transporter.sendMail({
-      from: `"${FROM_NAME}" <${senderUser}>`,
+    await sendMailWithFallback({
+      from: `"${FROM_NAME}" <${user}>`,
       to: recipient,
       subject: `🧪 Test Email from Astro Raj SMTP Service`,
       html: `
@@ -731,12 +847,12 @@ export async function sendTestEmail(targetEmail?: string): Promise<{ success: bo
             Hari Om! Aapka Gmail SMTP integration successfully connect ho gaya hai aur emails dispatch hone ke liye bilkul taiyar hain.
           </p>
           <div style="background: #1e293b; padding: 12px 16px; border-radius: 8px; margin: 16px 0; font-size: 13px;">
-            <p style="margin: 4px 0;"><strong>Sender:</strong> ${escapeHtml(senderUser)}</p>
+            <p style="margin: 4px 0;"><strong>Sender:</strong> ${escapeHtml(user)}</p>
             <p style="margin: 4px 0;"><strong>Receiver:</strong> ${escapeHtml(recipient)}</p>
-            <p style="margin: 4px 0;"><strong>Status:</strong> Connected & Verified</p>
+            <p style="margin: 4px 0;"><strong>Status:</strong> Connected & Verified (Port 465/587 IPv4)</p>
           </div>
           <p style="margin: 0; font-size: 12px; color: #94a3b8;">
-            Jab bhi koi booking ya order paid hoga, automatic customer aur admin confirmation emails trigger ho jayenge.
+            Jab bhi koi booking ya order paid hoga, automatic customer aur admin confirmation emails trigger ho jayenge (Strict single-dispatch guarantee).
           </p>
         </div>
       `,

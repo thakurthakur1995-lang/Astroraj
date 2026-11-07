@@ -91,15 +91,6 @@ export async function POST(req: NextRequest) {
       }
 
       if (existing.paymentStatus === "paid") {
-        try {
-          await sendBookingConfirmationEmails({
-            booking: existing,
-            paymentId: razorpay_payment_id || existing.razorpayPaymentId,
-          });
-        } catch (err) {
-          console.error("[verify-payment] Error dispatching booking emails on already verified:", err);
-        }
-
         return NextResponse.json({
           success: true,
           message: "Payment already verified.",
@@ -169,15 +160,6 @@ export async function POST(req: NextRequest) {
       }
 
       if (existing.paymentStatus === "paid") {
-        try {
-          await sendOrderConfirmationEmails({
-            order: existing,
-            paymentId: razorpay_payment_id || existing.razorpayPaymentId,
-          });
-        } catch (err) {
-          console.error("[verify-payment] Error dispatching order emails on already verified:", err);
-        }
-
         return NextResponse.json({
           success: true,
           message: "Payment already verified.",
@@ -223,6 +205,9 @@ export async function POST(req: NextRequest) {
     // Fallback: If entityType was not passed, detect from order_id prefix or lookup
     const bkg = await getBookingByRazorpayOrderId(razorpay_order_id);
     if (bkg) {
+      if (bkg.paymentStatus === "paid") {
+        return NextResponse.json({ success: true, message: "Payment already verified.", alreadyVerified: true });
+      }
       const updated = await markBookingPaymentPaid({
         razorpayOrderId: razorpay_order_id,
         razorpayPaymentId: razorpay_payment_id,
@@ -241,6 +226,9 @@ export async function POST(req: NextRequest) {
 
     const ord = await getOrderByRazorpayOrderId(razorpay_order_id);
     if (ord) {
+      if (ord.paymentStatus === "paid") {
+        return NextResponse.json({ success: true, message: "Payment already verified.", alreadyVerified: true });
+      }
       const updated = await markOrderPaymentPaid({
         razorpayOrderId: razorpay_order_id,
         razorpayPaymentId: razorpay_payment_id,

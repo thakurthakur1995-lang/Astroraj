@@ -39,6 +39,44 @@ export const PRODUCTS: Product[] = [
   //   "origin": "Astro Raj Digital Gateway, Rishikesh"
   // },
   {
+    "id": "dakshinamurthy-kavach",
+    "slug": "dakshinamurthy-kavach",
+    "name": "दक्षिणामूर्ति कवच (Dakshinamurthy Kavach)",
+    "category": "spiritual",
+    "categoryLabel": "Bracelets & Spiritual Corner",
+    "categories": [
+      "spiritual",
+      "yantra"
+    ],
+    "price": 1100,
+    "originalPrice": 1500,
+    "shortDescription": "Sacred Siddh Dakshinamurthy Kavacham for supreme wisdom, intellect, leadership authority, eloquence (Vak Siddhi), and divine spiritual protection.",
+    "description": "Benefits of Dakshinamurthy Kavacham:\n\n• Wisdom and Intellect: Sharpens the mind, enhances memory, deepens comprehension, and helps the practitioner grasp complex philosophical or Vedantic texts.\n• Leadership and Influence: Acts as a \"Samrajya-dayak\" (bestower of leadership) and \"Trailokya Sammohak,\" making it a favorite for leaders, managers, and public figures who need clarity and authority.\n• Eloquence and Speech: Regular recitation is believed to bestow Vak Siddhi (mastery over speech), allowing poetry, prose, and articulate expression to flow naturally.\n• Spiritual Awakening and Siddhis: Invokes the 32-letter mantra alignment across key body points (Aksaranyasa), awakening subtle mental faculties and granting the eight classical Siddhis (Animadi Mahasiddhi).\n• Protection and Peace: Functions as a divine shield (Kavach) that guards the physical body from head to foot, removes dualities (Dvandva), and wards off negative energies.\n\nConsecrated & energized with sacred Vedic mantras in Rishikesh on the holy banks of Maa Ganga. Encased in a pure silver-finish protective capsule pendant with holy red Raksha thread.",
+    "images": [
+      "/images/products/dakshinamurthy-kavach/dakshinamurthy-kavach-1.webp",
+      "/images/products/dakshinamurthy-kavach/dakshinamurthy-kavach-1.jpg"
+    ],
+    "inStock": true,
+    "sku": "AR-KAV-DAK-01",
+    "featured": true,
+    "certified": true,
+    "certificationAuthority": "Vedic Consecration Certificate by Astro Raj",
+    "spiritualBenefits": [
+      "Sharpens mind, memory, comprehension & intellect",
+      "Bestows leadership, authority & influence (Samrajya-dayak)",
+      "Empowers eloquent speech and expression (Vak Siddhi)",
+      "Spiritual awakening & 32-letter mantra alignment (Aksaranyasa)",
+      "Divine shield from head to foot against negative energies"
+    ],
+    "specifications": {
+      "Deity": "Bhagwan Dakshinamurthy (Lord Shiva)",
+      "Material": "Pure Sacred Metallic Finish Capsule with Energized Raksha Sutra",
+      "Auspicious Days": "Thursdays, Pradosham, Shivratri & Daily Wear",
+      "Consecration": "Siddh with Dakshinamurthy Mantras in Rishikesh Ashram"
+    },
+    "origin": "Rishikesh, Uttarakhand, India"
+  },
+  {
     "id": "all-siddh-shree-yantra-main-sphatik",
     "slug": "all-siddh-shree-yantra-main-sphatik",
     "name": "All Siddh Shree Yantra (Main Sphatik)",
