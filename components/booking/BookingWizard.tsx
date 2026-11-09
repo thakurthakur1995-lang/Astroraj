@@ -21,12 +21,26 @@ import {
   FileText,
   Globe,
   Building,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { SERVICES, SERVICE_CATEGORIES } from "@/lib/data/services";
 import { CONSULTATION_PRICING_MATRIX, SITE_SETTINGS } from "@/lib/constants";
 import { ConsultationType, ConsultationUrgency, BookingCustomerDetails, BookingRecord } from "@/lib/types";
 import { loadRazorpayScript, RazorpaySuccessResponse } from "@/lib/razorpay-client";
 import { OfflineBookingForm } from "./OfflineBookingForm";
+
+const SERVICES_PER_PAGE = 4;
+
+function getServicePageForId(serviceId: string, category: string = "all"): number {
+  const list = SERVICES.filter(
+    (s) =>
+      s.onlineAvailable !== false &&
+      (category === "all" || s.categoryId === category)
+  );
+  const idx = list.findIndex((s) => s.id === serviceId);
+  return idx >= 0 ? Math.floor(idx / SERVICES_PER_PAGE) + 1 : 1;
+}
 
 export function BookingWizard() {
   const searchParams = useSearchParams();
@@ -37,14 +51,16 @@ export function BookingWizard() {
   // Top-level Mode: Online (Razorpay) vs Offline (WhatsApp & Manual Payment)
   const [bookingMode, setBookingMode] = useState<"online" | "offline">(preselectedMode);
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const initialServiceId = preselectedService || "personal-consultation";
+  const [selectedServiceId, setSelectedServiceId] = useState<string>(initialServiceId);
+  const [servicePage, setServicePage] = useState<number>(() =>
+    getServicePageForId(initialServiceId, "all")
+  );
 
   // Step state (1 to 5)
   const [currentStep, setCurrentStep] = useState<number>(1);
 
-  // Selection states
-  const [selectedServiceId, setSelectedServiceId] = useState<string>(
-    preselectedService || "personal-consultation"
-  );
+
   const [consultationType, setConsultationType] = useState<ConsultationType>("audio");
   const [durationMinutes, setDurationMinutes] = useState<15 | 30>(30);
   const [urgency, setUrgency] = useState<ConsultationUrgency>("normal");
@@ -79,6 +95,14 @@ export function BookingWizard() {
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [confirmedBooking, setConfirmedBooking] = useState<BookingRecord | null>(null);
+
+  // Auto-jump to the page containing the preselected service when redirected or when query params change
+  useEffect(() => {
+    if (preselectedService) {
+      setSelectedServiceId(preselectedService);
+      setServicePage(getServicePageForId(preselectedService, categoryFilter));
+    }
+  }, [preselectedService, categoryFilter]);
 
   // Auto-set configuration if plan was passed in URL query
   useEffect(() => {
@@ -506,67 +530,122 @@ export function BookingWizard() {
       </div>
 
       {/* STEP 1: CHOOSE SERVICE */}
-      {currentStep === 1 && (
-        <div className="bg-white rounded-2xl sm:rounded-3xl border border-border p-4 sm:p-8 space-y-5 sm:space-y-6 shadow-xs overflow-hidden">
-          <div className="space-y-1">
-            <h2 className="font-serif text-xl font-bold text-vedic-dark">
-              Step 1: Choose Your Consultation Service
-            </h2>
-            <p className="text-xs text-vedic-muted">
-              Select the area of life or sacred ritual where you seek clarity and astrological guidance.
-            </p>
-          </div>
+      {currentStep === 1 && (() => {
+        const filteredServices = SERVICES.filter(
+          (s) =>
+            s.onlineAvailable !== false &&
+            (categoryFilter === "all" || s.categoryId === categoryFilter)
+        );
+        const SERVICES_PER_PAGE = 4;
+        const totalServicePages = Math.ceil(filteredServices.length / SERVICES_PER_PAGE) || 1;
+        const currentServicePage = Math.min(Math.max(1, servicePage), totalServicePages);
+        const paginatedServices = filteredServices.slice(
+          (currentServicePage - 1) * SERVICES_PER_PAGE,
+          currentServicePage * SERVICES_PER_PAGE
+        );
 
-          {/* Category Filter Chips */}
-          <div className="flex flex-wrap gap-1.5 pb-2 border-b border-border/70">
-            {[
-              { id: "all", label: "All Offerings" },
-              { id: "astrology", label: "Astrology" },
-              { id: "vastu", label: "Vastu Shastra" },
-              { id: "puja", label: "Pooja & Havans" },
-              { id: "mantra-diksha", label: "Mantra Diksha" },
-              { id: "ayurveda", label: "Ayurveda" },
-              { id: "gemstones", label: "Gemstones" },
-            ].map((cat) => (
+        return (
+          <div className="bg-white rounded-2xl sm:rounded-3xl border border-border p-4 sm:p-8 space-y-5 sm:space-y-6 shadow-xs overflow-hidden">
+            <div className="space-y-1">
+              <h2 className="font-serif text-xl font-bold text-vedic-dark">
+                Step 1: Choose Your Consultation Service
+              </h2>
+              <p className="text-xs text-vedic-muted">
+                Select the area of life or sacred ritual where you seek clarity and astrological guidance.
+              </p>
+            </div>
+
+
+
+            {/* Category Filter Chips */}
+            <div className="flex flex-wrap gap-1.5 pb-2 border-b border-border/70">
+              {[
+                { id: "all", label: "All Offerings" },
+                { id: "astrology", label: "Astrology" },
+                { id: "vastu", label: "Vastu Shastra" },
+                { id: "puja", label: "Pooja & Havans" },
+                { id: "mantra-diksha", label: "Mantra Diksha" },
+                { id: "ayurveda", label: "Ayurveda" },
+                { id: "gemstones", label: "Gemstones" },
+              ].map((cat) => (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => {
+                    setCategoryFilter(cat.id);
+                    setServicePage(getServicePageForId(selectedServiceId, cat.id));
+                  }}
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                    categoryFilter === cat.id
+                      ? "bg-saffron-600 text-white shadow-xs"
+                      : "bg-ivory text-vedic-muted hover:text-vedic-dark border border-border"
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Mobile View: Top Continue Button (Above services list) */}
+            <div className="sm:hidden pt-1 pb-1">
               <button
-                key={cat.id}
                 type="button"
-                onClick={() => setCategoryFilter(cat.id)}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
-                  categoryFilter === cat.id
-                    ? "bg-saffron-600 text-white shadow-xs"
-                    : "bg-ivory text-vedic-muted hover:text-vedic-dark border border-border"
-                }`}
+                onClick={() => setCurrentStep(2)}
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-saffron-600 hover:bg-saffron-700 text-white font-semibold text-sm shadow-md transition-all cursor-pointer"
               >
-                {cat.label}
+                <span>Continue to Mode & Plan</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
-            ))}
+            </div>
+
+            {/* Services Grid (4 per page) */}
+            {/* Mobile View: Top Action Buttons */}
+          <div className="sm:hidden flex items-center justify-between gap-3 pt-1 pb-1">
+            <button
+              type="button"
+              onClick={() => setCurrentStep(3)}
+              className="inline-flex items-center gap-1 text-xs font-semibold text-vedic-muted hover:text-vedic-dark px-3 py-2.5 rounded-xl border border-border bg-ivory"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Back</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (validateCustomerDetails()) {
+                  setCurrentStep(5);
+                }
+              }}
+              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-saffron-600 hover:bg-saffron-700 text-white font-semibold text-xs shadow-md transition-all cursor-pointer"
+            >
+              <span>Review Booking Summary</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {SERVICES.filter(
-              (s) =>
-                s.onlineAvailable !== false &&
-                (categoryFilter === "all" || s.categoryId === categoryFilter)
-            ).map(
-              (service) => {
+              {paginatedServices.map((service) => {
                 const isSelected = selectedServiceId === service.id;
                 return (
                   <div
                     key={service.id}
                     onClick={() => setSelectedServiceId(service.id)}
-                    className={`p-5 rounded-2xl border cursor-pointer transition-all ${isSelected
+                    className={`p-5 rounded-2xl border cursor-pointer transition-all ${
+                      isSelected
                         ? "border-saffron-600 bg-saffron-50/50 shadow-md ring-1 ring-saffron-600/30"
                         : "border-border hover:border-gold-400 bg-ivory"
-                      }`}
+                    }`}
                   >
                     <div className="flex items-start justify-between">
                       <h3 className="font-serif text-base font-bold text-vedic-dark">
                         {service.title}
                       </h3>
                       <div
-                        className={`w-5 h-5 rounded-full border flex items-center justify-center ${isSelected ? "border-saffron-600 bg-saffron-600 text-white" : "border-border"
-                          }`}
+                        className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ml-2 ${
+                          isSelected
+                            ? "border-saffron-600 bg-saffron-600 text-white"
+                            : "border-border"
+                        }`}
                       >
                         {isSelected && <Check className="w-3.5 h-3.5" />}
                       </div>
@@ -579,21 +658,74 @@ export function BookingWizard() {
                     </div>
                   </div>
                 );
-              }
-            )}
-          </div>
+              })}
+            </div>
 
-          <div className="pt-4 flex justify-end">
-            <button
-              onClick={() => setCurrentStep(2)}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-saffron-600 hover:bg-saffron-700 text-white font-semibold text-sm shadow-md transition-all"
-            >
-              <span>Continue to Mode & Plan</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
+            {/* Pagination Controls */}
+            {totalServicePages > 1 && (
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-border/70">
+                <span className="text-xs text-vedic-muted">
+                  Showing {Math.min((currentServicePage - 1) * SERVICES_PER_PAGE + 1, filteredServices.length)}–
+                  {Math.min(currentServicePage * SERVICES_PER_PAGE, filteredServices.length)} of {filteredServices.length} services
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setServicePage((p) => Math.max(1, p - 1))}
+                    disabled={currentServicePage === 1}
+                    className="px-2.5 py-1.5 rounded-lg border border-border bg-white text-xs font-medium text-vedic-dark hover:bg-ivory disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 transition-all"
+                    aria-label="Previous Page"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                    <span className="hidden sm:inline">Prev</span>
+                  </button>
+
+                  {Array.from({ length: totalServicePages }, (_, i) => i + 1).map((pg) => (
+                    <button
+                      key={pg}
+                      type="button"
+                      onClick={() => setServicePage(pg)}
+                      className={`w-8 h-8 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                        currentServicePage === pg
+                          ? "bg-saffron-600 text-white shadow-xs"
+                          : "border border-border bg-white text-vedic-dark hover:bg-ivory"
+                      }`}
+                    >
+                      {pg}
+                    </button>
+                  ))}
+
+                  <button
+                    type="button"
+                    onClick={() => setServicePage((p) => Math.min(totalServicePages, p + 1))}
+                    disabled={currentServicePage === totalServicePages}
+                    className="px-2.5 py-1.5 rounded-lg border border-border bg-white text-xs font-medium text-vedic-dark hover:bg-ivory disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 transition-all"
+                    aria-label="Next Page"
+                  >
+                    <span className="hidden sm:inline">Next</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Bottom Continue Action (Desktop and Mobile) */}
+            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-t border-border/60">
+              <div className="hidden sm:block text-xs text-vedic-muted">
+                Selected: <span className="font-semibold text-vedic-dark">{selectedService?.title}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setCurrentStep(2)}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-saffron-600 hover:bg-saffron-700 text-white font-semibold text-sm shadow-md transition-all cursor-pointer"
+              >
+                <span>Continue to Mode & Plan</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* STEP 2: CHOOSE MODE & DURATION */}
       {currentStep === 2 && (
@@ -605,6 +737,26 @@ export function BookingWizard() {
             <p className="text-xs text-vedic-muted">
               Customise how and when you wish to connect with Guruji.
             </p>
+          </div>
+
+          {/* Mobile View: Top Action Buttons */}
+          <div className="sm:hidden flex items-center justify-between gap-3 pt-1 pb-1">
+            <button
+              type="button"
+              onClick={() => setCurrentStep(1)}
+              className="inline-flex items-center gap-1 text-xs font-semibold text-vedic-muted hover:text-vedic-dark px-3 py-2.5 rounded-xl border border-border bg-ivory"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Back</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setCurrentStep(3)}
+              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-saffron-600 hover:bg-saffron-700 text-white font-semibold text-xs shadow-md transition-all cursor-pointer"
+            >
+              <span>Continue to Slot Selection</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
           </div>
 
           {/* Mode Selection */}
@@ -768,6 +920,26 @@ export function BookingWizard() {
             </p>
           </div>
 
+          {/* Mobile View: Top Action Buttons */}
+          <div className="sm:hidden flex items-center justify-between gap-3 pt-1 pb-1">
+            <button
+              type="button"
+              onClick={() => setCurrentStep(2)}
+              className="inline-flex items-center gap-1 text-xs font-semibold text-vedic-muted hover:text-vedic-dark px-3 py-2.5 rounded-xl border border-border bg-ivory"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Back</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setCurrentStep(4)}
+              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-saffron-600 hover:bg-saffron-700 text-white font-semibold text-xs shadow-md transition-all cursor-pointer"
+            >
+              <span>Continue to Birth Details</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
           {/* Date Picker */}
           <div className="space-y-2 min-w-0">
             <label className="text-xs font-bold uppercase tracking-wider text-vedic-dark block">
@@ -885,6 +1057,30 @@ export function BookingWizard() {
             <p className="text-xs text-vedic-muted">
               Vedic Jyotish calculations rely on precise astronomical coordinates at the time of your birth.
             </p>
+          </div>
+
+          {/* Mobile View: Top Action Buttons */}
+          <div className="sm:hidden flex items-center justify-between gap-3 pt-1 pb-1">
+            <button
+              type="button"
+              onClick={() => setCurrentStep(3)}
+              className="inline-flex items-center gap-1 text-xs font-semibold text-vedic-muted hover:text-vedic-dark px-3 py-2.5 rounded-xl border border-border bg-ivory"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Back</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (validateCustomerDetails()) {
+                  setCurrentStep(5);
+                }
+              }}
+              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-saffron-600 hover:bg-saffron-700 text-white font-semibold text-xs shadow-md transition-all cursor-pointer"
+            >
+              <span>Review Booking Summary</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1058,6 +1254,29 @@ export function BookingWizard() {
             <p className="text-xs text-vedic-muted">
               Please review all appointment details before completing secure checkout.
             </p>
+          </div>
+
+          {/* Mobile View: Top Action Buttons */}
+          <div className="sm:hidden flex items-center justify-between gap-3 pt-1 pb-1">
+            <button
+              type="button"
+              onClick={() => setCurrentStep(4)}
+              className="inline-flex items-center gap-1 text-xs font-semibold text-vedic-muted hover:text-vedic-dark px-3 py-2.5 rounded-xl border border-border bg-ivory"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Back</span>
+            </button>
+            <button
+              type="button"
+              onClick={handlePayment}
+              disabled={isProcessingPayment}
+              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-saffron-600 hover:bg-saffron-700 text-white font-semibold text-xs shadow-md transition-all cursor-pointer disabled:opacity-50"
+            >
+              <CreditCard className="w-3.5 h-3.5" />
+              <span>
+                {isProcessingPayment ? "Confirming..." : `Pay ₹${currentTier.price.toLocaleString("en-IN")}`}
+              </span>
+            </button>
           </div>
 
           {/* Summary Box */}
