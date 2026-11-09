@@ -11,13 +11,86 @@ function getSmtpCredentials() {
   return { user, pass };
 }
 
-// Resilient SMTP mail sender with automatic Port 465 (SSL) -> Port 587 (TLS) fallback and forced IPv4
+// Resilient Multi-Provider Mail Sender:
+// 1. If RESEND_API_KEY is configured -> sends over HTTPS Port 443 (100% bypasses DigitalOcean SMTP port blocks)
+// 2. If BREVO_API_KEY is configured -> sends over HTTPS Port 443
+// 3. Fallback: Direct SMTP (Port 465 SSL -> Port 587 STARTTLS) with forced IPv4
 export async function sendMailWithFallback(mailOptions: SendMailOptions): Promise<void> {
+  const resendApiKey = process.env.RESEND_API_KEY?.trim();
+  const brevoApiKey = process.env.BREVO_API_KEY?.trim();
+
+  const toRecipient = typeof mailOptions.to === "string"
+    ? mailOptions.to
+    : Array.isArray(mailOptions.to)
+      ? mailOptions.to[0]
+      : String(mailOptions.to);
+
+  // --- Provider 1: Resend HTTP API (Port 443 - NEVER BLOCKED BY DIGITALOCEAN) ---
+  if (resendApiKey) {
+    const fromAddress = process.env.RESEND_FROM_EMAIL || "Astro Raj <onboarding@resend.dev>";
+    try {
+      const response = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${resendApiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: fromAddress,
+          to: [toRecipient],
+          subject: mailOptions.subject,
+          html: mailOptions.html,
+        }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(`Resend API error (${response.status}): ${data.message || JSON.stringify(data)}`);
+      }
+      console.log(`[Email Service] Email dispatched successfully via Resend API to ${toRecipient}`);
+      return;
+    } catch (resendErr) {
+      console.error("[Email Service] Resend API error:", resendErr);
+      throw resendErr;
+    }
+  }
+
+  // --- Provider 2: Brevo HTTP API (Port 443 - NEVER BLOCKED BY DIGITALOCEAN) ---
+  if (brevoApiKey) {
+    const senderEmail = process.env.BREVO_SENDER_EMAIL || process.env.GMAIL_USER || ADMIN_EMAIL;
+    try {
+      const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+        method: "POST",
+        headers: {
+          "api-key": brevoApiKey,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sender: { name: FROM_NAME, email: senderEmail },
+          to: [{ email: toRecipient }],
+          subject: mailOptions.subject,
+          htmlContent: mailOptions.html,
+        }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(`Brevo API error (${response.status}): ${data.message || JSON.stringify(data)}`);
+      }
+      console.log(`[Email Service] Email dispatched successfully via Brevo API to ${toRecipient}`);
+      return;
+    } catch (brevoErr) {
+      console.error("[Email Service] Brevo API error:", brevoErr);
+      throw brevoErr;
+    }
+  }
+
+  // --- Provider 3: Direct SMTP (Gmail) ---
   const { user, pass } = getSmtpCredentials();
 
   if (!pass) {
     const errorMsg =
-      "[Email Service] GMAIL_APP_PASSWORD is not configured in server environment. Please set GMAIL_APP_PASSWORD in your VPS / server environment.";
+      "[Email Service] Neither RESEND_API_KEY nor GMAIL_APP_PASSWORD is configured. Please configure an email provider in your environment variables.";
     console.error(errorMsg);
     throw new Error(errorMsg);
   }
@@ -25,16 +98,16 @@ export async function sendMailWithFallback(mailOptions: SendMailOptions): Promis
   const host = process.env.SMTP_HOST || "smtp.gmail.com";
   const primaryPort = Number(process.env.SMTP_PORT || 465);
 
-  // 1. Try Primary: Port 465 (Direct SSL) with forced IPv4 (CRITICAL for DigitalOcean / Linux VPS)
+  // 1. Try Primary: Port 465 (Direct SSL) with forced IPv4
   const primaryTransporter = nodemailer.createTransport({
     host,
     port: primaryPort,
     secure: primaryPort === 465,
-    family: 4, // CRITICAL FOR DIGITALOCEAN VPS: Prevents Gmail IPv6 connection timeouts & blocks
+    family: 4,
     auth: { user, pass },
-    connectionTimeout: 12000,
-    greetingTimeout: 10000,
-    socketTimeout: 15000,
+    connectionTimeout: 10000,
+    greetingTimeout: 8000,
+    socketTimeout: 12000,
     tls: {
       rejectUnauthorized: true,
       servername: host,
@@ -54,11 +127,11 @@ export async function sendMailWithFallback(mailOptions: SendMailOptions): Promis
       host,
       port: 587,
       secure: false, // STARTTLS
-      family: 4, // Force IPv4
+      family: 4,
       auth: { user, pass },
-      connectionTimeout: 12000,
-      greetingTimeout: 10000,
-      socketTimeout: 15000,
+      connectionTimeout: 10000,
+      greetingTimeout: 8000,
+      socketTimeout: 12000,
       tls: {
         rejectUnauthorized: true,
         servername: host,
@@ -826,30 +899,38 @@ function escapeHtml(str: string | number | undefined | null): string {
 
 export async function sendTestEmail(targetEmail?: string): Promise<{ success: boolean; message: string }> {
   const recipient = targetEmail || ADMIN_EMAIL;
+  const resendApiKey = process.env.RESEND_API_KEY?.trim();
+  const brevoApiKey = process.env.BREVO_API_KEY?.trim();
   const { user, pass } = getSmtpCredentials();
 
-  if (!pass) {
+  if (!resendApiKey && !brevoApiKey && !pass) {
     return {
       success: false,
-      message: "GMAIL_APP_PASSWORD is not configured in server environment variables. Please add your 16-character Google App Password in your VPS settings.",
+      message: "No email service configured. Please add RESEND_API_KEY (recommended for DigitalOcean) or GMAIL_APP_PASSWORD in environment variables.",
     };
   }
+
+  const activeProvider = resendApiKey
+    ? "Resend HTTP API (Port 443 - Cloud VPS Ready)"
+    : brevoApiKey
+      ? "Brevo HTTP API (Port 443 - Cloud VPS Ready)"
+      : "Gmail SMTP (Port 465/587)";
 
   try {
     await sendMailWithFallback({
       from: `"${FROM_NAME}" <${user}>`,
       to: recipient,
-      subject: `🧪 Test Email from Astro Raj SMTP Service`,
+      subject: `🧪 Test Email from Astro Raj Email Service`,
       html: `
         <div style="font-family: Arial, sans-serif; padding: 24px; background: #0f172a; color: #f8fafc; border-radius: 12px; border: 1px solid #334155; max-width: 500px;">
           <h2 style="margin-top: 0; color: #fbbf24; font-size: 20px;">Astro Raj Email Service Test</h2>
           <p style="color: #cbd5e1; font-size: 14px; line-height: 1.5;">
-            Hari Om! Aapka Gmail SMTP integration successfully connect ho gaya hai aur emails dispatch hone ke liye bilkul taiyar hain.
+            Hari Om! Aapka email service successfully connect ho gaya hai aur customer & admin confirmation emails dispatch hone ke liye bilkul taiyar hain.
           </p>
           <div style="background: #1e293b; padding: 12px 16px; border-radius: 8px; margin: 16px 0; font-size: 13px;">
-            <p style="margin: 4px 0;"><strong>Sender:</strong> ${escapeHtml(user)}</p>
+            <p style="margin: 4px 0;"><strong>Active Provider:</strong> ${activeProvider}</p>
             <p style="margin: 4px 0;"><strong>Receiver:</strong> ${escapeHtml(recipient)}</p>
-            <p style="margin: 4px 0;"><strong>Status:</strong> Connected & Verified (Port 465/587 IPv4)</p>
+            <p style="margin: 4px 0;"><strong>Status:</strong> Connected & Verified</p>
           </div>
           <p style="margin: 0; font-size: 12px; color: #94a3b8;">
             Jab bhi koi booking ya order paid hoga, automatic customer aur admin confirmation emails trigger ho jayenge (Strict single-dispatch guarantee).
@@ -859,13 +940,17 @@ export async function sendTestEmail(targetEmail?: string): Promise<{ success: bo
     });
     return {
       success: true,
-      message: `Test email successfully sent to ${recipient}!`,
+      message: `Test email successfully sent to ${recipient} via ${activeProvider}!`,
     };
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : String(error);
+    const isTimeout = errorMsg.toLowerCase().includes("timeout");
+    const hint = isTimeout && !resendApiKey && !brevoApiKey
+      ? " DigitalOcean blocks outbound SMTP ports 25, 465, and 587 by default. To bypass this, add RESEND_API_KEY to your VPS environment variables for instant HTTPS (Port 443) delivery."
+      : "";
     return {
       success: false,
-      message: `Failed to send email: ${errorMsg}`,
+      message: `Failed to send email: ${errorMsg}.${hint}`,
     };
   }
 }
