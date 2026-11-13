@@ -1,4 +1,4 @@
-import { ConsultationPricingTier, SiteSettings } from "./types";
+import { ConsultationPricingTier, ConsultationType, ConsultationUrgency, SiteSettings } from "./types";
 
 export const SITE_SETTINGS: SiteSettings = {
   brandName: "Astro Raj",
@@ -98,6 +98,56 @@ export const CONSULTATION_PRICING_MATRIX: ConsultationPricingTier[] = [
     originalPrice: 20400,
   },
 ];
+
+/**
+ * Calculates consultation pricing dynamically from the service's starting price.
+ * Follows the Vedic Consultation matrix increments:
+ * - 15m Audio Normal = Base Price (service.priceStartingFrom)
+ * - 30m Audio Normal = Base Price + 1,000
+ * - 15m Video Normal = Base Price + 1,000
+ * - 30m Video Normal = Base Price + 3,000
+ * - Urgent (Within 24 Hours) = 2x Normal fee
+ * - Original Price = 2x Displayed Price
+ */
+export function calculateConsultationTier(
+  serviceStartingPrice: number = 2100,
+  consultationType: ConsultationType = "audio",
+  durationMinutes: number = 15,
+  urgency: ConsultationUrgency = "normal"
+): ConsultationPricingTier {
+  const basePrice = Number(serviceStartingPrice) > 0 ? Number(serviceStartingPrice) : 2100;
+
+  let durationDelta = 0;
+  if (durationMinutes === 30) {
+    durationDelta = 1000;
+  } else if (durationMinutes === 45) {
+    durationDelta = 2000;
+  } else if (durationMinutes === 60) {
+    durationDelta = 3000;
+  }
+
+  let formatDelta = 0;
+  if (consultationType === "video") {
+    formatDelta = durationMinutes >= 30 ? 2000 : 1000;
+  } else if (consultationType === "in-person") {
+    formatDelta = 2000;
+  }
+
+  const normalPrice = basePrice + durationDelta + formatDelta;
+  const price = urgency === "urgent" ? normalPrice * 2 : normalPrice;
+  const originalPrice = price * 2;
+  const turnaroundDays = urgency === "urgent" ? "Within 24 Hours" : "7–15 Days";
+
+  return {
+    id: `${consultationType}-${durationMinutes}-${urgency}`,
+    durationMinutes: (durationMinutes as 15 | 30 | 45 | 60),
+    type: consultationType,
+    urgency,
+    turnaroundDays,
+    price,
+    originalPrice,
+  };
+}
 
 export const NAV_LINKS = [
   { label: "Home", href: "/" },

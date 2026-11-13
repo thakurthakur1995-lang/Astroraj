@@ -25,7 +25,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { SERVICES, SERVICE_CATEGORIES } from "@/lib/data/services";
-import { CONSULTATION_PRICING_MATRIX, SITE_SETTINGS } from "@/lib/constants";
+import { CONSULTATION_PRICING_MATRIX, calculateConsultationTier, SITE_SETTINGS } from "@/lib/constants";
 import { ConsultationType, ConsultationUrgency, BookingCustomerDetails, BookingRecord } from "@/lib/types";
 import { loadRazorpayScript, RazorpaySuccessResponse } from "@/lib/razorpay-client";
 import { OfflineBookingForm } from "./OfflineBookingForm";
@@ -38,7 +38,7 @@ function getServicePageForId(serviceId: string, category: string = "all"): numbe
       s.onlineAvailable !== false &&
       (category === "all" || s.categoryId === category)
   );
-  const idx = list.findIndex((s) => s.id === serviceId);
+  const idx = list.findIndex((s) => s.id === serviceId || s.slug === serviceId);
   return idx >= 0 ? Math.floor(idx / SERVICES_PER_PAGE) + 1 : 1;
 }
 
@@ -62,7 +62,7 @@ export function BookingWizard() {
 
 
   const [consultationType, setConsultationType] = useState<ConsultationType>("audio");
-  const [durationMinutes, setDurationMinutes] = useState<15 | 30>(30);
+  const [durationMinutes, setDurationMinutes] = useState<15 | 30>(15);
   const [urgency, setUrgency] = useState<ConsultationUrgency>("normal");
 
   // Date and Time Slot
@@ -134,19 +134,32 @@ export function BookingWizard() {
     }
   }, [currentStep, bookingMode, confirmedBooking]);
 
-  // Calculate pricing from matrix
-  const currentTier = CONSULTATION_PRICING_MATRIX.find(
-    (tier) =>
-      tier.type === consultationType &&
-      tier.durationMinutes === durationMinutes &&
-      tier.urgency === urgency
-  ) || {
-    price: 3100,
-    originalPrice: 6200,
-    turnaroundDays: "7-15 Days",
-  };
+  const selectedService =
+    SERVICES.find((s) => s.id === selectedServiceId || s.slug === selectedServiceId) ||
+    SERVICES[0];
 
-  const selectedService = SERVICES.find((s) => s.id === selectedServiceId) || SERVICES[0];
+  // Calculate pricing dynamically from the actual selected service's starting price and chosen plan options
+  const currentTier = (() => {
+    if (
+      selectedService.pricingTiers &&
+      selectedService.pricingTiers.length > 0 &&
+      selectedService.pricingTiers[0].price === selectedService.priceStartingFrom
+    ) {
+      const match = selectedService.pricingTiers.find(
+        (tier) =>
+          tier.type === consultationType &&
+          tier.durationMinutes === durationMinutes &&
+          tier.urgency === urgency
+      );
+      if (match) return match;
+    }
+    return calculateConsultationTier(
+      selectedService.priceStartingFrom,
+      consultationType,
+      durationMinutes,
+      urgency
+    );
+  })();
 
   // Available Time Slots
   const morningSlots = [
@@ -599,37 +612,18 @@ export function BookingWizard() {
             </div>
 
             {/* Services Grid (4 per page) */}
-            {/* Mobile View: Top Action Buttons */}
-          <div className="sm:hidden flex items-center justify-between gap-3 pt-1 pb-1">
-            <button
-              type="button"
-              onClick={() => setCurrentStep(3)}
-              className="inline-flex items-center gap-1 text-xs font-semibold text-vedic-muted hover:text-vedic-dark px-3 py-2.5 rounded-xl border border-border bg-ivory"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Back</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                if (validateCustomerDetails()) {
-                  setCurrentStep(5);
-                }
-              }}
-              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-saffron-600 hover:bg-saffron-700 text-white font-semibold text-xs shadow-md transition-all cursor-pointer"
-            >
-              <span>Review Booking Summary</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {paginatedServices.map((service) => {
                 const isSelected = selectedServiceId === service.id;
                 return (
                   <div
                     key={service.id}
-                    onClick={() => setSelectedServiceId(service.id)}
+                    onClick={() => {
+                      setSelectedServiceId(service.id);
+                      setDurationMinutes(15);
+                      setConsultationType("audio");
+                      setUrgency("normal");
+                    }}
                     className={`p-5 rounded-2xl border cursor-pointer transition-all ${
                       isSelected
                         ? "border-saffron-600 bg-saffron-50/50 shadow-md ring-1 ring-saffron-600/30"
@@ -731,11 +725,17 @@ export function BookingWizard() {
       {currentStep === 2 && (
         <div className="bg-white rounded-2xl sm:rounded-3xl border border-border p-4 sm:p-8 space-y-5 sm:space-y-6 shadow-xs overflow-hidden">
           <div className="space-y-1">
-            <h2 className="font-serif text-xl font-bold text-vedic-dark">
-              Step 2: Choose Mode, Duration & Urgency
-            </h2>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <h2 className="font-serif text-xl font-bold text-vedic-dark">
+                Step 2: Choose Mode, Duration & Urgency
+              </h2>
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-saffron-800 bg-saffron-50 px-3 py-1 rounded-full border border-saffron-200 self-start sm:self-auto">
+                <Sparkles className="w-3.5 h-3.5 text-saffron-600" />
+                <span>{selectedService.title}</span>
+              </span>
+            </div>
             <p className="text-xs text-vedic-muted">
-              Customise how and when you wish to connect with Guruji.
+              Customise how and when you wish to connect with Guruji for {selectedService.title}.
             </p>
           </div>
 
@@ -871,15 +871,20 @@ export function BookingWizard() {
           {/* Price Banner */}
           <div className="p-4 bg-ivory rounded-2xl border border-gold-400/40 flex items-center justify-between">
             <div>
-              <span className="text-xs text-vedic-muted block">Selected Plan Fee</span>
-              <span className="font-serif text-2xl font-bold text-saffron-700">
-                ₹{currentTier.price.toLocaleString("en-IN")}
-              </span>
-              {currentTier.originalPrice && (
-                <span className="text-xs text-vedic-muted line-through ml-2">
-                  ₹{currentTier.originalPrice.toLocaleString("en-IN")}
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs text-vedic-muted block">Selected Plan Fee</span>
+                <span className="text-[11px] text-vedic-muted font-medium hidden sm:inline">• {selectedService.title}</span>
+              </div>
+              <div className="flex items-baseline gap-2 mt-0.5">
+                <span className="font-serif text-2xl font-bold text-saffron-700">
+                  ₹{currentTier.price.toLocaleString("en-IN")}
                 </span>
-              )}
+                {currentTier.originalPrice && (
+                  <span className="text-xs text-vedic-muted line-through">
+                    ₹{currentTier.originalPrice.toLocaleString("en-IN")}
+                  </span>
+                )}
+              </div>
             </div>
 
             <span className="text-xs font-semibold text-vedic-dark bg-white px-3 py-1.5 rounded-lg border border-border">

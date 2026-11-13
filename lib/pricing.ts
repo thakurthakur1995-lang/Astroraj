@@ -1,4 +1,4 @@
-import { CONSULTATION_PRICING_MATRIX } from "./constants";
+import { CONSULTATION_PRICING_MATRIX, calculateConsultationTier } from "./constants";
 import { SERVICES } from "./data/services";
 import { PRODUCTS } from "./data/products";
 import { COURSES } from "./data/courses";
@@ -33,39 +33,38 @@ export async function validateAndCalculateBookingPrice(params: {
 
   // Find service
   let serviceTitle = "Vedic Consultation";
+  let serviceStartingPrice = 2100;
   if (isSupabaseConfigured) {
     try {
       const { data } = await supabase
         .from("services")
-        .select("title")
+        .select("title, price_starting_from")
         .eq("id", serviceId)
         .single();
       if (data?.title) {
         serviceTitle = data.title;
+      }
+      if (data?.price_starting_from) {
+        serviceStartingPrice = Number(data.price_starting_from);
       }
     } catch {
       // Fallback to local data
     }
   }
 
-  if (serviceTitle === "Vedic Consultation") {
-    const found = SERVICES.find((s) => s.id === serviceId);
-    if (found) serviceTitle = found.title;
+  const found = SERVICES.find((s) => s.id === serviceId || s.slug === serviceId);
+  if (found) {
+    if (serviceTitle === "Vedic Consultation") serviceTitle = found.title;
+    if (found.priceStartingFrom) serviceStartingPrice = found.priceStartingFrom;
   }
 
-  // Server-side pricing verification from official matrix
-  const tier = CONSULTATION_PRICING_MATRIX.find(
-    (t) =>
-      t.type === consultationType &&
-      t.durationMinutes === durationMinutes &&
-      t.urgency === urgency
+  // Server-side dynamic pricing calculation based on service starting price and selected options
+  const tier = calculateConsultationTier(
+    serviceStartingPrice,
+    consultationType,
+    durationMinutes,
+    urgency
   );
-
-  if (!tier) {
-    throw new Error(
-      `Pricing tier not found for ${consultationType}, ${durationMinutes} mins, ${urgency}`
-    );
-  }
 
   const priceInINR = tier.price;
   const amountInPaise = Math.round(priceInINR * 100);
@@ -74,8 +73,9 @@ export async function validateAndCalculateBookingPrice(params: {
     priceInINR,
     originalPrice: tier.originalPrice,
     amountInPaise,
-    serviceTitle: `${serviceTitle} (${durationMinutes} Min ${consultationType === "video" ? "Video" : "Audio"
-      })`,
+    serviceTitle: `${serviceTitle} (${durationMinutes} Min ${
+      consultationType === "video" ? "Video" : "Audio"
+    })`,
   };
 }
 
