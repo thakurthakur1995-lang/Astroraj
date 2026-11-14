@@ -13,21 +13,122 @@ function getSmtpCredentials() {
 
 // Resilient Multi-Provider Mail Sender:
 // 1. If RESEND_API_KEY is configured -> sends over HTTPS Port 443 (100% bypasses DigitalOcean SMTP port blocks)
+//    Note: If using unverified test domain (onboarding@resend.dev), Resend strictly only allows sending to the account owner.
+//    For external customer recipients, it automatically skips/falls back to SMTP.
 // 2. If BREVO_API_KEY is configured -> sends over HTTPS Port 443
 // 3. Fallback: Direct SMTP (Port 465 SSL -> Port 587 STARTTLS) with forced IPv4
-export async function sendMailWithFallback(mailOptions: SendMailOptions): Promise<void> {
+export async function sendMailWithFallback(mailOptions: SendMailOptions): Promise<{ provider: string }> {
   const resendApiKey = process.env.RESEND_API_KEY?.trim();
   const brevoApiKey = process.env.BREVO_API_KEY?.trim();
+  const emailProviderPref = process.env.EMAIL_PROVIDER?.trim().toLowerCase();
 
-  const toRecipient = typeof mailOptions.to === "string"
-    ? mailOptions.to
-    : Array.isArray(mailOptions.to)
-      ? mailOptions.to[0]
-      : String(mailOptions.to);
+  const rawRecipient = Array.isArray(mailOptions.to)
+    ? mailOptions.to[0]
+    : mailOptions.to;
 
-  // --- Provider 1: Resend HTTP API (Port 443 - NEVER BLOCKED BY DIGITALOCEAN) ---
-  if (resendApiKey) {
+  const toRecipient: string = typeof rawRecipient === "string"
+    ? rawRecipient
+    : typeof rawRecipient === "object" && rawRecipient && "address" in rawRecipient
+      ? String((rawRecipient as any).address)
+      : String(rawRecipient || "");
+
+  const { user, pass } = getSmtpCredentials();
+  const recipientClean = toRecipient.trim().toLowerCase();
+  const adminClean = (ADMIN_EMAIL || "").trim().toLowerCase();
+  const userClean = (user || "").trim().toLowerCase();
+  const isOwnerRecipient = recipientClean === adminClean || recipientClean === userClean;
+
+  const errors: string[] = [];
+
+  // Provider: Direct SMTP (Gmail)
+  const trySmtp = async (): Promise<boolean> => {
+    if (!pass) {
+      errors.push("Gmail SMTP: GMAIL_APP_PASSWORD is not configured");
+      return false;
+    }
+
+    const host = process.env.SMTP_HOST || "smtp.gmail.com";
+    const primaryPort = Number(process.env.SMTP_PORT || 465);
+
+    // 1. Try Primary: Port 465 (Direct SSL) with forced IPv4
+    try {
+      const primaryTransporter = nodemailer.createTransport({
+        host,
+        port: primaryPort,
+        secure: primaryPort === 465,
+        family: 4,
+        auth: { user, pass },
+        connectionTimeout: 10000,
+        greetingTimeout: 8000,
+        socketTimeout: 12000,
+        tls: {
+          rejectUnauthorized: true,
+          servername: host,
+        },
+      } as any);
+
+      await primaryTransporter.sendMail({
+        ...mailOptions,
+        from: mailOptions.from || `"${FROM_NAME}" <${user}>`,
+      });
+      console.log(`[Email Service] Email dispatched successfully via Gmail SMTP (Port ${primaryPort}) to ${toRecipient}`);
+      return true;
+    } catch (primaryErr: any) {
+      const pMsg = primaryErr?.message || String(primaryErr);
+      console.warn(
+        `[Email Service] Primary SMTP port ${primaryPort} failed (${pMsg}). Retrying via Port 587 (STARTTLS)...`
+      );
+
+      // 2. Fallback: Port 587 (STARTTLS) with forced IPv4
+      try {
+        const fallbackTransporter = nodemailer.createTransport({
+          host,
+          port: 587,
+          secure: false, // STARTTLS
+          family: 4,
+          auth: { user, pass },
+          connectionTimeout: 10000,
+          greetingTimeout: 8000,
+          socketTimeout: 12000,
+          tls: {
+            rejectUnauthorized: true,
+            servername: host,
+          },
+        } as any);
+
+        await fallbackTransporter.sendMail({
+          ...mailOptions,
+          from: mailOptions.from || `"${FROM_NAME}" <${user}>`,
+        });
+        console.log(`[Email Service] Email dispatched successfully via Gmail SMTP (Port 587) to ${toRecipient}`);
+        return true;
+      } catch (fallbackErr: any) {
+        const fMsg = fallbackErr?.message || String(fallbackErr);
+        console.error(`[Email Service] Both SMTP ports (465 & 587) failed to deliver to ${toRecipient}: ${fMsg}`);
+        errors.push(`Gmail SMTP failed (Ports 465/587): ${fMsg}`);
+        return false;
+      }
+    }
+  };
+
+  // Provider: Resend HTTP API
+  const tryResend = async (): Promise<boolean> => {
+    if (!resendApiKey) return false;
+
     const fromAddress = process.env.RESEND_FROM_EMAIL || "Astro Raj <onboarding@resend.dev>";
+    const isTestingDomain = fromAddress.includes("@resend.dev");
+
+    // Resend free test domain restriction:
+    // onboarding@resend.dev strictly only permits sending to the account owner email.
+    // If recipient is an external customer and fromAddress is testing domain, Resend will ALWAYS fail with 403.
+    if (isTestingDomain && !isOwnerRecipient) {
+      console.log(
+        `[Email Service] Skipping Resend for external customer ${toRecipient} because fromAddress (${fromAddress}) is unverified test domain. Resend sandbox only permits sending to owner (${adminClean}). Falling back to SMTP...`
+      );
+      errors.push(`Resend skipped: test domain (${fromAddress}) cannot send to external customer (${toRecipient})`);
+      return false;
+    }
+
     try {
       const response = await fetch("https://api.resend.com/emails", {
         method: "POST",
@@ -45,18 +146,26 @@ export async function sendMailWithFallback(mailOptions: SendMailOptions): Promis
 
       const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        throw new Error(`Resend API error (${response.status}): ${data.message || JSON.stringify(data)}`);
+        const errorMsg = `Resend API error (${response.status}): ${data.message || JSON.stringify(data)}`;
+        console.warn(`[Email Service] ${errorMsg}. Falling back to next provider...`);
+        errors.push(errorMsg);
+        return false;
       }
-      console.log(`[Email Service] Email dispatched successfully via Resend API to ${toRecipient}`);
-      return;
-    } catch (resendErr) {
-      console.error("[Email Service] Resend API error:", resendErr);
-      throw resendErr;
-    }
-  }
 
-  // --- Provider 2: Brevo HTTP API (Port 443 - NEVER BLOCKED BY DIGITALOCEAN) ---
-  if (brevoApiKey) {
+      console.log(`[Email Service] Email dispatched successfully via Resend API to ${toRecipient}`);
+      return true;
+    } catch (resendErr: any) {
+      const rMsg = resendErr?.message || String(resendErr);
+      console.warn(`[Email Service] Resend network error (${rMsg}). Falling back to next provider...`);
+      errors.push(`Resend error: ${rMsg}`);
+      return false;
+    }
+  };
+
+  // Provider: Brevo HTTP API
+  const tryBrevo = async (): Promise<boolean> => {
+    if (!brevoApiKey) return false;
+
     const senderEmail = process.env.BREVO_SENDER_EMAIL || process.env.GMAIL_USER || ADMIN_EMAIL;
     try {
       const response = await fetch("https://api.brevo.com/v3/smtp/email", {
@@ -75,71 +184,37 @@ export async function sendMailWithFallback(mailOptions: SendMailOptions): Promis
 
       const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        throw new Error(`Brevo API error (${response.status}): ${data.message || JSON.stringify(data)}`);
+        const errorMsg = `Brevo API error (${response.status}): ${data.message || JSON.stringify(data)}`;
+        console.warn(`[Email Service] ${errorMsg}. Falling back to next provider...`);
+        errors.push(errorMsg);
+        return false;
       }
+
       console.log(`[Email Service] Email dispatched successfully via Brevo API to ${toRecipient}`);
-      return;
-    } catch (brevoErr) {
-      console.error("[Email Service] Brevo API error:", brevoErr);
-      throw brevoErr;
+      return true;
+    } catch (brevoErr: any) {
+      const bMsg = brevoErr?.message || String(brevoErr);
+      console.warn(`[Email Service] Brevo network error (${bMsg}). Falling back to next provider...`);
+      errors.push(`Brevo error: ${bMsg}`);
+      return false;
     }
+  };
+
+  // Provider Selection Strategy
+  if (emailProviderPref === "smtp") {
+    if (await trySmtp()) return { provider: "Gmail SMTP" };
+    if (await tryResend()) return { provider: "Resend HTTP API" };
+    if (await tryBrevo()) return { provider: "Brevo HTTP API" };
+  } else {
+    if (await tryResend()) return { provider: "Resend HTTP API" };
+    if (await tryBrevo()) return { provider: "Brevo HTTP API" };
+    if (await trySmtp()) return { provider: "Gmail SMTP" };
   }
 
-  // --- Provider 3: Direct SMTP (Gmail) ---
-  const { user, pass } = getSmtpCredentials();
-
-  if (!pass) {
-    const errorMsg =
-      "[Email Service] Neither RESEND_API_KEY nor GMAIL_APP_PASSWORD is configured. Please configure an email provider in your environment variables.";
-    console.error(errorMsg);
-    throw new Error(errorMsg);
-  }
-
-  const host = process.env.SMTP_HOST || "smtp.gmail.com";
-  const primaryPort = Number(process.env.SMTP_PORT || 465);
-
-  // 1. Try Primary: Port 465 (Direct SSL) with forced IPv4
-  const primaryTransporter = nodemailer.createTransport({
-    host,
-    port: primaryPort,
-    secure: primaryPort === 465,
-    family: 4,
-    auth: { user, pass },
-    connectionTimeout: 10000,
-    greetingTimeout: 8000,
-    socketTimeout: 12000,
-    tls: {
-      rejectUnauthorized: true,
-      servername: host,
-    },
-  } as any);
-
-  try {
-    await primaryTransporter.sendMail(mailOptions);
-    return;
-  } catch (primaryErr: any) {
-    console.warn(
-      `[Email Service] Primary SMTP port ${primaryPort} failed (${primaryErr?.message || primaryErr}). Retrying via Port 587 (STARTTLS)...`
-    );
-
-    // 2. Fallback: Port 587 (STARTTLS) with forced IPv4
-    const fallbackTransporter = nodemailer.createTransport({
-      host,
-      port: 587,
-      secure: false, // STARTTLS
-      family: 4,
-      auth: { user, pass },
-      connectionTimeout: 10000,
-      greetingTimeout: 8000,
-      socketTimeout: 12000,
-      tls: {
-        rejectUnauthorized: true,
-        servername: host,
-      },
-    } as any);
-
-    await fallbackTransporter.sendMail(mailOptions);
-  }
+  // All providers failed
+  const failureMsg = `[Email Service] All email delivery providers failed for recipient ${toRecipient}. Attempts: ${errors.join(" | ")}`;
+  console.error(failureMsg);
+  throw new Error(failureMsg);
 }
 
 // Memory cache & concurrency lock to prevent duplicate email dispatches
@@ -185,13 +260,15 @@ export async function sendBookingConfirmationEmails(params: {
     // Tentatively add keys to cache to prevent concurrent triggers
     keys.forEach((k) => sentEmailsCache.add(k));
 
+    const resendApiKey = process.env.RESEND_API_KEY?.trim();
+    const brevoApiKey = process.env.BREVO_API_KEY?.trim();
     const { user, pass } = getSmtpCredentials();
-    if (!pass) {
+    if (!pass && !resendApiKey && !brevoApiKey) {
       keys.forEach((k) => sentEmailsCache.delete(k));
-      console.warn("[Email Service] GMAIL_APP_PASSWORD not configured on server.");
+      console.warn("[Email Service] No email service configured on server (Neither GMAIL_APP_PASSWORD, RESEND_API_KEY nor BREVO_API_KEY).");
       return {
         success: false,
-        error: "GMAIL_APP_PASSWORD not configured on server.",
+        error: "No email service configured on server.",
       };
     }
 
@@ -451,17 +528,18 @@ export async function sendBookingConfirmationEmails(params: {
 
     try {
       const sendPromises: Promise<any>[] = [];
+      const customerEmail = booking.email?.trim();
 
       // 1. Send to Customer
-      if (booking.email) {
+      if (customerEmail) {
         sendPromises.push(
           sendMailWithFallback({
             from: fromHeader,
-            to: booking.email,
+            to: customerEmail,
             subject: `Booking Confirmed: ${booking.serviceTitle} | Astro Raj (${booking.bookingCode})`,
             html: customerHtml,
           }).catch((err) => {
-            console.error(`[Email Service] Failed sending customer booking email to ${booking.email}:`, err);
+            console.error(`[Email Service] Failed sending customer booking email to ${customerEmail}:`, err);
             throw err;
           })
         );
@@ -481,10 +559,33 @@ export async function sendBookingConfirmationEmails(params: {
       );
 
       const results = await Promise.allSettled(sendPromises);
+      const customerIdx = customerEmail ? 0 : -1;
+      const adminIdx = customerEmail ? 1 : 0;
+
+      const customerFailed = customerIdx !== -1 && results[customerIdx]?.status === "rejected";
+      const adminFailed = results[adminIdx]?.status === "rejected";
+
+      if (customerFailed) {
+        console.error(
+          `[Email Service] Customer booking email failed:`,
+          (results[customerIdx] as PromiseRejectedResult).reason
+        );
+      }
+      if (adminFailed) {
+        console.error(
+          `[Email Service] Admin booking email failed:`,
+          (results[adminIdx] as PromiseRejectedResult).reason
+        );
+      }
+
       const hasSuccess = results.some((r) => r.status === "fulfilled");
 
       if (hasSuccess) {
-        console.log(`[Email Service] Booking confirmation emails dispatched for ${booking.bookingCode}`);
+        // If customer email failed, release lock from cache so retries can redeliver
+        if (customerFailed) {
+          keys.forEach((k) => sentEmailsCache.delete(k));
+        }
+        console.log(`[Email Service] Booking confirmation emails dispatched for ${booking.bookingCode} (Customer: ${customerFailed ? "FAILED" : "SENT"}, Admin: ${adminFailed ? "FAILED" : "SENT"})`);
         return { success: true };
       } else {
         // Unlock on complete failure
@@ -544,13 +645,15 @@ export async function sendOrderConfirmationEmails(params: {
     // Tentatively add keys to cache to prevent concurrent triggers
     keys.forEach((k) => sentEmailsCache.add(k));
 
+    const resendApiKey = process.env.RESEND_API_KEY?.trim();
+    const brevoApiKey = process.env.BREVO_API_KEY?.trim();
     const { user, pass } = getSmtpCredentials();
-    if (!pass) {
+    if (!pass && !resendApiKey && !brevoApiKey) {
       keys.forEach((k) => sentEmailsCache.delete(k));
-      console.warn("[Email Service] GMAIL_APP_PASSWORD not configured on server.");
+      console.warn("[Email Service] No email service configured on server (Neither GMAIL_APP_PASSWORD, RESEND_API_KEY nor BREVO_API_KEY).");
       return {
         success: false,
-        error: "GMAIL_APP_PASSWORD not configured on server.",
+        error: "No email service configured on server.",
       };
     }
 
@@ -828,17 +931,18 @@ export async function sendOrderConfirmationEmails(params: {
 
     try {
       const sendPromises: Promise<any>[] = [];
+      const customerEmail = order.customer?.email?.trim();
 
       // 1. Send to Customer
-      if (order.customer.email) {
+      if (customerEmail) {
         sendPromises.push(
           sendMailWithFallback({
             from: fromHeader,
-            to: order.customer.email,
+            to: customerEmail,
             subject: `Order Confirmed: #${order.orderNumber} | Astro Raj`,
             html: customerHtml,
           }).catch((err) => {
-            console.error(`[Email Service] Failed sending customer order email to ${order.customer.email}:`, err);
+            console.error(`[Email Service] Failed sending customer order email to ${customerEmail}:`, err);
             throw err;
           })
         );
@@ -858,10 +962,33 @@ export async function sendOrderConfirmationEmails(params: {
       );
 
       const results = await Promise.allSettled(sendPromises);
+      const customerIdx = customerEmail ? 0 : -1;
+      const adminIdx = customerEmail ? 1 : 0;
+
+      const customerFailed = customerIdx !== -1 && results[customerIdx]?.status === "rejected";
+      const adminFailed = results[adminIdx]?.status === "rejected";
+
+      if (customerFailed) {
+        console.error(
+          `[Email Service] Customer order email failed:`,
+          (results[customerIdx] as PromiseRejectedResult).reason
+        );
+      }
+      if (adminFailed) {
+        console.error(
+          `[Email Service] Admin order email failed:`,
+          (results[adminIdx] as PromiseRejectedResult).reason
+        );
+      }
+
       const hasSuccess = results.some((r) => r.status === "fulfilled");
 
       if (hasSuccess) {
-        console.log(`[Email Service] Order confirmation emails dispatched for #${order.orderNumber}`);
+        // If customer email failed, release lock from cache so retries can redeliver
+        if (customerFailed) {
+          keys.forEach((k) => sentEmailsCache.delete(k));
+        }
+        console.log(`[Email Service] Order confirmation emails dispatched for #${order.orderNumber} (Customer: ${customerFailed ? "FAILED" : "SENT"}, Admin: ${adminFailed ? "FAILED" : "SENT"})`);
         return { success: true };
       } else {
         // Unlock on complete failure
@@ -910,14 +1037,8 @@ export async function sendTestEmail(targetEmail?: string): Promise<{ success: bo
     };
   }
 
-  const activeProvider = resendApiKey
-    ? "Resend HTTP API (Port 443 - Cloud VPS Ready)"
-    : brevoApiKey
-      ? "Brevo HTTP API (Port 443 - Cloud VPS Ready)"
-      : "Gmail SMTP (Port 465/587)";
-
   try {
-    await sendMailWithFallback({
+    const result = await sendMailWithFallback({
       from: `"${FROM_NAME}" <${user}>`,
       to: recipient,
       subject: `🧪 Test Email from Astro Raj Email Service`,
@@ -928,7 +1049,7 @@ export async function sendTestEmail(targetEmail?: string): Promise<{ success: bo
             Hari Om! Aapka email service successfully connect ho gaya hai aur customer & admin confirmation emails dispatch hone ke liye bilkul taiyar hain.
           </p>
           <div style="background: #1e293b; padding: 12px 16px; border-radius: 8px; margin: 16px 0; font-size: 13px;">
-            <p style="margin: 4px 0;"><strong>Active Provider:</strong> ${activeProvider}</p>
+            <p style="margin: 4px 0;"><strong>Active Provider:</strong> Auto Fallback</p>
             <p style="margin: 4px 0;"><strong>Receiver:</strong> ${escapeHtml(recipient)}</p>
             <p style="margin: 4px 0;"><strong>Status:</strong> Connected & Verified</p>
           </div>
@@ -938,9 +1059,10 @@ export async function sendTestEmail(targetEmail?: string): Promise<{ success: bo
         </div>
       `,
     });
+    const providerUsed = result?.provider || "Configured Email Provider";
     return {
       success: true,
-      message: `Test email successfully sent to ${recipient} via ${activeProvider}!`,
+      message: `Test email successfully sent to ${recipient} via ${providerUsed}!`,
     };
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : String(error);
