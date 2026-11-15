@@ -121,7 +121,7 @@ export function Footer() {
               </li>
               <li>
                 <Link href="/book-consultation?mode=offline" className="text-emerald-400 hover:text-emerald-300 font-semibold transition-colors">
-                  🏛️ Book Offline Consultation (WhatsApp)
+                  🏛️ Book Offline Consultation (Office / On-Site)
                 </Link>
               </li>
             </ul>

@@ -55,7 +55,7 @@ export interface OfflineConsultationInquiry {
   email?: string;
   city: string;
   address?: string;
-  consultationPreference: "ashram_rishikesh" | "onsite_visit" | "direct_coordination";
+  consultationPreference: "ashram_rishikesh" | "office_rishikesh" | "onsite_visit" | "direct_coordination";
   preferredDate: string;
   preferredSlot: string;
   dateOfBirth?: string;

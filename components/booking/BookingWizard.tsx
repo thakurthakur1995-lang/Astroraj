@@ -451,7 +451,7 @@ export function BookingWizard() {
           </div>
 
           <div className="text-xs text-vedic-muted pt-4 border-t border-border/60">
-            For any queries or rescheduling requests, call our Rishikesh ashram at {SITE_SETTINGS.phone}.
+            For any queries or rescheduling requests, call our Rishikesh office at {SITE_SETTINGS.phone}.
           </div>
         </div>
       </div>
@@ -921,7 +921,7 @@ export function BookingWizard() {
               Step 3: Select Date & Available Time Slot
             </h2>
             <p className="text-xs text-vedic-muted">
-              Choose an available appointment window from Guruji&apos;s Rishikesh ashram calendar.
+              Choose an available appointment window from Guruji&apos;s Rishikesh office calendar.
             </p>
           </div>
 

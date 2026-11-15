@@ -7,7 +7,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
     slug: "astrology-consultation",
     title: "Astrology Consultation",
     shortDescription: "Personalized birth chart, dasha analysis, career, marriage and life path guidance by Astrologer Rajat Thakur.",
-    longDescription: "Rooted in authentic Parashari and Jaimini Vedic astrology, Guruji offers deep insights into planetary influences, karmic timelines, and practical spiritual remedies without fear-based predictions. Available both online via HD call and offline in-person at Rishikesh Ashram.",
+    longDescription: "Rooted in authentic Parashari and Jaimini Vedic astrology, Guruji offers deep insights into planetary influences, karmic timelines, and practical spiritual remedies without fear-based predictions. Available both online via HD call and offline in-person at Rishikesh Office.",
     iconName: "Compass",
     badge: "Most Popular",
     featuredImage: "/images/vedic-janam-kundli.jpg",
@@ -74,7 +74,7 @@ export const SERVICES: Service[] = [
     categoryId: "astrology",
     title: "Personal Astrology Consultation",
     shortDescription: "Comprehensive one-on-one consultation with Guruji covering life trajectory, dasha analysis, and remedy roadmap.",
-    fullDescription: "Gain profound clarity on life's most pressing challenges. In this consultation, Astrologer Rajat Thakur analyzes your Lagna, Navamsha (D9), current Mahadasha/Antardasha, and planetary transits (Gochara) to give honest, actionable, and compassionate guidance. Available online or offline at Rishikesh Ashram.",
+    fullDescription: "Gain profound clarity on life's most pressing challenges. In this consultation, Astrologer Rajat Thakur analyzes your Lagna, Navamsha (D9), current Mahadasha/Antardasha, and planetary transits (Gochara) to give honest, actionable, and compassionate guidance. Available online or offline at Rishikesh Office.",
     image: "/images/services/personal-astrology-consultation.jpg",
     priceStartingFrom: 2100,
     featured: true,
@@ -90,15 +90,15 @@ export const SERVICES: Service[] = [
     ],
     inclusions: [
       "Choice of 15 min or 30 min duration",
-      "Audio call, High-Definition Video call, or In-Person Ashram visit",
+      "Audio call, High-Definition Video call, or In-Person Office visit",
       "Vedic remedy checklist sent via WhatsApp/Email",
       "Urgent 24-hour turnaround option available",
     ],
     processSteps: [
-      { title: "Select Mode & Duration", description: "Choose Online (Audio/Video) or Offline (In-Person at Ashram)." },
+      { title: "Select Mode & Duration", description: "Choose Online (Audio/Video) or Offline (In-Person at Office)." },
       { title: "Provide Birth Details", description: "Fill exact Date of Birth, Time of Birth, Place of Birth, and your primary questions." },
       { title: "Pick Date & Time Slot", description: "Select your preferred slot from Guruji's live calendar availability." },
-      { title: "Confirmation & Booking", description: "Secure instant online checkout or manual payment via WhatsApp for offline sessions." },
+      { title: "Confirmation & Booking", description: "Secure instant online checkout or 50% advance online booking for offline sessions." },
       { title: "Direct Consultation", description: "Guruji connects with you directly with prior thorough chart preparation." },
     ],
     faqs: [
@@ -108,7 +108,7 @@ export const SERVICES: Service[] = [
       },
       {
         question: "How does Offline consultation work?",
-        answer: "Fill the Offline Consultation form. Your details are forwarded to admin WhatsApp, where our ashram coordinator confirms the slot and manual payment details for your in-person visit.",
+        answer: "Fill the Offline Consultation form, select your preferred date, pay 50% advance online, and our office coordinator will coordinate your visit schedule.",
       },
       {
         question: "How soon can I consult if it is an urgent situation?",
@@ -169,7 +169,7 @@ export const SERVICES: Service[] = [
       "Direct question and answer round",
     ],
     processSteps: [
-      { title: "Choose Format", description: "Select online video/audio or offline ashram appointment." },
+      { title: "Choose Format", description: "Select online video/audio or offline office appointment." },
       { title: "Submit Details", description: "Share your professional query and birth data." },
       { title: "Consultation", description: "Strategic career roadmapping." },
     ],
@@ -246,7 +246,7 @@ export const SERVICES: Service[] = [
       },
       {
         question: "Can I book an on-site physical visit to my house?",
-        answer: "Yes! Choose the Offline Consultation option, fill in your property location, and our ashram coordinator will arrange an in-person site visit.",
+        answer: "Yes! Choose the Offline Consultation option, fill in your property location, and our office coordinator will arrange an in-person site visit.",
       },
     ],
   },
@@ -531,7 +531,7 @@ export const SERVICES: Service[] = [
       },
       {
         question: "Can I take Diksha offline in Rishikesh?",
-        answer: "Yes, you can visit our Rishikesh Ashram in person. Choose the Offline Consultation option to register your details and coordinate manual booking.",
+        answer: "Yes, you can visit our Rishikesh Office in person. Choose the Offline Consultation option or contact Guruji directly for initiation guidance.",
       },
     ],
   },
@@ -758,7 +758,7 @@ export const SERVICES: Service[] = [
     slug: "nadi-pariksha-holistic-consultation",
     categoryId: "ayurveda",
     title: "In-Person Nadi Pariksha & Classical Ayurvedic Guidance",
-    shortDescription: "Authentic radial pulse diagnosis and tailored herbal roadmap conducted in-person at Rishikesh Ashram or clinic.",
+    shortDescription: "Authentic radial pulse diagnosis and tailored herbal roadmap conducted in-person at Rishikesh Office or clinic.",
     fullDescription: "Nadi Pariksha is the ancient non-invasive Ayurvedic science of reading the three biological humors (Vata, Pitta, Kapha) and organ health through the radial pulse. In this in-person session at Rishikesh, Guruji and learned Vaidyas assess your cellular constitution, digestive fire (Agni), toxins (Ama), and prescribe authentic classical formulations.",
     image: "/images/services/nadi-pariksha-classical-ayurveda.jpg",
     priceStartingFrom: 2100,
@@ -778,7 +778,7 @@ export const SERVICES: Service[] = [
       "Follow-up lifestyle counseling",
     ],
     processSteps: [
-      { title: "Book Offline Slot", description: "Submit details via Offline Form to book your ashram visit." },
+      { title: "Book Offline Slot", description: "Submit details via Offline Form to book your office visit." },
       { title: "Pulse Examination", description: "Conducted in early morning or quiet fasting state." },
       { title: "Herbal Protocol", description: "Personalized formulation roadmap." },
     ],

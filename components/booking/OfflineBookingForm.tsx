@@ -360,7 +360,7 @@ export function OfflineBookingForm({
             }
           } catch (verifyErr) {
             console.error("Verification error:", verifyErr);
-            alert("Payment processed, but network interrupted. Please contact our ashram with your payment receipt.");
+            alert("Payment processed, but network interrupted. Please contact our office with your payment receipt.");
           } finally {
             setIsProcessingPayment(false);
           }
@@ -585,7 +585,7 @@ export function OfflineBookingForm({
           </div>
           <ol className="list-decimal list-inside space-y-1.5 text-vedic-muted leading-relaxed pl-1">
             <li>
-              <strong className="text-vedic-dark">Ashram Schedule Confirmation:</strong> Our ashram coordinator will call you within a few hours to confirm the exact visiting hours for your scheduled day.
+              <strong className="text-vedic-dark">Office Schedule Confirmation:</strong> Our office coordinator will call you within a few hours to confirm the exact visiting hours for your scheduled day.
             </li>
             <li>
               <strong className="text-vedic-dark">Forward Pass on WhatsApp:</strong> Click the green WhatsApp button below to ensure your booking pass is directly linked in our coordinator&apos;s records.
@@ -605,7 +605,7 @@ export function OfflineBookingForm({
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm shadow-md transition-all cursor-pointer"
           >
             <MessageCircle className="w-4 h-4" />
-            <span>Send Confirmation to Ashram WhatsApp</span>
+            <span>Send Confirmation to Office WhatsApp</span>
           </a>
 
           <button
@@ -722,7 +722,7 @@ export function OfflineBookingForm({
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white hover:bg-ivory text-vedic-dark border border-border font-bold text-sm transition-all cursor-pointer"
             >
               <Phone className="w-4 h-4 text-saffron-700" />
-              <span>Call Rishikesh Ashram ({SITE_SETTINGS.phone})</span>
+              <span>Call Rishikesh Office ({SITE_SETTINGS.phone})</span>
             </a>
           </div>
         </div>
@@ -1390,12 +1390,12 @@ export function OfflineBookingForm({
 
           <div className="flex items-center justify-center gap-1.5 p-2 bg-ivory rounded-lg border border-border">
             <Phone className="w-4 h-4 text-amber-600 shrink-0" />
-            <span>Dedicated Ashram Coordinator</span>
+            <span>Dedicated Office Coordinator</span>
           </div>
         </div>
 
         <div className="text-center text-xs text-vedic-muted pt-1">
-          Need immediate consultation assistance? Call our Rishikesh ashram at{" "}
+          Need immediate consultation assistance? Call our Rishikesh office at{" "}
           <a
             href={`tel:${SITE_SETTINGS.phone}`}
             className="font-bold text-vedic-dark hover:underline"

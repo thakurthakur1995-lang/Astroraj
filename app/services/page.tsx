@@ -73,13 +73,13 @@ export default async function ServicesPage() {
                 <span>🏛️ Offline Consultations & Site Visits</span>
               </div>
               <p className="text-xs text-vedic-muted leading-relaxed">
-                Prefer an in-person meeting? Visit Guruji at our Rishikesh Ashram (Shisham Jhari) or request an on-site property visit for Vastu. Submit your details to admin WhatsApp; our team manually processes payment (UPI/Bank) and confirms your slot.
+                Prefer an in-person meeting? Visit Guruji at our Rishikesh Office (Shisham Jhari) or request an on-site property visit. Choose your preferred date, pay 50% advance online, and settle the remaining 50% balance on-site.
               </p>
               <Link
                 href="/book-consultation?mode=offline"
                 className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-800 pt-1"
               >
-                <span>Book Offline (WhatsApp & Manual Pay)</span>
+                <span>Book Offline (Office / On-Site Visit)</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>

@@ -133,7 +133,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
                 className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm shadow-md transition-all cursor-pointer"
               >
                 <Building className="w-4 h-4" />
-                <span>Book Offline (In-Person / WhatsApp)</span>
+                <span>Book Offline (Office / On-Site Visit)</span>
               </Link>
 
               <a
@@ -171,13 +171,13 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
               <div className="p-5 rounded-2xl bg-emerald-50/50 border border-emerald-200/60 space-y-2">
                 <div className="font-bold text-sm text-emerald-900 flex items-center gap-1.5">
                   <Building className="w-4 h-4 text-emerald-700" />
-                  <span>2. Offline Consultation Mode (Ashram / Site Visit)</span>
+                  <span>2. Offline Consultation Mode (Office / Site Visit)</span>
                 </div>
                 <ul className="text-xs text-vedic-muted space-y-1.5 list-disc list-inside leading-relaxed">
-                  <li>In-Person consultation at our Rishikesh Ashram (Shisham Jhari, Muni Ki Reti).</li>
+                  <li>In-Person consultation at our Rishikesh Office (Shisham Jhari, Muni Ki Reti).</li>
                   <li>On-Site property visits available for Residential, Commercial & Industrial Vastu.</li>
-                  <li>Fill your details in the Offline form; all information is forwarded to Admin WhatsApp.</li>
-                  <li>Manual payment (UPI/Bank Transfer) is coordinated directly with the ashram coordinator.</li>
+                  <li>Fill your details in the Offline form with preferred appointment date and meeting preference.</li>
+                  <li>Secure booking with 50% advance online, remaining 50% balance paid on-site / at office.</li>
                 </ul>
               </div>
             </div>
@@ -437,7 +437,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
                     className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm shadow-md transition-all cursor-pointer"
                   >
                     <Building className="w-4 h-4" />
-                    <span>Book Offline (In-Person / WhatsApp)</span>
+                    <span>Book Offline (Office / On-Site Visit)</span>
                   </Link>
 
                   <a
@@ -472,18 +472,18 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
           <div className="space-y-1">
             <div className="font-bold text-sm text-vedic-dark flex items-center gap-2">
               <Building className="w-4 h-4 text-saffron-700" />
-              <span>Prefer an In-Person Consultation at Rishikesh Ashram or On-Site Visit?</span>
+              <span>Prefer an In-Person Consultation at Rishikesh Office or On-Site Visit?</span>
             </div>
             <p className="text-xs text-vedic-muted leading-relaxed max-w-2xl">
-              Fill the offline consultation form with your details. Our coordinator receives your request on Admin WhatsApp, coordinates your slot with Guruji, and provides manual payment details (UPI/Bank Transfer).
+              Fill the offline consultation form with your preferred date. Secure your slot with 50% advance online, and settle the remaining 50% balance on-site.
             </p>
           </div>
           <Link
             href={`/book-consultation?service=${matchedService.slug}&mode=offline`}
-            className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shrink-0 shadow-xs flex items-center justify-center gap-1.5"
+            className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shrink-0 shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
           >
-            <MessageCircle className="w-3.5 h-3.5" />
-            <span>Book Offline via WhatsApp</span>
+            <Building className="w-3.5 h-3.5" />
+            <span>Book Offline (Office / On-Site)</span>
           </Link>
         </div>
 
@@ -824,7 +824,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
             Ready to Schedule Your Session for {matchedService.title}?
           </h2>
           <p className="text-xs sm:text-sm text-amber-100/80 max-w-lg mx-auto">
-            Choose online live consultation with instant calendar confirmation or offline in-person session with manual payment coordination.
+            Choose online live consultation with instant calendar confirmation or offline in-person session with 50% advance booking.
           </p>
           <div className="pt-2 flex flex-wrap items-center justify-center gap-4">
             <Link
@@ -840,7 +840,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
               className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm shadow-md"
             >
               <Building className="w-4 h-4" />
-              <span>Book Offline (In-Person / WhatsApp)</span>
+              <span>Book Offline (Office / On-Site Visit)</span>
             </Link>
           </div>
         </div>
