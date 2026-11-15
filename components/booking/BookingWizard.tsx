@@ -470,7 +470,7 @@ export function BookingWizard() {
           Book Your Personal Consultation
         </h1>
         <p className="text-xs sm:text-sm text-vedic-muted max-w-lg mx-auto">
-          Choose Online consultation (Live Audio/Video) or Offline consultation (In-Person Ashram / Site Visit with manual payment).
+          Choose Online consultation (Live Audio/Video) or Offline consultation (In-Person Office / On-Site Visit with 50% advance).
         </p>
       </div>
 

@@ -4,6 +4,11 @@ import { PRODUCTS } from "./data/products";
 import { COURSES } from "./data/courses";
 import { ConsultationType, ConsultationUrgency } from "./types";
 import { isSupabaseConfigured, supabase } from "./supabase/client";
+import {
+  getOfflinePricing,
+  OfflineMeetingPreference,
+  OfflineLocationType,
+} from "./offline-pricing";
 
 export interface BookingPriceResult {
   priceInINR: number;
@@ -17,10 +22,50 @@ export async function validateAndCalculateBookingPrice(params: {
   consultationType: ConsultationType;
   durationMinutes: number;
   urgency: ConsultationUrgency;
+  bookingMode?: "online" | "offline";
+  offlinePreference?: OfflineMeetingPreference;
+  offlineLocation?: OfflineLocationType;
 }): Promise<BookingPriceResult> {
-  const { serviceId, consultationType, durationMinutes, urgency } = params;
+  const {
+    serviceId,
+    consultationType,
+    durationMinutes,
+    urgency,
+    bookingMode,
+    offlinePreference,
+    offlineLocation,
+  } = params;
 
-  // Validate allowed parameters
+  // Handle Offline Consultation Booking Mode
+  if (bookingMode === "offline") {
+    const offlineResult = getOfflinePricing(
+      serviceId,
+      offlinePreference || "rishikesh_office",
+      offlineLocation || "rishikesh_area"
+    );
+
+    if (!offlineResult || offlineResult.isDirectContactOnly) {
+      throw new Error(
+        "Invalid offline consultation selection or this offering requires direct coordination with Guruji."
+      );
+    }
+
+    const prefLabel =
+      offlineResult.preference === "rishikesh_office"
+        ? "Rishikesh Office Visit"
+        : `On-Site Visit (${
+            offlineResult.locationType === "outsider" ? "Outsider" : "Rishikesh Area"
+          })`;
+
+    return {
+      priceInINR: offlineResult.advanceAmount, // 50% advance to pay online
+      originalPrice: offlineResult.totalPrice, // 100% total fee
+      amountInPaise: Math.round(offlineResult.advanceAmount * 100),
+      serviceTitle: `${offlineResult.serviceTitle} (Offline - ${prefLabel} [50% Advance])`,
+    };
+  }
+
+  // Validate allowed parameters for Online Consultation
   if (!["audio", "video", "in-person"].includes(consultationType)) {
     throw new Error(`Invalid consultation type: ${consultationType}`);
   }

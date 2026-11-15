@@ -31,24 +31,35 @@ export async function POST(req: NextRequest) {
     if (type === "booking") {
       const {
         serviceId,
-        consultationType,
-        durationMinutes,
-        urgency,
+        consultationType = "audio",
+        durationMinutes = 15,
+        urgency = "normal",
         date,
         timeSlot,
         customerDetails,
+        bookingMode = "online",
+        offlinePreference,
+        offlineLocation,
+        propertyAddress,
       } = body;
 
-      if (!serviceId || !consultationType || !durationMinutes || !urgency) {
+      if (!serviceId) {
+        return NextResponse.json(
+          { success: false, message: "Missing required service identifier." },
+          { status: 400 }
+        );
+      }
+
+      if (bookingMode !== "offline" && (!consultationType || !durationMinutes || !urgency)) {
         return NextResponse.json(
           { success: false, message: "Missing required booking consultation options." },
           { status: 400 }
         );
       }
 
-      if (!customerDetails || !customerDetails.fullName || !customerDetails.email || !customerDetails.phone) {
+      if (!customerDetails || !customerDetails.fullName || !customerDetails.phone) {
         return NextResponse.json(
-          { success: false, message: "Customer name, email and phone number are required." },
+          { success: false, message: "Customer name and phone number are required." },
           { status: 400 }
         );
       }
@@ -56,9 +67,12 @@ export async function POST(req: NextRequest) {
       // Calculate and validate amount strictly server-side
       const pricing = await validateAndCalculateBookingPrice({
         serviceId,
-        consultationType,
-        durationMinutes: Number(durationMinutes),
-        urgency,
+        consultationType: (bookingMode === "offline" ? "in-person" : consultationType) as any,
+        durationMinutes: Number(durationMinutes || 60),
+        urgency: (urgency || "normal") as any,
+        bookingMode,
+        offlinePreference,
+        offlineLocation,
       });
 
       const receipt = `bkg_${Date.now().toString().slice(-8)}`;
@@ -69,11 +83,23 @@ export async function POST(req: NextRequest) {
         currency: "INR",
         receipt,
         notes: {
-          type: "booking",
+          type: bookingMode === "offline" ? "offline_booking" : "booking",
           serviceId,
-          consultationType,
+          consultationType: bookingMode === "offline" ? "in-person" : consultationType,
           customerName: customerDetails.fullName,
-          customerEmail: customerDetails.email,
+          customerEmail: customerDetails.email || "",
+          ...(bookingMode === "offline"
+            ? {
+                offlinePreference: offlinePreference || "rishikesh_office",
+                offlineLocation: offlineLocation || "N/A",
+                advanceAmount: String(pricing.priceInINR),
+                totalFee: String(pricing.originalPrice || pricing.priceInINR),
+                balanceOnSite: String(
+                  (pricing.originalPrice || pricing.priceInINR) - pricing.priceInINR
+                ),
+                propertyAddress: propertyAddress || "N/A",
+              }
+            : {}),
         },
       });
 
@@ -81,11 +107,11 @@ export async function POST(req: NextRequest) {
       const bookingRecord = await createBooking({
         serviceId,
         serviceTitle: pricing.serviceTitle,
-        consultationType,
-        durationMinutes: Number(durationMinutes) as 15 | 30 | 45 | 60,
-        urgency,
+        consultationType: (bookingMode === "offline" ? "in-person" : consultationType) as any,
+        durationMinutes: (Number(durationMinutes) || 60) as 15 | 30 | 45 | 60,
+        urgency: (urgency || "normal") as any,
         date: date || new Date().toISOString().split("T")[0],
-        timeSlot: timeSlot || "11:00 AM - 11:30 AM",
+        timeSlot: timeSlot || (bookingMode === "offline" ? "Confirmed Day Schedule" : "11:00 AM - 11:30 AM"),
         price: pricing.priceInINR,
         originalPrice: pricing.originalPrice,
         ...customerDetails,
