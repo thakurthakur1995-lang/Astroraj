@@ -91,6 +91,16 @@ export async function POST(req: NextRequest) {
       }
 
       if (existing.paymentStatus === "paid") {
+        // Ensure confirmation emails are dispatched if webhook missed/failed for customer
+        try {
+          await sendBookingConfirmationEmails({
+            booking: existing,
+            paymentId: razorpay_payment_id || existing.paymentId,
+          });
+        } catch (err) {
+          console.error("[verify-payment] Error dispatching booking emails for paid booking:", err);
+        }
+
         return NextResponse.json({
           success: true,
           message: "Payment already verified.",
@@ -160,6 +170,16 @@ export async function POST(req: NextRequest) {
       }
 
       if (existing.paymentStatus === "paid") {
+        // Ensure confirmation emails are dispatched if webhook missed/failed for customer
+        try {
+          await sendOrderConfirmationEmails({
+            order: existing,
+            paymentId: razorpay_payment_id || existing.paymentId,
+          });
+        } catch (err) {
+          console.error("[verify-payment] Error dispatching order emails for paid order:", err);
+        }
+
         return NextResponse.json({
           success: true,
           message: "Payment already verified.",
