@@ -32,6 +32,37 @@ import { OfflineBookingForm } from "./OfflineBookingForm";
 
 const SERVICES_PER_PAGE = 4;
 
+// Online Consultation Time Slots (12:00 PM - 04:00 PM IST)
+const TIME_SLOTS_15_MIN = [
+  "12:00 PM - 12:15 PM",
+  "12:15 PM - 12:30 PM",
+  "12:30 PM - 12:45 PM",
+  "12:45 PM - 01:00 PM",
+  "01:00 PM - 01:15 PM",
+  "01:15 PM - 01:30 PM",
+  "01:30 PM - 01:45 PM",
+  "01:45 PM - 02:00 PM",
+  "02:00 PM - 02:15 PM",
+  "02:15 PM - 02:30 PM",
+  "02:30 PM - 02:45 PM",
+  "02:45 PM - 03:00 PM",
+  "03:00 PM - 03:15 PM",
+  "03:15 PM - 03:30 PM",
+  "03:30 PM - 03:45 PM",
+  "03:45 PM - 04:00 PM",
+];
+
+const TIME_SLOTS_30_MIN = [
+  "12:00 PM - 12:30 PM",
+  "12:30 PM - 01:00 PM",
+  "01:00 PM - 01:30 PM",
+  "01:30 PM - 02:00 PM",
+  "02:00 PM - 02:30 PM",
+  "02:30 PM - 03:00 PM",
+  "03:00 PM - 03:30 PM",
+  "03:30 PM - 04:00 PM",
+];
+
 function getServicePageForId(serviceId: string, category: string = "all"): number {
   const list = SERVICES.filter(
     (s) =>
@@ -73,7 +104,7 @@ export function BookingWizard() {
   };
 
   const [bookingDate, setBookingDate] = useState<string>(getMinDate());
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>("11:00 AM - 11:30 AM");
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>(TIME_SLOTS_15_MIN[0]);
 
   // Customer Details Form
   const [customerDetails, setCustomerDetails] = useState<BookingCustomerDetails>({
@@ -109,9 +140,18 @@ export function BookingWizard() {
     if (preselectedPlan) {
       if (preselectedPlan.includes("video")) setConsultationType("video");
       if (preselectedPlan.includes("15")) setDurationMinutes(15);
+      if (preselectedPlan.includes("30")) setDurationMinutes(30);
       if (preselectedPlan.includes("urgent")) setUrgency("urgent");
     }
   }, [preselectedPlan]);
+
+  // Keep selectedTimeSlot synced whenever consultation duration changes (15 min vs 30 min)
+  useEffect(() => {
+    const validSlots = durationMinutes === 30 ? TIME_SLOTS_30_MIN : TIME_SLOTS_15_MIN;
+    if (!validSlots.includes(selectedTimeSlot)) {
+      setSelectedTimeSlot(validSlots[0]);
+    }
+  }, [durationMinutes, selectedTimeSlot]);
 
   // Automatically scroll to the top of the page whenever step, booking mode, or confirmation changes
   useEffect(() => {
@@ -161,24 +201,8 @@ export function BookingWizard() {
     );
   })();
 
-  // Available Time Slots
-  const morningSlots = [
-    "09:30 AM - 10:00 AM",
-    "10:15 AM - 10:45 AM",
-    "11:00 AM - 11:30 AM",
-    "11:45 AM - 12:15 PM",
-  ];
-  const afternoonSlots = [
-    "02:00 PM - 02:30 PM",
-    "02:45 PM - 03:15 PM",
-    "03:30 PM - 04:00 PM",
-    "04:15 PM - 04:45 PM",
-  ];
-  const eveningSlots = [
-    "05:30 PM - 06:00 PM",
-    "06:15 PM - 06:45 PM",
-    "07:00 PM - 07:30 PM",
-  ];
+  // Available Time Slots based on selected consultation duration (12:00 PM - 04:00 PM IST)
+  const availableTimeSlots = durationMinutes === 30 ? TIME_SLOTS_30_MIN : TIME_SLOTS_15_MIN;
 
   // Validation
   const validateCustomerDetails = () => {
@@ -968,60 +992,19 @@ export function BookingWizard() {
             <div className="space-y-3">
               <div>
                 <span className="text-[11px] font-semibold text-gold-600 uppercase block mb-1.5">
-                  Morning Slots
+                  Afternoon Slots (12:00 PM – 04:00 PM • {durationMinutes} Min Consultation)
                 </span>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                  {morningSlots.map((slot) => (
+                  {availableTimeSlots.map((slot) => (
                     <button
                       key={slot}
                       type="button"
                       onClick={() => setSelectedTimeSlot(slot)}
-                      className={`p-2.5 rounded-xl border text-xs font-medium transition-all ${selectedTimeSlot === slot
+                      className={`p-2.5 rounded-xl border text-xs font-medium transition-all cursor-pointer ${
+                        selectedTimeSlot === slot
                           ? "bg-saffron-600 text-white border-saffron-600 shadow-xs"
                           : "bg-ivory border-border text-vedic-dark hover:border-gold-400"
-                        }`}
-                    >
-                      {slot}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <span className="text-[11px] font-semibold text-gold-600 uppercase block mb-1.5">
-                  Afternoon Slots
-                </span>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                  {afternoonSlots.map((slot) => (
-                    <button
-                      key={slot}
-                      type="button"
-                      onClick={() => setSelectedTimeSlot(slot)}
-                      className={`p-2.5 rounded-xl border text-xs font-medium transition-all ${selectedTimeSlot === slot
-                          ? "bg-saffron-600 text-white border-saffron-600 shadow-xs"
-                          : "bg-ivory border-border text-vedic-dark hover:border-gold-400"
-                        }`}
-                    >
-                      {slot}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <span className="text-[11px] font-semibold text-gold-600 uppercase block mb-1.5">
-                  Evening Slots
-                </span>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-                  {eveningSlots.map((slot) => (
-                    <button
-                      key={slot}
-                      type="button"
-                      onClick={() => setSelectedTimeSlot(slot)}
-                      className={`p-2.5 rounded-xl border text-xs font-medium transition-all ${selectedTimeSlot === slot
-                          ? "bg-saffron-600 text-white border-saffron-600 shadow-xs"
-                          : "bg-ivory border-border text-vedic-dark hover:border-gold-400"
-                        }`}
+                      }`}
                     >
                       {slot}
                     </button>
